@@ -1,0 +1,59 @@
+---
+title: Hello World
+---
+`useTheme` is a custom hook used to get the theme object from context.  
+examples:
+- 1l
+- 1l
+- 1l
+- 1l
+
+## Import
+  
+```js
+import { useTheme } from "@chakra-ui/react"
+```
+
+## Return value
+
+The `useTheme` hook returns the theme object.
+
+## Usage
+
+```jsx live=false
+function Example() {
+  const theme = useTheme()
+
+  return <div>{/* Do something with the theme */}</div>
+}
+```
+
+> This is an example post. There's another one [here](/posts/example-post).
+
+<!-- `inline code a =0`   -->
+<!-- ``inline code a =0``   -->
+<!-- ```oneline -->
+<!-- inline code a =0 -->
+<!-- ```   -->
+hello `inline code a =0` hello
+
+
+```cpp
+const styles = {
+  global: (props) => ({
+    fontFamily: "body",
+    color: mode("gray.800", "whiteAlpha.900")(props),
+    bg: mode("white", "gray.800")(props),
+    lineHeight: "base",
+    "*::placeholder": {
+      color: mode("gray.400", "whiteAlpha.400")(props),
+    },
+    "*, *::before, &::after": {
+      borderColor: mode("gray.200", "whiteAlpha.300")(props),
+      wordWrap: "break-word",
+    },
+    fontFeatureSettings: `"pnum"`,
+    fontVariantNumeric: "proportional-nums",
+  }),
+}
+```

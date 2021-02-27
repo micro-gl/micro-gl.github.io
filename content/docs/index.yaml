@@ -1,0 +1,35 @@
+name: docs
+
+groups:
+
+  - title: Getting Started
+    items:
+    - title: setup
+      route: getting-started/setup
+      path: content/docs/A/hello-world.mdx
+
+    - title: Features
+      route: getting-started/features
+      path: content/docs/A/hello-world.mdx
+
+  - title: Concepts
+    items:
+    - title: Numbers
+      route: B/hello-world
+      path: content/docs/B/hello-world.mdx
+
+    - title: Pixel coders
+      route: B/hello-world
+      path: content/docs/B/hello-world.mdx
+
+    - title: Samplers
+      route: B/hello-world
+      path: content/docs/B/hello-world.mdx
+
+    - title: Compostion
+      route: B/hello-world
+      path: content/docs/B/hello-world.mdx
+      
+    - title: Canvas
+      route: B/hello-world
+      path: content/docs/B/hello-world.mdx
