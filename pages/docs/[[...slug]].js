@@ -21,7 +21,8 @@ export const getStaticProps = async ({ params }) => {
   // console.log(params)
   const docs = import_folder(path.join(process.cwd(), 'content', 'docs'), fs, path)
   const { slug } = params
-  const route = slug.reduce((acc, curr) => path.join(acc, curr), '')
+  const route = slug ? slug.reduce((acc, curr) => path.join(acc, curr), '') : 
+                                                    docs.groups[0].items[0].route
   const path_of_file = docs.__map[route]
   const source = fs.readFileSync(path_of_file)
   const { content, data } = matter(source)
@@ -58,7 +59,12 @@ export const getStaticPaths = async () => {
                        .map(item => (
                         { params: { 
                             slug: to_optional(item),
-                          }}))
+                          }}));
+  paths.push({ params: { 
+    slug: [],
+  }})
+
+                          
   // console.log(docs)
  
   return {
