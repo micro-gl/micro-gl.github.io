@@ -5,7 +5,8 @@ import hydrate from 'next-mdx-remote/hydrate'
 import renderToString from 'next-mdx-remote/render-to-string'
 import components from '../../src/components/mdx-components'
 import Layout from '../../src/components/layout'
-import import_folder from '../../src/utils/folder'
+import {import_folder} from '../../src/utils/folder'
+console.log(import_folder)
 
 export default function PostPage( props ) {
   const { data } = props
@@ -18,7 +19,7 @@ export default function PostPage( props ) {
 export const getStaticProps = async ({ params }) => {
   console.log('getStaticProps')
   // console.log(params)
-  const docs = import_folder(path.join(process.cwd(), 'content', 'docs'))
+  const docs = import_folder(path.join(process.cwd(), 'content', 'docs'), fs, path)
   const { slug } = params
   const route = slug.reduce((acc, curr) => path.join(acc, curr), '')
   const path_of_file = docs.__map[route]
@@ -47,8 +48,8 @@ export const getStaticProps = async ({ params }) => {
 }
 
 export const getStaticPaths = async () => {
-  console.log('paths2')
-  const docs = import_folder(path.join(process.cwd(), 'content', 'docs'))
+  console.log('creating docs pages')
+  const docs = import_folder(path.join(process.cwd(), 'content', 'docs'), fs, path)
   const to_optional = (path) => {
     return path.replace(/\.mdx?$/, '').split('/')
   }

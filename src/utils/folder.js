@@ -1,8 +1,6 @@
 const yaml = require('js-yaml');
-const fs   = require('fs');
-const path   = require('path');
 
-export const process = (document) => {
+const process = function(document) {
   const paths = document.groups.map(group => group.items)
                               .flat() 
   let __map = {}
@@ -14,7 +12,7 @@ export const process = (document) => {
   return { ...document, __map }
 }
 
-export default (folder_path) => {
+const import_folder = function(folder_path, fs, path) {
   let doc = undefined
   try {
     doc = yaml.load(fs.readFileSync(path.join(folder_path, 'index.yaml'), 'utf8'));
@@ -24,3 +22,9 @@ export default (folder_path) => {
   }
   return process(doc)
 }
+
+module.exports = {
+  process,
+  import_folder
+}
+
