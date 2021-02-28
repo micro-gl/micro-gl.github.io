@@ -32,7 +32,7 @@ export default function Layout( props ) {
         {!small_screen && 
           <SideBar pl={0} pt={1} mr={pl}
                 w={widthSide} h="100%" 
-                groupFontSize="1.0rem" itemFontSize="0.70rem"
+                groupFontSize="1.2rem" itemFontSize="1.0rem"
                 selectedSlug={slug}
                 groups={groups} name={name} />}
 
@@ -49,7 +49,7 @@ export default function Layout( props ) {
         menu &&
         <SideBar px={2} pt={1}
                 w="100%" h="100%" overflowY="auto"
-                groupFontSize="1.0rem" itemFontSize="0.70rem"
+                groupFontSize="1.2rem" itemFontSize="1.0rem"
                 selectedSlug={slug}
                 groups={groups} name={name} />
       }

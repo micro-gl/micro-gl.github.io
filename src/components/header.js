@@ -4,7 +4,7 @@ import { HiOutlineLightBulb } from "react-icons/hi"
 
 const Header = (props) => {
   const { colorMode, toggleColorMode } = useColorMode()
-  let { slug, widthAll, onMenuClick, ...rest } = props
+  let { slug, widthAll, widthSide, plSide, onMenuClick, ...rest } = props
   const medium_screen = useBreakpointValue({ base: true, md: false})
   const small_screen = useBreakpointValue({ base: true, sm: false})
 

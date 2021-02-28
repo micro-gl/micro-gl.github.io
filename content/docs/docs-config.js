@@ -1,4 +1,4 @@
-import { processor } from './proceesor'
+import { process } from '../../src/utils/folder'
 
 const docs_config = (base) => {
   return {    
@@ -70,4 +70,4 @@ const docs_config = (base) => {
   }
 }
 
-export default processor(docs_config())
+export default process(docs_config())
