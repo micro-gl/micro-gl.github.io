@@ -9,6 +9,9 @@ const process = function(document) {
       console.log(`processor warning:: route ${item.route} is overriden`)
     __map[item.route] = item.path
   })
+  __map[""] = document.groups[0].items[0].path
+  __map["/"] = document.groups[0].items[0].path
+  __map["b"] = document.groups[0].items[0].path
   return { ...document, __map }
 }
 

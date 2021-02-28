@@ -13,7 +13,7 @@ module.exports = {
       //   permanent: true,
       // },
       {
-        source: '/',
+        source: '/a',
         destination: first_route,
         permanent: true,
       },
