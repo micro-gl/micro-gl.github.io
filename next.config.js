@@ -7,13 +7,13 @@ module.exports = {
     const docs = import_folder(path.join(process.cwd(), 'content', 'docs'), fs, path)
     const first_route = `/docs/${docs.groups[0].items[1].route}`
     return [
+      // {
+      //   source: '/',
+      //   destination: '/docs',
+      //   permanent: true,
+      // },
       {
         source: '/',
-        destination: '/docs',
-        permanent: true,
-      },
-      {
-        source: '/docs',
         destination: first_route,
         permanent: true,
       },
