@@ -12,7 +12,7 @@ export default function PostPage( props ) {
   const { data } = props
   const data_ = { ...data, content : hydrate(data.content, { components })}
   return (
-    <Layout data={data_} widthSide="180px" widthContent="630px"/>
+    <Layout data={data_} widthSide="180px" widthContent="800px"/>
   )
 }
 
@@ -61,7 +61,7 @@ export const getStaticPaths = async () => {
                             slug: to_optional(item),
                           }}));
   paths.push({ params: { 
-    slug: [],
+    slug: [""],
   }})
 
                           

@@ -7,10 +7,10 @@ const styles = {
     body: {
       color: mode("gray.800", "whiteAlpha.900")(props),
       bg: mode("whiteAlpha.900", "gray.800")(props),
-      fontSize: "sm",
+      fontSize: "md",
 
     },
-    ".mdx-prose": mdx_style
+    ".mdx": mdx_style
   })
 }
 

@@ -1,6 +1,8 @@
 import { mode } from '@chakra-ui/theme-tools'
 
 const mdx_style = (props) => ({
+    fontWeight: "500",
+    fontFamily: "Inter",
     h1: {
       mt: "2rem",
       mb: ".25rem",
@@ -12,7 +14,7 @@ const mdx_style = (props) => ({
     h2: {
       mt: "4rem",
       mb: "0.5rem",
-      lineHeight: 1.3,
+      lineHeight: "1.3rem",
       fontWeight: "semibold",
       fontSize: "1.5rem",
       letterSpacing: "-.025em",
@@ -66,6 +68,14 @@ const mdx_style = (props) => ({
       }
     },
     ul: {
+      mt: "1.5rem",
+      ml: "1.25rem",
+      "blockquote &": { mt: 0 },
+      "& > * + *": {
+        mt: "0.25rem",
+      },
+    },
+    ol: {
       mt: "1.5rem",
       ml: "1.25rem",
       "blockquote &": { mt: 0 },

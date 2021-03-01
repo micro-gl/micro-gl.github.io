@@ -36,9 +36,9 @@ export default function Layout( props ) {
                 selectedSlug={slug}
                 groups={groups} name={name} />}
 
-        <Box  h="100%"  mt={4} px={6}
+        <Box  h="100%"  pt={0} mt={0} px={6} id="content"
               w={widthContent}
-              overflowY="auto" className="mdx-prose">
+              overflowY="auto" className="mdx">
           <h1>{ title }</h1>
           { content }
         </Box>

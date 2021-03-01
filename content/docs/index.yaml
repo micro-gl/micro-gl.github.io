@@ -6,10 +6,14 @@ groups:
     items:
     - title: setup
       route: getting-started/setup
-      path: content/docs/A/hello-world.mdx
+      path: content/docs/setup.mdx
 
     - title: Features
       route: getting-started/features
+      path: content/docs/features.mdx
+
+    - title: Features2
+      route: getting-started/features2
       path: content/docs/A/hello-world.mdx
 
   - title: Concepts
