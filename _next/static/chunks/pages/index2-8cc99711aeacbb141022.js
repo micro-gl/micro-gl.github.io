@@ -1,0 +1,1 @@
+_N_E=(window.webpackJsonp_N_E=window.webpackJsonp_N_E||[]).push([[13],{"7DGc":function(n,u,i){(window.__NEXT_P=window.__NEXT_P||[]).push(["/index2",function(){return i("fC+r")}])},"fC+r":function(n,u,i){"use strict";function o(n){n.name,n.groups;return"index2"}i.r(u),i.d(u,"default",(function(){return o}))}},[["7DGc",0]]]);
