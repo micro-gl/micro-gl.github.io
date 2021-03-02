@@ -1,0 +1,88 @@
+pixel coders are objects that can encode color or intensity into pixel representation
+and also decode a pixel into a color.  
+
+`microgl` can support any color configuration and any pixel format you can think of.
+
+here is a basic pixel coder, that encodes **RGB** 8-bit color channels into a packed
+32 bit integer
+```cpp
+#include <microgl/PixelCoder.h>
+
+class RGB888_PACKED_32 : public PixelCoder<uint32_t, 8,8,8,0, RGB888_PACKED_32> {
+public:
+    using PixelCoder::decode;
+    using PixelCoder::encode;
+
+    inline void encode(const color_t &input, uint32_t &output) const {
+        output = (input.r << 16) + (input.g << 8) + input.b;
+    }
+
+    inline void decode(const uint32_t &input, color_t &output) const {
+        output.r = (input & 0x00FF0000) >> 16;
+        output.g = (input & 0x0000FF00) >> 8;
+        output.b = (input & 0x000000FF);
+    };
+
+};
+```
+
+here is another pixel coder, that encodes/decodes a single 8-bit color channel into
+8 bit integer
+```cpp
+#include <microgl/PixelCoder.h>
+
+class RGB8 : public PixelCoder<uint8_t, 8, 8, 8, 0, RGB8> {
+public:
+    using PixelCoder::decode;
+    using PixelCoder::encode;
+
+    inline void encode(const color_t &input, uint8_t &output) const {
+        output = input.r;
+    }
+
+    inline void decode(const uint8_t &input, color_t &output) const {
+        output.r = output.g = output.b = input;
+    };
+
+};
+```
+
+The above examples demonstrate how simple it is to create pixel coders with any  
+color depth configuration and any pixel format desired.  
+
+> out of the box, **<microgl/pixel_coders>** is packed with the following pixel coders for your conveniance
+
+## True color coders (32 bit coders)
+for pixels stored in a *4 bytes* data structure
+- `RGB888_PACKED_32.h` - **rgb(8|8|8)** channels into a 32 bit unsigned integer
+- `RGBA8888_PACKED_32.h` - **rgba(8|8|8|8)** channels into a 32 bit unsigned integer
+- `RGBA8888_ARRAY.h` - **rgba(8|8|8|8)** channels into a 4d vector (faster reads)
+- `RGB888_ARRAY.h` - **rgb(8|8|8)** channels into a 4d vector (faster reads)
+- `RGB8.h` - **rgb(8|8|8)** grayscale into 8 bits unsigned integer
+
+## 16 bit coders
+for pixels stored in a *2 bytes* data structure
+- `RGB555_PACKED_16.h` - **rgb(5|5|5)** channels into a 16 bits unsigned integer (word)
+- `RGB565_PACKED_16.h` - **rgb(5|6|5)** channels into a 16 bits unsigned integer (word)
+- `RGBA4444_PACKED_16.h` - **rgba(4|4|4|4)** channels into a 16 bits unsigned integer (word)
+- `RGBA5551_PACKED_16.h` - **rgba(5|5|5|1)** channels into a 16 bits unsigned integer (word)
+- `ARGB1555_PACKED_16.h` - **argb(1|5|5|5)** channels into a 16 bits unsigned integer (word)
+
+## 8 bit coders
+for pixels stored in a *1 bytes* data structure
+- `RGB332_PACKED_8.h` - **rgb(3|3|2)** channels into a 8 bits unsigned integer (char)
+
+## Memory friendly coders
+the following coders are very handy for packed bitmaps, they also use a lookup table for
+fast conversions
+- `BPP_RGB.h` - arbitrary single channel bits scaled into any rgb depth
+- `BPP_1_RGB.h` - 1 bit channel (2 colors) scaled into any rgb depth
+- `BPP_2_RGB.h` - 2 bit channel (4 colors) scaled into any rgb depth
+- `BPP_4_RGB.h` - 4 bit channel (16 colors) scaled into any rgb depth
+- `BPP_8_RGB.h` - 8 bit channel (256 colors) scaled into any rgb depth
+
+
+## Converting Coders
+this coders can transform a coder to another rgba depth
+- `coder_rgba.h` - convert a given coder to a different rgba color depth
+- `coder_converter.h` - convert one coder to the color depth of another coder

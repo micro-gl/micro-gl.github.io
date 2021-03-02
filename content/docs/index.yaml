@@ -12,23 +12,19 @@ groups:
       route: getting-started/features
       path: content/docs/features.mdx
 
-    - title: Features2
-      route: getting-started/features2
-      path: content/docs/A/hello-world.mdx
-
   - title: Concepts
     items:
     - title: Numbers
-      route: B/hello-world
-      path: content/docs/B/hello-world.mdx
+      route: concepts/numbers
+      path: content/docs/numbers.mdx
 
     - title: Pixel coders
-      route: B/hello-world
-      path: content/docs/B/hello-world.mdx
+      route: concepts/pixel-coders
+      path: content/docs/pixel-coders.mdx
 
     - title: Samplers
-      route: B/hello-world
-      path: content/docs/B/hello-world.mdx
+      route: concepts/samplers
+      path: content/docs/samplers.mdx
 
     - title: Compostion
       route: B/hello-world

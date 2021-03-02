@@ -1,7 +1,7 @@
 import { mode } from '@chakra-ui/theme-tools'
 
 const mdx_style = (props) => ({
-    fontWeight: "500",
+    fontWeight: "400",
     fontFamily: "Inter",
     h1: {
       mt: "2rem",
