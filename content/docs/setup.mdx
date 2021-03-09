@@ -4,41 +4,19 @@ There are various ways, that `microgl` can be consumed and used
 download the project to a sub folder of your project. inside your `CMakeLists.txt` add  
 ```cmake
   add_subdirectory(/path/to/microgl)
-  target_link_libraries(app microgl)
+  target_link_libraries(your_app microgl)
 ```
 if you installed `micro{gl}` (see below) at your system, you can instead
 ```cmake
-  target_link_libraries(app path/to/microgl/static/file)
-  target_include_directories(app path/to/microgl/include/)
+  target_include_directories(app path/to/microgl/install/include/)
 ```
 
 ## 2. embed *micro{gl}* source code in your own build
 download the project to a local folder inside your project, preferably `${YOUR_APP}/libs/microgl`.  
 then, make sure to:  
-- add files in `microgl/src` to your compilation step
 - add `microgl/include/public/` to your include paths
 
-## 3. use *CMake* to create a static lib
-```bash
-$ cd path/to/microgl
-$ mkdir cake-build-release
-$ cd cmake-build-release
-$ cmake -DCMAKE_BUILD_TYPE=Release ..
-$ cmake --build . --target microgl
-$ ../bin/libmicrogl.a # in unix like systems
-```
-
-## 4. use *CMake* to create a shared lib
-```bash
-$ cd path/to/microgl
-$ mkdir cake-build-release
-$ cd cmake-build-release
-$ cmake -DCMAKE_BUILD_TYPE=Release ..
-$ cmake --build . --target microgl-shared
-$ ../bin/libmicrogl-shared.dylib # in unix like systems
-```
-
-## 5. install *microGL* with *CMake*
+## 4. install *microGL* with *CMake*
 this will install static and dynamic libs into the system (`/usr/local/` for unix like).
 header files will be copied as well (`/usr/local/include`)
 ```bash
