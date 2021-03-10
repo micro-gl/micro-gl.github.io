@@ -90,17 +90,17 @@ struct texture {
 }
 ```
 where:
-- **`Bitmap`** is the bitmap type to sampler from 
-- **`filter`** is one of
-  - **`texture_filter::NearestNeighboor`**
-  - **`texture_filter::Bilinear`**
-- **`tint`** is a flag to enable color tinting, off by default
-- **`wrap_u`** indicates how to handle horizontal sampling overflows, one of
-  - **`texture_wrap::None`** - most economic
-  - **`texture_wrap::Clamp`** - clamp overflow to 1
-  - **`texture_wrap::ClampToBorderColor`** - overflows will sample from border color
-  - **`texture_wrap::Repeat`** - overflows will repeat in cyclic order
-- **`wrap_v`** same as **`wrap_u`** but for vertical sampling overflows
+- `Bitmap` is the bitmap type to sampler from 
+- `filter` is one of
+  - `texture_filter::NearestNeighboor`
+  - `texture_filter::Bilinear`
+- `tint` is a flag to enable color tinting, off by default
+- `wrap_u` indicates how to handle horizontal sampling overflows, one of
+  - `texture_wrap::None` - most economic
+  - `texture_wrap::Clamp` - clamp overflow to 1
+  - `texture_wrap::ClampToBorderColor` - overflows will sample from border color
+  - `texture_wrap::Repeat` - overflows will repeat in cyclic order
+- `wrap_v` same as `wrap_u` but for vertical sampling overflows
 
 > a texture will automatically use the **rgba** info of the bitmap it samples from 
 
@@ -286,45 +286,3 @@ the `chrome` template argument is enum with the following values:
 - [chrome_mode::green_channel_inverted](#) - use the inverted green channel
 - [chrome_mode::blue_channel_inverted](#) - use the inverted blue channel
 - [chrome_mode::alpha_channel_inverted](#) - use the inverted alpha channel
-
-
-## `microgl::sampling` namespace
-This namespace also defines the following utility methods
-
-### sample from another number system
-sample uv coords from sampler with a different number system.
-This is handy because samplers work in quantized space to be more
-efficient and sometimes it is not convenient. This method will convert
-the uv coords into fixed points and then sample from the sampler.
-```cpp
-/**
-* @tparam Sampler the sampler type
-* @tparam number the number type
-* 
-* @param sampler the sampler reference 
-* @param u the u coord
-* @param v the v coord
-* @param p precision can be {low, medium, high, amazing}
-* @param output output color
-*/
-template<class Sampler, typename number>
-inline void sample(const Sampler & sampler,
-                   const number &u, const number &v,
-                   const enum microgl::precision &p,
-                   color_t &output) {
-```
-
-### `base_sampler` class
-You can extend this class to include other utility methods inside your class.
-This is a nice container, that can wrap samplers and also invoke their sampling
-behaviour via `crpt` compile-time polymorphism. I prefer not to use it because it
-makes the definition a bit combersome and long with `c++` templates quirks 
-
-```cpp
-/**
-* @tparam rgba_ the rgba_t info type
-* @tparam impl the type of the derived class
-*/
-template<typename rgba_, typename impl>
-class base_sampler
-```

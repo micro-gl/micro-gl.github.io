@@ -18,7 +18,11 @@ groups:
       route: concepts/numbers
       path: content/docs/numbers.mdx
 
-    - title: Pixel coders
+    - title: RGBA
+      route: concepts/rgba
+      path: content/docs/rgba.mdx
+
+    - title: Pixel Coders
       route: concepts/pixel-coders
       path: content/docs/pixel-coders.mdx
 
@@ -26,10 +30,18 @@ groups:
       route: concepts/samplers
       path: content/docs/samplers.mdx
 
-    - title: Compostion
-      route: B/hello-world
-      path: content/docs/B/hello-world.mdx
-      
+    - title: Composition
+      route: concepts/composition
+      path: content/docs/composition.mdx
+    
+    - title: Bitmaps
+      route: concepts/bitmaps
+      path: content/docs/bitmaps.mdx
+    
     - title: Canvas
-      route: B/hello-world
-      path: content/docs/B/hello-world.mdx
+      route: concepts/canvas
+      path: content/docs/canvas.mdx
+    
+    - title: 3d shaders
+      route: concepts/canvas
+      path: content/docs/canvas.mdx

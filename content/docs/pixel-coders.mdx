@@ -22,12 +22,12 @@ struct RGB888_PACKED_32 {
 
     // these methods can be static if they do not access any variable
     // this encodes a color object into a pixel of type uint32_t
-    inline void encode(const color_t &input, uint32_t &output) const {
+    inline void encode(const color_t &input, pixel &output) const {
         output = (input.r << 16) + (input.g << 8) + input.b;
     }
 
     // this decodes a uint32_t integer into a color object
-    inline void decode(const uint32_t &input, color_t &output) const {
+    inline void decode(const pixel &input, color_t &output) const {
         output.r = (input & 0x00FF0000) >> 16;
         output.g = (input & 0x0000FF00) >> 8;
         output.b = (input & 0x000000FF);
@@ -47,7 +47,7 @@ struct RGBA_PACKED {
     // the rgba info is here
     using rgba = rgba_t<r, g, b, a>;
     // the pixel type is here
-    using pixel =...
+    using pixel = ... // will automatically be uint8_t, uint16_t, uint32_t, uint64_t
     ... 
     ... 
 }
@@ -145,6 +145,126 @@ this coders can transform a coder to another rgba depth
 - `GRAYSCALE.h` - a pixel coder template, that saves one channel, also supports alpha channel
 - `SINGLE.h` - defines 4 single channel pixel coders structs `R`, `G`, `B`, `A` literaly
 
-## extra stuff
-you can also encode intensities objects (unquantized measures) with the coder namespace methods
-overloads of `encode` and `decode`. have a look at `<microgl/pixel_coder.h>`
+
+## `microgl::coder` namespace
+
+### encode intensity into a pixel with a pixel coder
+```cpp
+/**
+* encode intensity into a pixel with a pixel coder
+*
+* @tparam number underlying intensity number type
+* @tparam Coder the pixel coder type to use
+*
+* @param input input intensity
+* @param output output pixel
+* @param $coder the coder reference
+*/
+template <typename number, class Coder>
+void inline
+encode(const intensity<number> &input, typename Coder::pixel &output, const Coder & $coder)
+```
+
+### decode pixel into intensity using a coder
+```cpp
+/**
+* decode pixel into intensity using a coder
+*
+* @tparam number underlying intensity number type
+* @tparam Coder the pixel coder type to use
+*
+* @param input input pixel
+* @param output output intensity
+* @param $coder the coder reference
+*/
+template <typename number, class Coder>
+void decode(const typename Coder::pixel &input, intensity<number> &output, const Coder & $coder) {
+```
+
+### `pixel_coder` class
+a base pixel coder that can boost your pixel coder with extra utilities.
+inheritance is via crpt design pattern.
+```cpp
+/**
+*
+* @tparam pixel_ the pixel storage type
+* @tparam rgba_ the {rgba_t} info object
+* @tparam impl the type of the derived class
+*/
+template<typename pixel_, typename rgba_, typename impl>
+class pixel_coder : public crpt<impl> {
+    using pixel= pixel_;
+    using rgba= rgba_;
+
+    // this will encode in your derived class
+    void encode(const color_t &input, pixel &output) const
+    // this will decode in your derived class
+    void decode(const pixel &input, color_t &output) const
+
+    /**
+    * encode intensity to pixel of the coder
+    *
+    * @tparam number underlying intensity number type
+    *
+    * @param input input intensity
+    * @param output output pixel
+    */
+    template <typename number>
+    void encode(const intensity<number> &input, pixel &output) const
+
+    /**
+    * decode pixel into intensity
+    *
+    * @tparam number underlying intensity number type
+    *
+    * @param input input pixel
+    * @param output output intensity
+    */
+    template <typename number>
+    void decode(const pixel &input, intensity<number> &output) const
+
+    /**
+    * convert intensity to color of space defined but this coder
+    *
+    * @tparam number underlying intensity number type
+    * @param input intensity
+    * @param output color
+    */
+    template <typename number>
+    void convert(const intensity<number> &input, color_t &output) const
+
+    /**
+    * convert color to intensity
+    *
+    * @tparam number underlying intensity number type
+    *
+    * @param input color
+    * @param output intensity
+    */
+    template <typename number>
+    void convert(const color_t &input, intensity<number> &output) const
+
+    /**
+    * convert a color of this coder space into a space of another coder
+    *
+    * @tparam CODER2 the other coder
+    *
+    * @param input color
+    * @param output color output
+    */
+    template<typename CODER2>
+    void convert(const color_t &input, color_t &output) const
+    /**
+    * convert a pixel from this coder to a pixel of another coder
+    *
+    * @tparam CODER2 the other coder
+    *
+    * @param input input pixel of my coder
+    * @param output the output pixel
+    * @param coder2 the other coder reference
+    */
+    template<typename CODER2>
+    void convert(const pixel &input, typename CODER2::pixel &output, const CODER2 &coder2) const
+
+}
+```
