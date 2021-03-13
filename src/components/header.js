@@ -26,7 +26,7 @@ const Header = (props) => {
             <Icon w={6} h={6} color="black.500"
                   as={HiOutlineLightBulb} />
           </Button>
-          <Button as="a" p={0} mx={1} onClick={(e)=> window.open("http://github.com",'_blank')}
+          <Button as="a" p={0} mx={1} onClick={(e)=> window.open("https://github.com/micro-gl/micro-gl",'_blank')}
                   bg="transparent">
             <Icon w={6} h={6} color="black.500"
                   as={AiFillGithub} />

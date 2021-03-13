@@ -10,7 +10,9 @@ On top of that, Bitmaps have a simple interface to :
 All bitmaps inherit from **`<microgl/base_bitmap.h>`** via `crpt` pattern (compile time polymorphism).
 all bitmaps have the following interface through compile-time inheritance 
 
-## Bitmap methods
+## Base Bitmap methods
+All bitmaps inherit from **`base_bitmap`**, which is an abstract defined base class used
+with `crpt` design pattern.
 ```cpp
 /**
  * @tparam impl implemenation type of derived class
@@ -72,7 +74,8 @@ public:
 - Implemented at **`<microgl/bitmaps/bitmap.h>`**
 - Example at **`/examples/example_sampler_texture.cpp`**
 
-Regular bitmap interface
+Regular bitmap inherits from **`base_bitmap`** and also adds the following interface  
+This bitmap is the most common implemenation of a **`base_bitmap`**
 
 ```cpp
 /**
@@ -92,6 +95,82 @@ public:
 
     // constructors
     bitmap(int w, int h)
-    bitmap(uint8_t* $pixels, int w, int h)
+    bitmap(void * $pixels, int w, int h)
 }
+```
+
+## Packed Bitmap
+- Implemented at **`<microgl/bitmaps/PackedBitmap.h>`**
+- Example at **`/examples/example_draw_bitmap_packed.cpp`**
+
+A packed bitmap is a memory efficient bitmap, that encodes pixels as group of bits
+of size 1, 2, 4, 8 bits. This is good for single channel storage like text. Using this
+scheme can compress your simgle channel bitmaps by great deal.
+
+```cpp
+/**
+ * @tparam BPP bits per pixel (1|2|4|8)
+ * @tparam CODER the pixel coder to decode the pixels
+ * @tparam reverse_elements_pos_in_byte this can help with endian-ness issues
+ */
+template <unsigned BPP, typename CODER, bool reverse_elements_pos_in_byte=false>
+class PackedBitmap : public base_bitmap<.....> {
+public:
+    /**
+     * construct a bitmap with a given pixel array
+     *
+     * @param $pixels the pixels array
+     * @param w the bitmap width
+     * @param h the bitmap height
+     */
+    PackedBitmap(void* $pixels, int w, int h)
+    /**
+     * construct a bitmap and allocate a pixel array
+     *
+     * @param w the bitmap width
+     * @param h the bitmap height
+     */
+    PackedBitmap(int w, int h)
+```
+
+> the pixel coder must have a pixel type of `unsigned char` (uint8_t)
+
+## Indexed/Palette Bitmap
+- Implemented at **`<microgl/bitmaps/PaletteBitmap.h>`**
+- Example at **`/examples/example_draw_bitmap_indexed_palette.cpp`**
+
+ A bitmap that uses a palette of pixels of size 2, 4, 16 or 256. This way,
+ the pixels array is just an index array into the palette, therefore the indices 
+ can be packed as 1, 2, 4 or 8 bits respectively. This is memory efficient.
+
+```cpp
+/**
+ * @tparam PALETTE_SIZE 2, 4, 16, 256 size
+ * @tparam CODER the pixel coder for the palette
+ * @tparam reverse_elements_pos_in_byte can help with endian-ness issues
+ */
+template <unsigned PALETTE_SIZE, typename CODER, bool reverse_elements_pos_in_byte=false>
+class PaletteBitmap : public base_bitmap<....> {
+public:
+
+    /**
+     * construct a bitmap with a given indices array and pixel palette.
+     * @param $indices the indices array
+     * @param palette the palette
+     * @param w the bitmap width
+     * @param h the bitmap height
+     */
+    PaletteBitmap(void* $indices, void *palette, int w, int h)
+    /**
+     * construct a bitmap, allocate indices array.
+     * @param w the bitmap width
+     * @param h the bitmap height
+     */
+    PaletteBitmap(int w, int h)
+
+    // get palette size
+    unsigned paletteSize()
+    // update palette
+    void updatePalette(pixel * $palette)
+
 ```
