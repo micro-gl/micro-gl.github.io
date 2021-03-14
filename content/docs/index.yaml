@@ -4,7 +4,7 @@ groups:
 
   - title: Getting Started
     items:
-    - title: setup
+    - title: Setup
       route: getting-started/setup
       path: content/docs/setup.mdx
 
@@ -37,11 +37,12 @@ groups:
     - title: Bitmaps
       route: concepts/bitmaps
       path: content/docs/bitmaps.mdx
-    
+
+    - title: 3D Shaders
+      route: concepts/3d
+      path: content/docs/3d.mdx
+
     - title: Canvas
       route: concepts/canvas
       path: content/docs/canvas.mdx
     
-    - title: 3d shaders
-      route: concepts/canvas
-      path: content/docs/canvas.mdx
