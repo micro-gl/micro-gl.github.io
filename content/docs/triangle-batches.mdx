@@ -1,0 +1,77 @@
+# Introduction
+
+**Triangles Batches** are supported in `microgl`. This is a convenient way to draw
+many triangles in an optimized manner.
+
+> Example at **`/examples/example_draw_triangle.cpp`**
+
+<img src="/images/canvas_polygon.png" style={{height:"250px", margin: "auto"}} />
+
+WIP
+
+# Usage Example
+
+WIP
+
+# Signature API
+
+```cpp
+/**
+ * @tparam bitmap_type  the bitmap type
+ * @tparam options      the options bitset
+ */
+template<typename bitmap_type, uint8_t options=CANVAS_OPT_default>
+class canvas {
+public:
+    /**
+     * Draw 2d triangle batches. Given:
+     * - vertex buffer, indices buffer, indices type, draw triangles.
+     * - uvs are optional, and if are nullptr, the method will compute them alone.
+     * - indices buffer are optional, and if are nullptr, the method will use vertex buffer as is.
+     *
+     * Supported batch strategies are:
+     * - TRIANGLES - every 3 indices for a triangle
+     * - FAN - the first index forms with every 2 other indices
+     * - STRIP - the best for low memory when possible
+     *
+     * Indices array point to the vertex array and is an important concept, when you want
+     * to draw a subset of vertices, or to construct triangles from a set of vertices
+     *
+     * @tparam BlendMode        the blend mode struct
+     * @tparam PorterDuff       the alpha compositing struct
+     * @tparam antialias        antialiasing flag
+     * @tparam number1          number type of position
+     * @tparam number2          number type of uv coords
+     * @tparam Sampler1         sampler type for fill
+     * @tparam Sampler2         sampler type for stroke
+     *
+     * @param sampler           fill sampler reference
+     * @param transform         3x3 matrix transformation
+     * @param vertices          pointer to points array
+     * @param uvs               (Optional) pointer to uv array
+     * @param indices           (Optional) pointer to indices array
+     * @param boundary_buffer   (Optional) pointer to boundary buffer, used in quick anti-aliasing
+     * @param size              size of indices buffer
+     * @param type              type of indices buffer {TRIANGLES, FAN, TRIANGLES_STRIP}
+     * @param opacity           opacity [0..255]
+     * @param u0                uv coord
+     * @param v0                uv coord
+     * @param u1                uv coord
+     * @param v1                uv coord
+     */
+    template<typename BlendMode=blendmode::Normal, typename PorterDuff=porterduff::FastSourceOverOnOpaque,
+            bool antialias=false, typename number1=float, typename number2=float, typename Sampler>
+    void drawTriangles(const Sampler & sampler,
+                       const matrix_3x3<number1> &transform,
+                       const vec2<number1> *vertices= nullptr,
+                       const vec2<number2> *uvs=nullptr,
+                       const index *indices= nullptr,
+                       const boundary_info * boundary_buffer= nullptr,
+                       index size=0,
+                       enum indices type=indices::TRIANGLES,
+                       opacity_t opacity=255,
+                       const number2 &u0=number2(0), const number2 &v0=number2(1),
+                       const number2 &u1=number2(1), const number2 &v1=number2(0));
+
+```
+

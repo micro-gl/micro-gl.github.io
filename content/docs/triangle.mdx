@@ -1,0 +1,90 @@
+# Introduction
+
+**Triangles** are fundamental geometries in vector graphics
+
+> Example at **`/examples/example_draw_triangle.cpp`**
+
+<img src="/images/canvas_triangle.png" style={{height:"250px", margin: "auto"}} />
+
+# Usage Example
+
+```cpp
+#include <microgl/canvas.h>
+#include <microgl/pixel_coders/RGB888_PACKED_32.h>
+#include <microgl/pixel_coders/RGB888_ARRAY.h>
+
+using Canvas24= canvas<bitmap<coder::RGB888_PACKED_32>>;
+using Texture24= sampling::texture<bitmap<coder::RGB888_ARRAY>>;
+using number = float;
+//using number = Q<15>;
+
+Canvas24 canvas(W, H);
+auto img_2 = resources.loadImageFromCompressedPath("images/uv_512.png");
+
+Texture24 tex(new bitmap<coder::RGB888_ARRAY>(img_2.data, img_2.width, img_2.height));
+
+canvas.clear(intensity<number>{1, 1, 1, 1});
+canvas.drawTriangle<blendmode::Normal, porterduff::None<>>(
+        tex,
+        10.0,  10.0,  0.0, 1.0, // x, y, u, v
+        500.0, 10.0,  1.0, 1.0, // x, y, u, v
+        500.0, 500.0, 1.0, 0.0, // x, y, u, v
+        255);
+
+```
+
+# Signature API
+
+```cpp
+/**
+ * @tparam bitmap_type  the bitmap type
+ * @tparam options      the options bitset
+ */
+template<typename bitmap_type, uint8_t options=CANVAS_OPT_default>
+class canvas {
+public:
+    /**
+     * Draw a triangle with sampler
+     *
+     * @tparam BlendMode            the blend mode struct
+     * @tparam PorterDuff           the alpha compositing struct
+     * @tparam antialias            enable/disable anti-aliasing, currently NOT supported
+     * @tparam number1              vertices number type
+     * @tparam number2              uv coords number type
+     * @tparam Sampler              sampler type
+     *
+     * @param sample                sampler reference
+     * @param v0_x                  1st point x
+     * @param v0_y                  1st point y
+     * @param u0                    1st point u
+     * @param v0                    1st point v
+     *
+     * @param v1_x                  2nd point x
+     * @param v1_y                  2nd point y
+     * @param u1                    2nd point u
+     * @param v1                    2nd point v
+     *
+     * @param v2_x                  3rd point x
+     * @param v2_y                  3rd point y
+     * @param u2                    3rd point u
+     * @param v2                    3rd point v
+     *
+     * @param opacity               opacity [0..255]
+     * @param aa_first_edge         antialias 1st edge
+     * @param aa_second_edge        antialias 2nd edge
+     * @param aa_third_edge         antialias 3rd edge
+     */
+    template <typename BlendMode=blendmode::Normal,
+              typename PorterDuff=porterduff::FastSourceOverOnOpaque,
+              bool antialias=false, 
+              typename number1=float, typename number2=number1, 
+              typename Sampler>
+    void drawTriangle(const Sampler &sample,
+                      const number1 &v0_x, const number1 &v0_y, const number2 &u0, const number2 &v0,
+                      const number1 &v1_x, const number1 &v1_y, const number2 &u1, const number2 &v1,
+                      const number1 &v2_x, const number1 &v2_y, const number2 &u2, const number2 &v2,
+                      opacity_t opacity = 255, 
+                      bool aa_first_edge = true, bool aa_second_edge = true, bool aa_third_edge = true);
+
+```
+

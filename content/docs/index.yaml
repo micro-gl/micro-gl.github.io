@@ -53,8 +53,8 @@ groups:
       path: content/docs/rectangles.mdx
 
     - title: Rounded Shapes
-      route: drawing/rouned
-      path: content/docs/rouned.mdx
+      route: drawing/rounded
+      path: content/docs/rounded.mdx
 
     - title: Quadrilaterals
       route: drawing/quadrilaterals
