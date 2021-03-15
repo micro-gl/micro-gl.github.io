@@ -1,0 +1,228 @@
+# Introduction
+
+**Canvas** is the main drawing concept in `microgl`. Canvas can be described as:
+- An object with minimal state
+- An object that holds a [bitmap](bitmap) to draw on
+- a bunch of methods to draw shapes on a bitmap using [sampler](samplers) and [3d-shaders](3d)
+
+> **Canvas** origin (0, 0) is at the top left like photoshop and spans to the bottom and right
+
+Canvas can be found at **`<microgl/canvas.h>`** and using it is a template, that can be instantieated 
+with the following signature:
+
+```cpp
+/**
+ * @tparam bitmap_type  the bitmap type
+ * @tparam options      the options bitset
+ */
+template<typename bitmap_type, uint8_t options=CANVAS_OPT_default>
+class canvas {
+public:
+    // the canvas type
+    using canvas_t = ...
+    // the underlying bitmap type
+    using bitmap_t = ...
+    // the pixel type of the bitmap
+    using pixel = ...
+    // the pixel coder type of the bitmap
+    using pixel_coder = ...
+
+    struct window_t {
+        rect canvas_rect;
+        rect clip_rect;
+        int index_correction=0;
+    };
+
+    static constexpr bool options_compress_bits() { return options&CANVAS_OPT_raster_COMPRESS_BITS; }
+    static constexpr bool options_big_integers() { return options&CANVAS_OPT_2d_raster_USE_BIG_INT; }
+    static constexpr bool options_avoid_overflow() { return options&CANVAS_OPT_2d_raster_AVOID_RENDER_WITH_OVERFLOWS; }
+    static constexpr bool options_use_division() { return options&CANVAS_OPT_2d_raster_USE_DIVISION; }
+
+    struct render_options_t {
+        uint8_t _2d_raster_bits_sub_pixel= options_big_integers() ? 8 : 4;
+        uint8_t _2d_raster_bits_uv= options_big_integers() ? 15 : 10;
+        uint8_t _3d_raster_bits_sub_pixel= options_big_integers() ? 8 : 4;
+        uint8_t _3d_raster_bits_w= options_big_integers() ? 15 : 12;
+    };
+
+    /**
+     * ctor of canvas that receives a bitmap reference
+     *
+     * @param $bmp a bitmap reference
+     */
+    explicit canvas(bitmap_type * $bmp)
+    /**
+     * ctor of canvas that allocate a bitmap internally
+     * @param width     width of canvas
+     * @param height    height of canvas
+     */
+    canvas(int width, int height)
+
+    /**
+     * update the clipping rectangle of the canvas
+     *
+     * @param l left distance to x=0
+     * @param t top distance to y=0
+     * @param r right distance to x=0
+     * @param b bottom distance to y=0
+     */
+    void updateClipRect(int l, int t, int r, int b)
+
+    /**
+     * where to position the bitmap relative to the canvas, this feature
+     * can help with block rendering, where the bitmap is smaller than the canvas
+     * diensions.
+     *
+     * @param left relative to x=0
+     * @param top relative to y=0
+     * @param $bmp (Optional) the bitmap reference
+     */
+    void updateCanvasWindow(int left, int top, bitmap_type * $bmp=nullptr)
+
+    /**
+     * given that we know the canvas size and the clip rect, calculate
+     * the sub rectangle (intersection), where drawing is visible
+     *
+     * @return a rectangle
+     */
+    rect calculateEffectiveDrawRect()
+
+    // get the clipping rectangle
+    const rect & clipRect() const
+
+    /**
+     * get the canvas rectangle, should be (0, 0, width, height), unless
+     * the sub windowing feature was used.
+     * @return a rectangle
+     */
+    const rect & canvasWindowRect() const
+
+    // get the rendering options
+    render_options_t & renderingOptions()
+
+    // get canvas width
+    int width() const;
+    // get canvas height
+    int height() const;
+    // get size of pixel
+    unsigned int sizeofPixel() const;
+    // get the pixels array from the underlying bitmap
+    pixel * pixels() const;
+    // get a pixel by position
+    pixel & getPixel(int x, int y) const ;
+    pixel & getPixel(int index) const ;
+    // decode pixel color by position
+    void getPixelColor(int index, color_t & output) const;
+    void getPixelColor(int x, int y, color_t & output) const;
+
+    // get the pixel coder reference of the underlying bitmap
+    const pixel_coder & coder() const;
+
+    // get the underlying bitmap pointer
+    bitmap_type * bitmapCanvas() const;
+
+    .
+    .
+    .
+    .
+```
+
+# Usage
+Canvas can be simply used with the following c++ code
+
+```cpp
+#include <microgl/canvas.h>
+#include <microgl/pixel_coders/RGB888_PACKED_32.h>
+
+using Canvas24= canvas<bitmap<coder::RGB888_PACKED_32>>;
+
+Canvas24 canvas_1(640, 480);
+
+// or with a given bitmap
+Canvas24 canvas_2(new bitmap<coder::RGB888_PACKED_32>(img_2.data, img_2.width, img_2.height))
+```
+
+# Supported Shapes
+Canvas can draw the following shapes with a [sampler](samplers) and a matrix transform.
+
+## Rectangles
+> Example at **`/examples/example_draw_rect_transform.cpp`**
+
+<img src="/images/canvas_rect.png" style={{height:"250px", margin: "auto"}} />
+
+## Rounded Rectangles
+> Example at **`/examples/example_draw_rounded_rectangle.cpp`**
+
+<img src="/images/canvas_rounded_rect.png" style={{height:"250px", margin: "auto"}} />
+
+## Triangle
+> * Example at **`/examples/example_draw_triangle.cpp`** 
+* Example at **`/examples/example_draw_triangles_matrix_transforms.cpp`**
+
+You can also draw triangles in batches
+
+<img src="/images/canvas_triangle.png" style={{height:"250px", margin: "auto"}} />
+
+## Polygon
+> Examples at **`/examples/example_draw_polygon.cpp`** 
+
+`microgl` can draw convex, concave, simple, monotone, self intersecting and complex polygon.
+i.e polygons of all types.
+
+<img src="/images/canvas_polygon.png" style={{height:"250px", margin: "auto"}} />
+
+## Circles
+> Examples at **`/examples/example_draw_circles.cpp`** 
+
+<img src="/images/canvas_circle.png" style={{height:"250px", margin: "auto"}} />
+
+## Quadrilaterals (4 points with perspective)
+> Examples at **`/examples/example_draw_quadrilaterals.cpp`** 
+
+<img src="/images/canvas_quadri.png" style={{height:"250px", margin: "auto"}} />
+
+## Masks
+> Examples at **`/examples/example_draw_masks.cpp`** 
+
+<img src="/images/canvas_mask.png" style={{height:"250px", margin: "auto"}} />
+
+## Path fills
+> Examples at **`/examples/example_draw_path.cpp`** 
+
+Paths are vector graphics shapes defined by lines, bezier paths, arcs and more.
+With them you can define multiple shapes, that when combined might for a complex polygon.
+after tessalation, the paths are filled using the **`one-zero`** or **`even-odd`** criterion
+
+<img src="/images/canvas_path.png" style={{height:"250px", margin: "auto"}} />
+
+## Path Strokes
+> Examples at **`/examples/example_draw_path_stroke.cpp`** 
+
+Paths strokes are vector graphics paths defined by lines, bezier paths, arcs and more.
+when tessalated, you can define things like:
+- stroke dash pattern and offset (useful for animation)
+- stroke cap of `butt`, `round`, `square`
+- stroke line join of `none`, `miter`, `miter_clip`, `round`, `bevel`
+
+<div style={{height:"250px", margin: "auto" }}>
+<img src="/images/canvas_stroke.png" style={{height:"100%", display: "inline-block"}} />
+<img src="/images/canvas_stroke_dash.png" style={{height:"100%", display:"inline-block"}} />
+</div>
+
+## Bezier Patches
+> Examples at **`/examples/example_draw_bezier_patch.cpp`** 
+
+Bezier patches of 2nd and 3rd degree, Quadratic and Cubic orders are supported as well
+
+<img src="/images/canvas_bezier_patch.png" style={{height:"250px", margin: "auto"}} />
+
+## Lines (Wu lines)
+> Examples at **`/examples/example_3d_simple_pipeline.cpp`** 
+
+> Examples at **`/examples/example_geometry_bezier_curve_divider.cpp`** 
+
+Wu lines algorithm is supported, it is a fast DDA algorithm, supports anti-aliasing
+but is not very accurate.
+
+<img src="/images/canvas_wu_lines.png" style={{height:"250px", margin: "auto"}} />
+
