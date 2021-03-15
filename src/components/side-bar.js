@@ -48,7 +48,7 @@ const SideBar = ( props ) => {
                                     itemFontSize, ...rest } = props
 
   return (
-    <Stack {...rest} as="nav" direction='column' overflowY="auto">
+    <Stack {...rest} as="nav" direction='column' overflowY="auto" pb="100px">
         { 
           groups.map((group, index) => (
             <SideGroup pt={2} w="100%" key={index} 

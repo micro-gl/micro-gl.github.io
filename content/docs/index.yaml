@@ -46,3 +46,48 @@ groups:
       route: concepts/canvas
       path: content/docs/canvas.mdx
     
+  - title: Drawing
+    items:
+    - title: Rectangles
+      route: drawing/rectangles
+      path: content/docs/rectangles.mdx
+
+    - title: Rounded Shapes
+      route: drawing/rouned
+      path: content/docs/rouned.mdx
+
+    - title: Quadrilaterals
+      route: drawing/quadrilaterals
+      path: content/docs/quadrilaterals.mdx
+
+    - title: Triangle
+      route: drawing/triangle
+      path: content/docs/triangle.mdx
+
+    - title: Triangle Batches
+      route: drawing/triangle-batches
+      path: content/docs/triangle-batches.mdx
+
+    - title: Polygons
+      route: drawing/polygons
+      path: content/docs/polygons.mdx
+
+    - title: Masks
+      route: drawing/masks
+      path: content/docs/masks.mdx
+    
+    - title: Path Fills
+      route: drawing/path-fills
+      path: content/docs/path-fills.mdx
+
+    - title: Path Strokes
+      route: drawing/path-fills
+      path: content/docs/path-fills.mdx
+
+    - title: Bezier Patches
+      route: drawing/patches
+      path: content/docs/patches.mdx
+
+    - title: Lines
+      route: drawing/lines
+      path: content/docs/lines.mdx

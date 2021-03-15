@@ -58,15 +58,6 @@ public:
      */
     canvas(int width, int height)
 
-    /**
-     * update the clipping rectangle of the canvas
-     *
-     * @param l left distance to x=0
-     * @param t top distance to y=0
-     * @param r right distance to x=0
-     * @param b bottom distance to y=0
-     */
-    void updateClipRect(int l, int t, int r, int b)
 
     /**
      * where to position the bitmap relative to the canvas, this feature
@@ -87,8 +78,6 @@ public:
      */
     rect calculateEffectiveDrawRect()
 
-    // get the clipping rectangle
-    const rect & clipRect() const
 
     /**
      * get the canvas rectangle, should be (0, 0, width, height), unless
@@ -141,6 +130,136 @@ Canvas24 canvas_1(640, 480);
 // or with a given bitmap
 Canvas24 canvas_2(new bitmap<coder::RGB888_PACKED_32>(img_2.data, img_2.width, img_2.height))
 ```
+
+# Clipping
+Canvas implements a clipping feature where you can specify a rectangle, that will draw every
+pixel inside it and NOT draw outside of it, by default, the clip rectangle is the dimensions
+of the canvas window, which by default is the size of the underlying bitmap.
+
+```cpp
+public:
+    /**
+     * update the clipping rectangle of the canvas
+     *
+     * @param l left distance to x=0
+     * @param t top distance to y=0
+     * @param r right distance to x=0
+     * @param b bottom distance to y=0
+     */
+    void updateClipRect(int l, int t, int r, int b)
+    // get the clipping rectangle
+    const rect & clipRect() const
+
+```
+
+# Block Rendering and Windowing
+Canvas implements a block rendering feature, where you can move the canvas surface to
+another position. This can be leveraged to do the following:
+- Draw the canvas in blocks with a smaller bitmap and then copy it to external display
+- This is ofcourse slower than drawing on entire canvas at once.
+- This is more memory friendly in memory constrained environments.
+- Use it when the underlying bitmap is smaller than the clip rect
+
+```cpp
+public:
+    /**
+     * @param left relative to x=0
+     * @param top relative to y=0
+     * @param $bmp (Optional) the bitmap reference
+     */
+     void updateCanvasWindow(int left, int top, bitmap_type * $bmp=nullptr)
+```
+
+Here are 2 examples of renderings, that used 1/4 and 1/2 of the canvas size
+<div style={{margin: "auto" }}>
+<img src="/images/canvas_block_1.png" style={{height:"250px", display: "inline-block"}} />
+<img src="/images/canvas_block_2.png" style={{height:"250px", display:"inline-block"}} />
+</div>
+
+> Examples at **`/examples/example_blocks_----.cpp`**
+
+# Canvas Options
+When the Canvas template is instantieated, it can be with a bitfield parameter to control some
+things. Options can be concatenated. Here are the current options:
+
+### CANVAS_OPT_2d_raster_USE_BIG_INT
+Use big integers for 2d rasterizer, this implies a 64 bits place holders
+for all or most calculations inside the rasterizer. bigger integers imply
+overflow is harder to come by
+
+### CANVAS_OPT_2d_raster_USE_DIVISION
+Inside the 2d rasterizer, use division for uv-mapping, this reduces
+the number of bits used BUT is slower. Generally this HAS to be used
+on a forced 32 bit rasterizer, in case you want a pure 32 bit integers
+only during rasterization. Do not use it when in BIG INT mode.
+
+### CANVAS_OPT_2d_raster_AVOID_RENDER_WITH_OVERFLOWS
+The 2d and 3d rasterizer can detect overflow of uv mapping, the detection
+feature is great for debugging the rasterizer. this flag enables detection
+and if so, exits the rendering. This is helpful for when using a 32 bit mode,
+where overflows are likely to happen
+
+### CANVAS_OPT_2d_raster_FORCE_32_BIT
+Use a true 32 bit mode in the 2d and 3d rasterizer, this means regular 32 bit integers
+and also the usage of division in order to reduce overflow and also detecting
+and exiting on overflows as they are likely to happen in 32 bit mode, if so,
+please adjust some of the render options bits in the canvas and make sure you
+render small geometries at a time  
+ 
+CANVAS_OPT_2d_raster_USE_DIVISION | CANVAS_OPT_2d_raster_AVOID_RENDER_WITH_OVERFLOWS | CANVAS_OPT_raster_COMPRESS_BITS
+
+### CANVAS_OPT_2d_raster_FORCE_64_BIT (default)
+Force 64 bits  
+CANVAS_OPT_2d_raster_USE_BIG_INT | CANVAS_OPT_2d_raster_AVOID_RENDER_WITH_OVERFLOWS
+
+### Usage
+
+```cpp
+#include <microgl/canvas.h>
+#include <microgl/pixel_coders/RGB888_PACKED_32.h>
+
+
+using Bitmap= bitmap<coder::RGB888_PACKED_32>;
+using Canvas24= canvas<Bitmap, CANVAS_OPT_2d_raster_FORCE_32_BIT>;
+
+Canvas24 canvas_1(640, 480);
+```
+
+# Rendering Options
+At any moment you can fine tune the precision (count of bits), that is spent on
+the 2d and 3d rasterizer via aquiring the rendering options
+```cpp
+public:
+  render_options_t & renderingOptions();
+```
+Which return the `render_options_t` struct
+
+```cpp
+struct render_options_t {
+    uint8_t _2d_raster_bits_sub_pixel= options_big_integers() ? 8 : 4;
+    uint8_t _2d_raster_bits_uv= options_big_integers() ? 15 : 10;
+    uint8_t _3d_raster_bits_sub_pixel= options_big_integers() ? 8 : 4;
+    uint8_t _3d_raster_bits_w= options_big_integers() ? 15 : 12;
+};
+```
+
+### *_2d_raster_bits_sub_pixel*
+The number of bits spent on `sub-pixel` precision. The more you spend, the smoother animation will
+be precieved.
+
+### *_2d_raster_bits_uv*
+The number of bits spent on `uv` precision. The more you spend, the better the sampling will look.
+
+### *_3d_raster_bits_sub_pixel*
+The number of bits spent on `sub-pixel` precision. The more you spend, the smoother animation will
+be precieved.
+
+### *_3d_raster_bits_w*
+The number of bits spent on `w` precision. The more you spend, then better interpolations (`barycentric` coords)
+will be produced.
+
+> The trick is to fine tune these values based on 32/64 bit mode and the size of the shapes bounding boxes.
+
 
 # Supported Shapes
 Canvas can draw the following shapes with a [sampler](samplers) and a matrix transform.
@@ -204,9 +323,9 @@ when tessalated, you can define things like:
 - stroke cap of `butt`, `round`, `square`
 - stroke line join of `none`, `miter`, `miter_clip`, `round`, `bevel`
 
-<div style={{height:"250px", margin: "auto" }}>
-<img src="/images/canvas_stroke.png" style={{height:"100%", display: "inline-block"}} />
-<img src="/images/canvas_stroke_dash.png" style={{height:"100%", display:"inline-block"}} />
+<div style={{margin: "auto" }}>
+<img src="/images/canvas_stroke.png" style={{height:"250px", display: "inline-block"}} />
+<img src="/images/canvas_stroke_dash.png" style={{height:"250px", display:"inline-block"}} />
 </div>
 
 ## Bezier Patches

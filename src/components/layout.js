@@ -1,7 +1,7 @@
 import matter from 'gray-matter'
 import SideBar from './side-bar'
 import Header from './header'
-import { Flex, Box } from '@chakra-ui/react'
+import { Flex, Box, chakra } from '@chakra-ui/react'
 import { useBreakpointValue } from '@chakra-ui/react'
 import useToggle from '../hooks/useToggle'
 
@@ -48,10 +48,11 @@ export default function Layout( props ) {
       {
         menu &&
         <SideBar px={2} pt={1}
-                w="100%" h="100%" overflowY="auto"
+                w="100%" h="100vh"
                 groupFontSize="1.2rem" itemFontSize="1.0rem"
                 selectedSlug={slug}
-                groups={groups} name={name} />
+                groups={groups} name={name} 
+        />
       }
 
     </>
