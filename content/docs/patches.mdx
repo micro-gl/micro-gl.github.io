@@ -4,6 +4,10 @@
 - Quadratic patches patches of size 3x3 
 - Cubic patches patches of size 4x4 
 
+User can control the count of horizontal and vertical samples for tessalation,
+The more, the better. This shape does not include fast anti-aliasing since we have
+tried not computed the boundary info of the triangle batches it produces.
+
 > Examples at **`/examples/example_draw_bezier_patch.cpp`** 
 
 <img src="/images/canvas_bezier_patch.png" style={{height:"250px", margin: "auto"}} />
