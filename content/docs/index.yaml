@@ -85,9 +85,17 @@ groups:
       path: content/docs/path-stroke.mdx
 
     - title: Bezier Patches
-      route: drawing/patches
+      route: drawing/bezier-patches
       path: content/docs/patches.mdx
 
     - title: Lines
       route: drawing/lines
       path: content/docs/lines.mdx
+
+    - title: Text
+      route: drawing/text
+      path: content/docs/text.mdx
+
+    - title: Gradients
+      route: drawing/gradients
+      path: content/docs/gradients.mdx
