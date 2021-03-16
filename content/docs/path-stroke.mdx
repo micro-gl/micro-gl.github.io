@@ -1,0 +1,127 @@
+# Introduction
+
+**Paths strokes** are vector graphics strokes defined by lines, bezier paths, elliptic arcs and more.
+`microgl` supports most SVG spec. We support:
+- **line joins** - none, miter, miter_clip, round, bevel
+- **cap** - butt, round, square
+- **dashes** - stroke dash patterns with offset (good for animation)
+
+### Stroke line-join enum
+- **`tessellation::stroke_line_join::none`**
+- **`tessellation::stroke_line_join::miter`**
+- **`tessellation::stroke_line_join::miter_clip`**
+- **`tessellation::stroke_line_join::round`**
+- **`tessellation::stroke_line_join::bevel`**
+
+### Stroke cap enum
+- **`tessellation::stroke_cap::butt`**
+- **`tessellation::stroke_cap::round`**
+- **`tessellation::stroke_cap::square`**
+
+> Examples at **`/examples/example_draw_path_stroke.cpp`** 
+
+<div style={{margin: "auto" }}>
+<img src="/images/canvas_stroke.png" style={{height:"250px", display: "inline-block"}} />
+<img src="/images/canvas_stroke_dash.png" style={{height:"250px", display:"inline-block"}} />
+</div>
+
+# Usage Example
+
+```cpp
+#include <microgl/canvas.h>
+#include <microgl/pixel_coders/RGB888_PACKED_32.h>
+
+using number = float;
+// using number = double;
+// using number = Q<12>;
+// using number = Q<4>;
+
+using Canvas24= canvas<bitmap<coder::RGB888_PACKED_32>>;
+
+sampling::flat_color<> color_grey {{22, 22, 22, 255}};
+Canvas24 canvas(W, H);
+
+path<number> path{};
+path.lineTo({150, 150})
+    .lineTo({450, 150})
+    .lineTo({200,450})
+    .lineTo({300,50})
+    .lineTo({400,450})
+    .closePath();
+
+canvas.clear({255, 255, 255, 255});
+canvas.drawPathStroke<blendmode::Normal, porterduff::FastSourceOverOnOpaque, true>(
+        color_grey,
+        matrix_3x3<number>::identity(),
+        path,
+        number{12},
+        tessellation::stroke_cap::butt,
+        // tessellation::stroke_cap::round,
+        // tessellation::stroke_cap::square,
+
+        // tessellation::stroke_line_join::bevel,
+        // tessellation::stroke_line_join::miter,
+        // tessellation::stroke_line_join::miter_clip,
+        tessellation::stroke_line_join::round,
+        4, 
+        // {0, 0}, 0,   // no dash
+        {50, 20}, 10,   // dash
+        255);
+
+```
+
+# Signature API
+
+```cpp
+/**
+ * @tparam bitmap_type  the bitmap type
+ * @tparam options      the options bitset
+ */
+template<typename bitmap_type, uint8_t options=CANVAS_OPT_default>
+class canvas {
+public:
+    /**
+     * Draw vector Path stroke
+     *
+     * @tparam BlendMode            the blend mode struct
+     * @tparam PorterDuff           the alpha compositing struct
+     * @tparam antialias            enable/disable anti-aliasing, currently NOT supported
+     * @tparam debug                debug mode ?
+     * @tparam number1              number type of path
+     * @tparam number2              number type of uv coords
+     * @tparam Sampler              Sampler type
+     *
+     * @param sampler               sampler reference
+     * @param transform             3x3 matrix for transform
+     * @param path                  the path reference
+     * @param stroke_width          stroke width in pixels
+     * @param cap                   stroke cap enum {butt, round, square}
+     * @param line_join             stroke line join {none, miter, miter_clip, round, bevel}
+     * @param miter_limit           the miter limit
+     * @param stroke_dash_array     stroke dash pattern
+     * @param stroke_dash_offset    stroke dash offset
+     * @param opacity               opacity [0..255]
+     * @param u0                    uv coord
+     * @param v0                    uv coord
+     * @param u1                    uv coord
+     * @param v1                    uv coord
+     */
+    template<typename BlendMode=blendmode::Normal, 
+             typename PorterDuff=porterduff::FastSourceOverOnOpaque,
+             bool antialias=false, bool debug=false, 
+             typename number1=float, typename number2=float, 
+             typename Sampler>
+    void drawPathStroke(const Sampler &sampler,
+                        const matrix_3x3<number1> &transform,
+                        tessellation::path<number1> &path,
+                        const number1 &stroke_width=number1(1),
+                        const tessellation::stroke_cap &cap=tessellation::stroke_cap::butt,
+                        const tessellation::stroke_line_join &line_join=tessellation::stroke_line_join::bevel,
+                        int miter_limit=4,
+                        const std::initializer_list<int> & stroke_dash_array={},
+                        int stroke_dash_offset=0, opacity_t opacity=255,
+                        number2 u0=number2(0), number2 v0=number2(1),
+                        number2 u1=number2(1), number2 v1=number2(0));
+
+```
+

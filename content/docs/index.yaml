@@ -81,8 +81,8 @@ groups:
       path: content/docs/path-fills.mdx
 
     - title: Path Strokes
-      route: drawing/path-fills
-      path: content/docs/path-fills.mdx
+      route: drawing/path-stroke
+      path: content/docs/path-stroke.mdx
 
     - title: Bezier Patches
       route: drawing/patches
