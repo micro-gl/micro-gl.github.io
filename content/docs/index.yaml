@@ -99,3 +99,7 @@ groups:
     - title: Gradients
       route: drawing/gradients
       path: content/docs/gradients.mdx
+
+    - title: More Samplers
+      route: drawing/more-samplers
+      path: content/docs/more-samplers.mdx
