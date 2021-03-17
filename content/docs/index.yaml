@@ -103,3 +103,7 @@ groups:
     - title: More Samplers
       route: drawing/more-samplers
       path: content/docs/more-samplers.mdx
+
+    - title: 3D
+      route: drawing/3d
+      path: content/docs/draw-3d.mdx
