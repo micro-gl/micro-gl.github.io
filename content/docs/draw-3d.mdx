@@ -95,9 +95,14 @@ example_run(&canvas, render);
 
 # Sampler Shader Example
 
-This only outputs a single color and therefore is very fast
+This shader can use any [sampler](/docs/concepts/samplers) object such as the ones implemented
+at **`<microgl/samplers/>`** (or your own custom sampler)
 
 <img src="/images/3d_shader_sampler.png" style={{height:"250px", margin: "auto"}} />
+
+## Usage Example
+This example demos the sampler shader to draw a texture, it also uses the z-buffer,
+to draw two overlapping 3d cubes
 
 ```cpp
 #include "src/Resources.h"
