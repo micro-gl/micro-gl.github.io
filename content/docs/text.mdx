@@ -1,0 +1,114 @@
+# Introduction
+
+**Text** is supported with a technique called **Bitmap Fonts**.
+
+> Examples at **`/examples/example_draw_bitmap_fonts.cpp`** 
+
+<div style={{margin: "auto" }}>
+<img src="/images/canvas_text.png" style={{height:"250px", display: "inline-block"}} />
+<img src="/images/canvas_text_2.png" style={{height:"250px", display:"inline-block"}} />
+</div>
+
+## Bitmap Font struct
+> Defined at **`<microgl/text/bitmap_font.h>`** 
+
+This struct is a template, typed on the bitmap type. Consult the class for more info.
+
+## Text Format struct
+> Defined at **`<microgl/text/text_format.h>`** 
+
+This struct defines common things like font size, spacing, word wrap, horizontal and vertical align.
+Consult the struct for more info.
+
+## Alpha channel
+the alpha channel of a bitmap font determines what to exclude. If you have a single channel bitmap
+font such as 1/2/4/8 bits per pixel, you are in luck :), because you can use `microgl` [Pixel Coders](pixel-coders),
+that decode such a channel into rgba color at runtime. You can also use lookup tables to map/scale the bits
+into other alpha bits. Look at:
+- **`<microgl/pixel_coders/BPP_RGBA>`** - this will map 1,2,4,8 bits to alpha channel, rgb values will stay
+fixed on maximum value. Uses a single lookup table only if needed at compile time.
+- **`<microgl/pixel_coders/BPP_RGB>`** - this will map 1,2,4,8 bits to RGB channel, uses 
+3 lookup tables only if needed. Alpha channel is discarded.
+
+# Usage Example
+
+```cpp
+#include <microgl/canvas.h>
+#include <microgl/pixel_coders/RGB888_PACKED_32.h>
+#include <microgl/pixel_coders/RGBA8888_ARRAY.h>
+#include <microgl/samplers/flat_color.h>
+
+using Canvas24= canvas<bitmap<coder::RGB888_PACKED_32>>;
+using Bitmap32_ARRAY= bitmap<coder::RGBA8888_ARRAY>;
+using font32= microgl::text::bitmap_font<Bitmap32_ARRAY>;
+
+Resources resources{};
+
+Canvas24 canvas(W, H);
+font32 font;
+
+// fill a bitmap font struct with data from BMF Angel (.fnt) file
+// you can also fill this struct yourself manually
+font32 font = resources.loadFont<Bitmap32_ARRAY>("digital_7-20");
+text::text_format format;
+
+font.padding=5;
+format.letterSpacing=0;
+format.leading=5;
+format.fontSize=-1; // keep native size, unscaled
+format.horizontalAlign=text::hAlign::left;
+format.verticalAlign=text::vAlign::top;
+format.wordWrap=text::wordWrap::break_word;
+
+canvas.clear({73, 84, 101, 255});
+canvas.drawText("Welcome to micro{gl} Welcome to micro{gl} Welcome to "
+                "micro{gl} Welcome to micro{gl} Welcome to micro{gl} ",
+                font,
+                {255, 0, 255, 255},
+                format,
+                0, 0, 300, 300,
+                true,
+                255);
+
+```
+
+# Signature API
+
+```cpp
+/**
+ * @tparam bitmap_type  the bitmap type
+ * @tparam options      the options bitset
+ */
+template<typename bitmap_type, uint8_t options=CANVAS_OPT_default>
+class canvas {
+public:
+    /**
+     * Draw Bitmap Fonts Text
+     *
+     * @tparam tint enable font tinting ?
+     * @tparam smooth enable font smooth interpolation if font has scaled ?
+     * @tparam bitmap_font_type the type of the bitmap, that the bitmap font uses
+     *
+     * @param text char array string of text to draw
+     * @param font the bitmap font reference
+     * @param color the color if tinting was enabled
+     * @param format text format
+     * @param left left position
+     * @param top top position
+     * @param right right position
+     * @param bottom bottom position
+     * @param frame draw a frame ?
+     * @param opacity opacity [0..255]
+     */
+    template<bool tint=true, bool smooth=false, 
+             typename bitmap_font_type>
+    void drawText(const char *text, 
+                  microgl::text::bitmap_font<bitmap_font_type> &font, 
+                  const color_t & color,
+                  microgl::text::text_format & format,
+                  int left, int top, int right, int bottom, 
+                  bool frame, 
+                  opacity_t opacity=255);
+
+```
+

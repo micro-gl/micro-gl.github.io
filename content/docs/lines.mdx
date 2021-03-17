@@ -1,0 +1,101 @@
+# Introduction
+
+**Lines** are supported with Wu algorithm:
+- Fast DDA algorithm, 1 pixel wide line
+- antialiasing
+- not very accurate because it is a DDA type algorithm
+- support for batch lines
+- support for wireframe triangles
+
+> Examples at **`/examples/example_draw_bezier_patch.cpp`** 
+
+> Examples at **`/examples/example_geometry_bezier_curve_divider.cpp`** 
+
+<div style={{margin: "auto" }}>
+<img src="/images/canvas_wu_lines.png" style={{height:"250px", display: "inline-block"}} />
+<img src="/images/canvas_wu_lines_2.png" style={{height:"250px", display:"inline-block"}} />
+</div>
+
+# Usage Example
+
+```cpp
+#include <microgl/canvas.h>
+#include <microgl/pixel_coders/RGB888_PACKED_32.h>
+#include <microgl/samplers/flat_color.h>
+
+using number = float;
+// using number = Q<12>;
+using vertex = vec2<number>;
+using Canvas24= canvas<bitmap<coder::RGB888_PACKED_32>>;
+using curve_divider = microgl::tessellation::curve_divider<number>;
+
+sampling::flat_color<> red{{255, 0, 0, 255}};
+Canvas24 canvas(W, H);
+dynamic_array<vertex> output{};
+vertex cubic_curve[4] = {{5, H - 5}, {W/8, H/4}, 
+                         {W/3, H/2}, {W/2, H/2}}
+
+auto algo = microgl::tessellation::CurveDivisionAlgorithm::Adaptive_tolerance_distance_Medium;
+auto type = microgl::tessellation::CurveType::Cubic;
+
+curve_divider::compute(cubic_curve, output, algo, type);
+
+canvas.clear({255, 255, 255, 255});
+canvas.drawWuLinePath(
+        {0, 0, 0, 255},
+        output.data(), output.size(),
+        false);
+
+for (int ix = 0; ix < output.size(); ++ix) {
+        const auto & p = output[ix];
+        canvas.drawCircle<blendmode::Normal, porterduff::FastSourceOverOnOpaque, true>(
+                red, red, p.x, p.y, number{5}, number{0});
+}
+
+```
+
+# Signature API
+
+```cpp
+/**
+ * @tparam bitmap_type  the bitmap type
+ * @tparam options      the options bitset
+ */
+template<typename bitmap_type, uint8_t options=CANVAS_OPT_default>
+class canvas {
+public:
+    /**
+     * Draw a Wu-line between two points
+     *
+     * @tparam number   number type of positions
+     *
+     * @param color     the color
+     * @param x0        1st point x
+     * @param y0        1st point y
+     * @param x1        2nd point x
+     * @param y1        2nd point y
+     * @param opacity   opacity [0..255]
+     */
+    template<typename number>
+    void drawWuLine(const color_t & color,
+                    const number &x0, const number &y0, 
+                    const number &x1, const number &y1,
+                    opacity_t opacity=255);
+
+    /**
+     * Draw a Wu-line path
+     * @tparam number       number type for positions
+     *
+     * @param color         the color
+     * @param points        the points array pointer
+     * @param size          the size of the points array
+     * @param closed_path   is the path closed ?
+     */
+    template <typename number>
+    void drawWuLinePath(const color_t & color,
+                        const vec2<number> *points,
+                        unsigned int size = 4,
+                        bool closed_path = false);
+
+```
+

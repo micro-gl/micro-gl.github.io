@@ -133,11 +133,18 @@ for pixels stored in a *1 bytes* data structure
 ## Memory friendly coders
 the following coders are very handy for packed bitmaps, they also use a lookup table for
 fast conversions
-- `BPP_RGB.h` - arbitrary single channel bits scaled into any rgb depth
+- **`BPP_RGBA.h`** - this will map/scale 1,2,4,8 bits pixel to a defined alpha channel bits, rgb values will stay
+fixed on maximum value. Uses a single lookup table only if needed at compile time. Good for optimized bitmap fonts.
+- `BPP_RGB.h` - this will map 1,2,4,8 bits to predefined RGB channels bits, uses 
+3 lookup tables only if needed. Alpha channel is discarded.
 - `BPP_1_RGB.h` - 1 bit channel (2 colors) scaled into any rgb depth
 - `BPP_2_RGB.h` - 2 bit channel (4 colors) scaled into any rgb depth
 - `BPP_4_RGB.h` - 4 bit channel (16 colors) scaled into any rgb depth
 - `BPP_8_RGB.h` - 8 bit channel (256 colors) scaled into any rgb depth
+- `BPP_1_RGBA.h` - 1 bit channel (2 colors) scaled into any rgba depth
+- `BPP_2_RGBA.h` - 2 bit channel (4 colors) scaled into any rgba depth
+- `BPP_4_RGBA.h` - 4 bit channel (16 colors) scaled into any rgba depth
+- `BPP_8_RGBA.h` - 8 bit channel (256 colors) scaled into any rgba depth
 
 
 ## Special Coders
