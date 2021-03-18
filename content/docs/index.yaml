@@ -107,3 +107,10 @@ groups:
     - title: 3D
       route: drawing/3d
       path: content/docs/draw-3d.mdx
+
+  - title: Geometry
+    items:
+    - title: Intro
+      route: geometry/intro
+      path: content/docs/wip.mdx
+  

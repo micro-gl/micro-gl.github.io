@@ -1,7 +1,7 @@
 # Introduction
 
 **Triangles Batches** are supported in `microgl`. This is a convenient way to draw
-many triangles in an optimized manner.
+many triangles with [samplers](/docs/concepts/samplers), [3d-shaders](/docs/drawing/3d) and **Wireframes**.
 
 > Example at **`/examples/example_draw_triangle.cpp`**
 
@@ -9,7 +9,17 @@ many triangles in an optimized manner.
 
 WIP
 
+# Vertices buffer
+WIP
+
+# Indices buffer and type
+WIP
+
+# Boundary buffer
+WIP
+
 # Usage Example
+WIP
 
 WIP
 
@@ -63,9 +73,9 @@ public:
             bool antialias=false, typename number1=float, typename number2=float, typename Sampler>
     void drawTriangles(const Sampler & sampler,
                        const matrix_3x3<number1> &transform,
-                       const vec2<number1> *vertices= nullptr,
-                       const vec2<number2> *uvs=nullptr,
-                       const index *indices= nullptr,
+                       const vec2<number1> * vertices= nullptr,
+                       const vec2<number2> * uvs=nullptr,
+                       const index * indices= nullptr,
                        const boundary_info * boundary_buffer= nullptr,
                        index size=0,
                        enum indices type=indices::TRIANGLES,
