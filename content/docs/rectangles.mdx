@@ -26,8 +26,8 @@ auto img_2 = resources.loadImageFromCompressedPath("images/uv_256.png");
 Canvas24 canvas24(W, H);
 Texture24 tex_uv{new bitmap<coder::RGB888_ARRAY>(img_2.data, img_2.width, img_2.height)};
 
-canvas->clear({255, 255, 255});
-canvas->drawRect<blendmode::Normal, porterduff::FastSourceOverOnOpaque, true, number>(
+canvas.clear({255, 255, 255});
+canvas.drawRect<blendmode::Normal, porterduff::FastSourceOverOnOpaque, true, number>(
         tex_uv,
         matrix_3x3<number>::rotation(microgl::math::deg_to_rad(35), 128, 128),
         0, 0, 256, 256);
@@ -65,8 +65,10 @@ public:
      * @param v1                uv coord
      */
     template <typename BlendMode=blendmode::Normal,
-            typename PorterDuff=porterduff::FastSourceOverOnOpaque, bool antialias=false,
-            typename number1=float, typename number2=number1, typename Sampler>
+              typename PorterDuff=porterduff::FastSourceOverOnOpaque, 
+              bool antialias=false,
+              typename number1=float, typename number2=number1, 
+              typename Sampler>
     void drawRect(const Sampler &sampler,
                   number1 left, number1 top,
                   number1 right, number1 bottom,
@@ -97,8 +99,10 @@ public:
      * @param v1                uv coord
      */
     template <typename BlendMode=blendmode::Normal,
-            typename PorterDuff=porterduff::FastSourceOverOnOpaque, bool antialias=false,
-            typename number1=float, typename number2=number1, typename Sampler>
+              typename PorterDuff=porterduff::FastSourceOverOnOpaque, 
+              bool antialias=false,
+              typename number1=float, typename number2=number1, 
+              typename Sampler>
     void drawRect(const Sampler &sampler,
                   const matrix_3x3<number1> &transform,
                   number1 left, number1 top,

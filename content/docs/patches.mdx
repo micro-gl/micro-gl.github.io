@@ -99,8 +99,11 @@ public:
      * @param v1            uv coord
      * @param opacity       opacity [0..255]
      */
-    template<typename BlendMode=blendmode::Normal, typename PorterDuff=porterduff::FastSourceOverOnOpaque,
-            bool antialias=false, bool debug=false, typename number1, typename number2=number1, typename Sampler>
+    template<typename BlendMode=blendmode::Normal, 
+             typename PorterDuff=porterduff::FastSourceOverOnOpaque,
+             bool antialias=false, bool debug=false, 
+             typename number1, typename number2=number1, 
+             typename Sampler>
     void drawBezierPatch(const Sampler &sampler,
                          const matrix_3x3<number1> &transform,
                          const vec3<number1> *mesh,

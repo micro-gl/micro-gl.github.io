@@ -78,9 +78,11 @@ public:
      *
      * @param opacity           opacity [0..255]
      */
-    template <typename BlendMode=blendmode::Normal,
-            typename PorterDuff=porterduff::FastSourceOverOnOpaque,
-            bool antialias=false, typename number1=float, typename number2=number1, class Sampler>
+    template<typename BlendMode=blendmode::Normal,
+             typename PorterDuff=porterduff::FastSourceOverOnOpaque,
+             bool antialias=false, 
+             typename number1=float, typename number2=number1, 
+             class Sampler>
     void drawQuadrilateral(const Sampler &sampler,
                            const number1 & v0_x, const number1 & v0_y, const number2 & u0, const number2 & v0,
                            const number1 & v1_x, const number1 & v1_y, const number2 & u1, const number2 & v1,

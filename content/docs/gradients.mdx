@@ -106,9 +106,9 @@ using number = float;
 Canvas24 canvas(640, 640);
 axial_linear_gradient<135, 3, Canvas24::rgba> gradient;
 
-gradient.addStop(0.0f, {255,0,0});
-gradient.addStop(0.5f, {0,255,0});
-gradient.addStop(1.f, {0,0,255});
+gradient.addStop(0.0f, {255, 0,   0});
+gradient.addStop(0.5f, {0,   255, 0});
+gradient.addStop(1.f,  {0,   0,   255});
 
 auto render = [&]() -> void {
     canvas.clear({255,255,255,255});
@@ -184,10 +184,10 @@ using number = float;
 Canvas24 canvas(640, 640);
 fast_radial_gradient<number, 4, rgba_t<8,8,8,0>, precision::high> gradient{0.5, 0.5, 0.5};
 
-gradient.addStop(0.0f, {255,0,0});
-gradient.addStop(0.45f, {255,0,0});
-gradient.addStop(0.50f, {0,255,0});
-gradient.addStop(1.f, {255,0,255});
+gradient.addStop(0.0f,  {255, 0,   0});
+gradient.addStop(0.45f, {255, 0,   0});
+gradient.addStop(0.50f, {0,   255, 0});
+gradient.addStop(1.f,   {255, 0,   255});
 
 auto render = [&]() -> void {
     canvas.clear({255,255,255,255});
@@ -200,10 +200,10 @@ auto render2 = [&]() -> void {
     canvas.clear({255,255,255,255});
     canvas.drawQuadrilateral<blendmode::Normal, porterduff::FastSourceOverOnOpaque, true, number>(
             gradient,
-            0,          0,     0.0f, 1.0f,
-            556,         0,       1.0f, 1.0f,
-            256,         256,    1.0f, 0.0f,
-            0,           256,    0.0f, 0.0f,
+            0,       0,     0.0f,   1.0f,
+            556,     0,     1.0f,   1.0f,
+            256,     256,   1.0f,   0.0f,
+            0,       256,   0.0f,   0.0f,
             255);
 };
 

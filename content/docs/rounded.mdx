@@ -33,15 +33,15 @@ using number = float;
 fast_radial_gradient<float, 4, Canvas24::rgba> gradient{0.5, 0.5, 0.75};
 linear_gradient_2_colors<120, Canvas24::rgba> gradient2Colors{{255,0,255}, {255,0,0}};
 
-auto * canvas = new Canvas24(W, H);
+Canvas24 canvas(W, H);
 
 gradient.addStop(0.0f, {255,0,0});
 gradient.addStop(0.45f, {255,0,0});
 gradient.addStop(0.50f, {0,255,0});
 gradient.addStop(1.f, {255,0,255});
 
-canvas->clear({255,255,255,255});
-canvas->drawRoundedRect<blendmode::Normal, porterduff::FastSourceOverOnOpaque, true, number>(
+canvas.clear({255,255,255,255});
+canvas.drawRoundedRect<blendmode::Normal, porterduff::FastSourceOverOnOpaque, true, number>(
         gradient,
         gradient2Colors,
         10, 10, 300, 300, // l,t,r,b
@@ -86,8 +86,9 @@ public:
      * @param v1                uv coord
      */
     template<typename BlendMode=blendmode::Normal,
-            typename PorterDuff=porterduff::FastSourceOverOnOpaque, bool antialias=false, typename number1,
-            typename number2=number1, typename Sampler1, typename Sampler2>
+             typename PorterDuff=porterduff::FastSourceOverOnOpaque, 
+             bool antialias=false, typename number1, typename number2=number1, 
+             typename Sampler1, typename Sampler2>
     void drawRoundedRect(const Sampler1 & sampler_fill,
                          const Sampler2 & sampler_stroke,
                          const number1 &left, const number1 &top,
@@ -121,8 +122,10 @@ public:
      * @param v1                uv coord
      */
     template<typename BlendMode=blendmode::Normal,
-            typename PorterDuff=porterduff::FastSourceOverOnOpaque, bool antialias=false,
-            typename number1, typename number2=number1, typename Sampler1, typename Sampler2>
+             typename PorterDuff=porterduff::FastSourceOverOnOpaque, 
+             bool antialias=false,
+             typename number1, typename number2=number1, 
+             typename Sampler1, typename Sampler2>
     void drawCircle(const Sampler1 & sampler_fill,
                     const Sampler2 & sampler_stroke,
                     const number1 &centerX, const number1 &centerY,

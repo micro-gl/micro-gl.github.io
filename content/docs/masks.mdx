@@ -87,7 +87,8 @@ public:
      * @param v1        uv coord
      * @param opacity   opacity [0..255]
      */
-    template <typename number1, typename number2=number1, typename Sampler>
+    template <typename number1, typename number2=number1, 
+              typename Sampler>
     void drawMask(const masks::chrome_mode &mode,
                   const Sampler &sampler,
                   number1 left, number1 top,

@@ -69,8 +69,11 @@ public:
      * @param u1                uv coord
      * @param v1                uv coord
      */
-    template<typename BlendMode=blendmode::Normal, typename PorterDuff=porterduff::FastSourceOverOnOpaque,
-            bool antialias=false, typename number1=float, typename number2=float, typename Sampler>
+    template<typename BlendMode=blendmode::Normal, 
+             typename PorterDuff=porterduff::FastSourceOverOnOpaque,
+             bool antialias=false, 
+             typename number1=float, typename number2=float, 
+             typename Sampler>
     void drawTriangles(const Sampler & sampler,
                        const matrix_3x3<number1> &transform,
                        const vec2<number1> * vertices= nullptr,
