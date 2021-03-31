@@ -18,6 +18,10 @@ groups:
       route: concepts/numbers
       path: content/docs/numbers.mdx
 
+    - title: Math
+      route: concepts/math
+      path: content/docs/math.mdx
+
     - title: RGBA
       route: concepts/rgba
       path: content/docs/rgba.mdx

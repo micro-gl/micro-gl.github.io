@@ -15,8 +15,7 @@
 #include <microgl/pixel_coders/RGB888_PACKED_32.h>
 #include <microgl/pixel_coders/RGB888_ARRAY.h>
 
-using Bitmap24= bitmap<coder::RGB888_PACKED_32>;
-using Canvas24= canvas<Bitmap24, CANVAS_OPT_2d_raster_FORCE_32_BIT>;
+using Canvas24= canvas<bitmap<coder::RGB888_PACKED_32, CANVAS_OPT_32_BIT>;
 using Texture24= sampling::texture<bitmap<coder::RGB888_ARRAY>, sampling::texture_filter::NearestNeighboor>;
 using number = float;
 // using number = Q<15>;
@@ -29,7 +28,7 @@ Texture24 tex_uv{new bitmap<coder::RGB888_ARRAY>(img_2.data, img_2.width, img_2.
 canvas.clear({255, 255, 255});
 canvas.drawRect<blendmode::Normal, porterduff::FastSourceOverOnOpaque, true, number>(
         tex_uv,
-        matrix_3x3<number>::rotation(microgl::math::deg_to_rad(35), 128, 128),
+        matrix_3x3<number>::rotation(microgl::math::deg_to_rad<number>(35), 128, 128),
         0, 0, 256, 256);
 ```
 

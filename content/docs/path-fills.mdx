@@ -44,7 +44,7 @@ using Canvas24= canvas<bitmap<coder::RGB888_PACKED_32>>;
 sampling::flat_color<> color_red {{255, 0, 255, 255}};
 Canvas24 canvas(W, H);
 
-path<number> path{};
+path<number, dynamic_array> path{};
 path.lineTo({150, 150})
     .quadraticCurveTo({450, 0}, {450, 150})
     .lineTo({200,450})

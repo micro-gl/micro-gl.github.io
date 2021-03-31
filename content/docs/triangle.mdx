@@ -25,7 +25,7 @@ auto img_2 = resources.loadImageFromCompressedPath("images/uv_512.png");
 Texture24 tex(new bitmap<coder::RGB888_ARRAY>(img_2.data, img_2.width, img_2.height));
 
 canvas.clear(intensity<number>{1, 1, 1, 1});
-canvas.drawTriangle<blendmode::Normal, porterduff::None<>>(
+canvas.drawTriangle<blendmode::Normal, porterduff::None<>, false, number, number>(
         tex,
         10.0,  10.0,  0.0, 1.0, // x, y, u, v
         500.0, 10.0,  1.0, 1.0, // x, y, u, v

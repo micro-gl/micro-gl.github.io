@@ -1,22 +1,22 @@
+# Introduction
 There are various ways, that **`microgl`** can be consumed and used
 
-## 1. using *CMake*
-download the project to a sub folder of your project. inside your **`CMakeLists.txt`** add  
+Because `microgl` is a headers only library, installing just means copying the `include/public/microgl`
+folder to your system search path or another folder and then set the include path in your build.
+the `cmake` file also has an install target.
+
+## Using *CMake*
+download the project to a sub folder of your project. inside your **`CMakeLists.txt`** add
 ```cmake
-  add_subdirectory(/path/to/microgl)
-  target_link_libraries(your_app microgl)
+add_subdirectory(/path/to/microgl)
+target_link_libraries(your_app microgl)
 ```
-if you installed **`micro{gl}`** (see below) at your system, you can instead
+if you installed **`micro{gl}`** (see above) at your system, you can instead
 ```cmake
-  target_include_directories(app path/to/microgl/install/include/)
+target_include_directories(app path/to/microgl/install/include/)
 ```
 
-## 2. embed *micro{gl}* source code in your own build
-download the project to a local folder inside your project, preferably **`${YOUR_APP}/libs/microgl`**.  
-then, make sure to:  
-- add **`microgl/include/public/`** to your include paths
-
-## 4. install *microGL* with *CMake*
+## Install *microGL* with *CMake*
 this will install static and dynamic libs into the system (**`/usr/local/`** for unix like).
 header files will be copied as well (**`/usr/local/include`**)
 ```bash

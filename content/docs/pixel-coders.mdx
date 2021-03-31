@@ -5,13 +5,11 @@ and also decode a pixel into a color.
 
 `microgl` can support any color configuration and any pixel format you can think of.
 
-here is a basic pixel coder, that encodes **RGB** 8-bit color channels into a packed
-32 bit integer. This is the minimal interface you have to implement to have a pixel coder.
-
 # How to define pixel coder
 
 ## 1. Implement the basic interface
-at it's simplest form, you have to implement the following interface.
+at it's simplest form, you have to implement the following interface. the struct/class have to be
+**default constructable**.
 here is a basic pixel coder, that encodes **RGB** 8-bit color channels into a packed
 32 bit integer. This is the minimal interface you have to implement to have a pixel coder.
 

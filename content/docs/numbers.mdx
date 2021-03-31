@@ -4,7 +4,7 @@ most of `microgl` algorithms can use any of the following numbers types at compi
 - `Q` numbers
 - `float` numbers
 - `double` numbers
-- any custom user defined number types will be available soon
+- any custom user defined number types
 
 > most of the methods in `microgl` are templates that use a generic `number` template argument
 to abstract away the number type.
@@ -16,7 +16,7 @@ for the precision of the number.
 ```cpp
 #include <microgl/Q.h>
 // q_15 have 15 bits of precision
-using q_15 = Q<15>;
+using q_15 = Q<15, int32_t>;
 
 q_15 q1{5}, q2{2};
 q_15 q3 = q1/q2;
@@ -93,3 +93,15 @@ vec2 v2 = transform_matrix * vertex;
 auto v3 = v2.dot(vertex);
 ```
 
+## Custom number types
+**`Q`** is an example of a custom number type. You can create your own if you like,
+just make sure your type has all the opertor overloads suitable for a number:
+- Can be constructed from other number types (copy constructor for your type) and conversion constructor
+(from `int`, `float` and `double`).
+- Implements **assignment** operator `your_number_type::operator=(const your_number_type &)`
+- Implements **math** operator `+, +=, -, -=, /, /=, *, *=`
+- Implements **negate** operator `your_number_type::operator -()`
+- Implements **comparison** operators `==, !=, <, <=, >, >=`
+- Implements **casting** operators for most integral types
+
+> Please, see **`<microgl/Q.h>`** for an example
