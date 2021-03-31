@@ -1,0 +1,176 @@
+# Introduction
+
+**Bitmaps** are objects that store a pixel array and an accompanying [Pixel Coder](pixel-coders).
+On top of that, Bitmaps have a simple interface to :
+- get/set a pixel by position
+- get/set a color by position
+- get/set intensity by position
+- clear/fill the bitmap with a pixel value
+
+All bitmaps inherit from **`<microgl/base_bitmap.h>`** via `crpt` pattern (compile time polymorphism).
+all bitmaps have the following interface through compile-time inheritance 
+
+## Base Bitmap methods
+All bitmaps inherit from **`base_bitmap`**, which is an abstract defined base class used
+with `crpt` design pattern.
+```cpp
+/**
+ * @tparam impl implemenation type of derived class
+ * @tparam pixel_coder_ the pixel coder type of the bitmap
+ * @tparam buffer_element_type the type of the elements stored in the pixel array
+ */
+template <typename impl, typename pixel_coder_, typename buffer_element_type=typename pixel_coder_::pixel>
+class base_bitmap : public crpt<impl> {
+public:
+    using pixel_coder = ... // pixel coder type
+    using pixel = ... // pixel type
+    using rgba = ... // rgba info type
+
+    static constexpr bool hasNativeAlphaChannel()
+    static constexpr bool nativeAlphaChannelBits()
+    static constexpr int maxNativeAlphaChannelValue()
+
+    int width() const
+    int height() const
+    int size() const
+    pixel * data() // pointer to pixel array
+    // get pixel coder reference
+    const pixel_coder &coder() const
+
+    int locate(int x, int y) const
+    // read pixels at position
+    pixel pixelAt(int x, int y) const
+    pixel pixelAt(int index) const
+    // write pixels at position
+    void writeAt(int x, int y, const pixel &value)
+    void writeAt(int index, const pixel &value)
+    void fill(const pixel &value)
+
+    // decode a pixel at position into color
+    void decode(int x, int y, microgl::color::color_t &output) const
+    void decode(int index, microgl::color::color_t &output) const
+
+    // decode a pixel at position into intensity
+    template <typename number>
+    void decode(int x, int y, microgl::color::intensity<number> &output) const
+    template <typename number>
+    void decode(int index, microgl::color::intensity<number> &output) const
+
+    // encode a color into pixel and then write it to the bitmap
+    void writeColor(int index, const microgl::color::color_t &color)
+    void writeColor(int x, int y, const microgl::color::color_t &color)
+
+    // encode intensity into pixel and then write it to the bitmap
+    template <typename number>
+    void writeColor(int index, const microgl::color::intensity<number> &color)
+    template <typename number>
+    void writeColor(int x, int y, const microgl::color::intensity<number> &color)
+}    
+```
+
+# Bitmaps
+
+## Regular Bitmap
+- Implemented at **`<microgl/bitmaps/bitmap.h>`**
+- Example at **`/examples/example_sampler_texture.cpp`**
+
+Regular bitmap inherits from **`base_bitmap`** and also adds the following interface  
+This bitmap is the most common implemenation of a **`base_bitmap`**
+
+```cpp
+/**
+ * @tparam pixel_coder_ the pixel coder
+ */
+template <typename pixel_coder_>
+class bitmap : public base_bitmap ....  {
+public:
+
+    // convert this bitmap to another bitmap
+    template<typename CODER2>
+    bitmap<CODER2> * convertToBitmap()
+
+    // copy this bitmap to another bitmap
+    template<typename CODER2>
+    void copyToBitmap(bitmap<CODER2> & bmp)
+
+    // constructors
+    bitmap(int w, int h)
+    bitmap(void * $pixels, int w, int h)
+}
+```
+
+## Packed Bitmap
+- Implemented at **`<microgl/bitmaps/PackedBitmap.h>`**
+- Example at **`/examples/example_draw_bitmap_packed.cpp`**
+
+A packed bitmap is a memory efficient bitmap, that encodes pixels as group of bits
+of size 1, 2, 4, 8 bits. This is good for single channel storage like text. Using this
+scheme can compress your simgle channel bitmaps by great deal.
+
+```cpp
+/**
+ * @tparam BPP bits per pixel (1|2|4|8)
+ * @tparam CODER the pixel coder to decode the pixels
+ * @tparam reverse_elements_pos_in_byte this can help with endian-ness issues
+ */
+template <unsigned BPP, typename CODER, bool reverse_elements_pos_in_byte=false>
+class PackedBitmap : public base_bitmap<.....> {
+public:
+    /**
+     * construct a bitmap with a given pixel array
+     *
+     * @param $pixels the pixels array
+     * @param w the bitmap width
+     * @param h the bitmap height
+     */
+    PackedBitmap(void* $pixels, int w, int h)
+    /**
+     * construct a bitmap and allocate a pixel array
+     *
+     * @param w the bitmap width
+     * @param h the bitmap height
+     */
+    PackedBitmap(int w, int h)
+```
+
+> the pixel coder must have a pixel type of `unsigned char` (uint8_t)
+
+## Indexed/Palette Bitmap
+- Implemented at **`<microgl/bitmaps/PaletteBitmap.h>`**
+- Example at **`/examples/example_draw_bitmap_indexed_palette.cpp`**
+
+ A bitmap that uses a palette of pixels of size 2, 4, 16 or 256. This way,
+ the pixels array is just an index array into the palette, therefore the indices 
+ can be packed as 1, 2, 4 or 8 bits respectively. This is memory efficient.
+
+```cpp
+/**
+ * @tparam PALETTE_SIZE 2, 4, 16, 256 size
+ * @tparam CODER the pixel coder for the palette
+ * @tparam reverse_elements_pos_in_byte can help with endian-ness issues
+ */
+template <unsigned PALETTE_SIZE, typename CODER, bool reverse_elements_pos_in_byte=false>
+class PaletteBitmap : public base_bitmap<....> {
+public:
+
+    /**
+     * construct a bitmap with a given indices array and pixel palette.
+     * @param $indices the indices array
+     * @param palette the palette
+     * @param w the bitmap width
+     * @param h the bitmap height
+     */
+    PaletteBitmap(void* $indices, void *palette, int w, int h)
+    /**
+     * construct a bitmap, allocate indices array.
+     * @param w the bitmap width
+     * @param h the bitmap height
+     */
+    PaletteBitmap(int w, int h)
+
+    // get palette size
+    unsigned paletteSize()
+    // update palette
+    void updatePalette(pixel * $palette)
+
+```

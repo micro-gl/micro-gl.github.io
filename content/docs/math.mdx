@@ -1,0 +1,109 @@
+# Introduction
+
+In `microgl`, for each new [number](/docs/concepts/numbers) type you use, a corresponding set of math functions overloads
+have to be defined in the `microgl::math` **namespace**. `microgl` supports any user-defined number type, that conforms
+to the definitions and operators of a number type. This way `microgl` becomes number type agnostic and does not assume
+any number type, which makes it for example easy to implement graphics without **FPU** or with any type of precision.
+
+## Math functions
+We require to implement the following math functions overloads per a number type
+```c++
+using number = ... // your type
+
+namesapce microgl {
+  namesapce math {
+    number to_fixed(const number val, unsigned char precision)
+    number sqrt(const number val)
+    number sin(const number radians)
+    number cos(const number radians)
+    number tan(const number radians)
+    number mod(number numer, number denom)
+  }
+}
+```
+
+Out of the box, `microgl` implements 4 math variations:
+- `non_std_q_math.h` - **Q** numbers math functions, that **don't** use the standard library
+- `std_q_math.h` - **Q** numbers math functions, that use the standard library
+- `non_std_float_math.h` - **float and double** numbers math functions, that don't use the standard library
+- `std_float_math.h` - **float and double** numbers math functions, that use the standard library
+
+You can decide to use them or avoid/mute them using the following:
+
+#### Avoiding builtin math functions
+Declare the **`MICROGL_AVOID_BUILTIN_MATH`** macro **BEFORE** the `microgl` header files in your source files.
+This way you can provide your own implementation for float/double/Q numbers. For example:
+- You use a micro-controller, that has a special **FPU** and you want to use it for float point types.
+- You want to use `Q` numbers and use lookup tables for trigonometric functions etc...
+
+#### Use builtin math with standard c++ library
+Declare the **`MICROGL_USE_STD_MATH`** macro **BEFORE** the `microgl` header files in your source files.
+This will use the standard c++ library math functions, which can lead to better performance on systems
+that implement the standard library.
+
+#### Use builtin math without standard c++ library
+Default behaviour (nothing to declare). By default, `microgl` implements **CPU** algorithms for math
+functions, which may perform fine for performance and accuracy.
+
+## Overriding builtin Math functions example
+So suppose you are developing for an embedded system that has a custom FPU or maybe you want to use
+a lookup-table for computing trigonometric function, then you will have to give your own implementation
+of math function for your desired number type.
+
+For simplicity, suppose you want to override **float** point math.
+
+**First**, create an implementation of the math functions, example:
+
+```cpp
+// hw_float_math.h
+namespace microgl {
+    namespace math {
+        inline int to_fixed(const float val, unsigned char precision) {
+            return int(val * float(int(1) << precision));
+        }
+        inline float mod(float numer, float denom) {
+            return _fancy_hardware_mod(numer, denom);
+        }
+        inline float sqrt(const float val) {
+            return _fancy_hardware_sqrt(val);
+        }
+        inline float sin(const float radians) {
+            return _fancy_hardware_sine(radians);
+        }
+        inline float cos(const float radians) {
+            return _fancy_hardware_cos(radians);
+        }
+        inline float tan(const float radians) {
+            return _fancy_hardware_tan(radians);
+        }
+    }
+}
+```
+
+**Second**, define the `MICROGL_AVOID_BUILTIN_MATH` **BEFORE** the `microgl` header files in your source files
+(this will make `microgl` not to include it's own float point math files) and include your math declarations
+ **BEFORE** the `microgl` header files in your source files, Example:
+
+ ```cpp
+#include "hw_float_math.h"
+// define this, so we will not clash with microgl default implementations
+#define MICROGL_AVOID_BUILTIN_MATH
+
+#include <microgl/canvas.h>
+
+....
+ ```
+
+ ## Using a new number type
+ We implement the `<microgl/Q.h>` number type and give it some default math function which you can override
+ with the same technique as above. But, suppose you copied or created a copy of `Q` in your own source files,
+ then it becomes a new type, therefore you will have to implement you own math functions as well. Essentially,
+ for any new type you create, you have to provide math functions overloads like so:
+
+ ```cpp
+#include "my_number_math.h"
+#include <microgl/canvas.h>
+
+ ```
+
+You always include your declarations **BEFORE** any `microgl` header files

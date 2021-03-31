@@ -1,0 +1,92 @@
+# Introduction
+
+**`microgl`** supports both color blending and alpha compositing.
+> **Note:** All methods in the blending and compositing structs have to be **static**
+
+## Color blending
+Color blending is essentially a function that given two colors, a **backdrop** color and a **source** color
+will create a new color. The function can be anything you can think of.
+The basic struct interface for a blend mode is
+
+```cpp
+struct Multiply_Blendmode {
+
+    template<uint8_t R, uint8_t G, uint8_t B>
+    static inline void blend(const color_t & b,
+                             const color_t & s,
+                             color_t &output) {
+
+          output.r = mul_channels_correct<R>(b.r, s.r);
+          output.g = mul_channels_correct<G>(b.g, s.g);
+          output.b = mul_channels_correct<B>(b.b, s.b);
+    }
+}
+```
+
+Essentially, this is a struct with a template member method, that has `R`, `G`, `B` depth into account.
+
+> the colors are named **`b`** and **`s`** as shorthand for **`backdrop`** and **`source`**
+
+Out of the box, microgl is packed with the following *blend modes* implemented at 
+**`<microgl/blend_modes/>`**
+- `Normal` (no blending at all)
+- `Multiply`
+- `Overlay`
+- `PinLight`
+- `Screen`
+- `Subtract`
+- `Darken`
+- `Lighten`
+- `Difference`
+- `Divide`
+- `ColorDodge`
+- `Exclusion`
+- `HardLight`
+- `VividLight`
+- `HardMix`
+- `LinearLight`
+- `SoftLight`
+
+## Alpha Compositing
+Alpha compositing is the usage of alpha channel to implement compositing.
+The basic struct interface to implement is 
+
+```cpp
+struct my_compositor {
+
+    /**
+     * @tparam bits the bits of the alpha channel
+     * @tparam multiplied_alpha_result should the output color should be pre-multiplied alpha
+     *
+     */
+    template <uint8_t bits, bool multiplied_alpha_result=true>
+    inline static void composite(const color_t &b,
+                                 const color_t &s,
+                                 color_t &output) {
+          // your implementation goes here
+    }
+
+};
+
+```
+
+microgl is shipping with all of the `porter duff` compositing operator, so it is recommended
+to use our suggested implementations found at **`<microgl/porter_duff/>`** :
+- `None` (no compositing at all)
+- `FastSourceOverOnOpaque` (recommended for fast regular alpha blending on opaque surface, not accurate)
+- `SourceOver`
+- `Source`
+- `SourceAtop`
+- `SourceIn`
+- `SourceOut`
+- `Destination`
+- `DestinationAtop`
+- `DestinationIn`
+- `DestinationOut`
+- `DestinationOver`
+- `Lighter`
+- `Clear`
+- `Copy`
+- `XOR`
+
+<img src="/images/porter-duff.png"/>

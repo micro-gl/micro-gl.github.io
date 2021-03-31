@@ -1,0 +1,137 @@
+# Introduction
+
+**Besides** of the [Gradients](/docs/drawing/gradients) samplers shipped with `microgl`,
+there are more samplers packed in.
+
+#  Texture Sampler
+- defined at `<microgl/samplers/texture.h>`
+- example at `/examples/example_sampler_texture.cpp`
+- example at `/examples/example_sampler_texture_wrap.cpp`
+
+<img src="/images/sampler_texture.png" style={{height:"250px", margin: "auto"}} />
+
+This sampler holds a [bitmap](bitmap) and samples from it
+
+## Usage Example
+```cpp
+#include "src/Resources.h"
+#include "src/example.h"
+#include <microgl/canvas.h>
+#include <microgl/pixel_coders/RGB888_PACKED_32.h>
+#include <microgl/pixel_coders/RGB888_ARRAY.h>
+#include <microgl/pixel_coders/RGBA8888_ARRAY.h>
+
+using Canvas24= canvas<bitmap<coder::RGB888_PACKED_32>>;
+using Texture32= sampling::texture<bitmap<coder::RGBA8888_ARRAY>>;
+//    using number = Q<12>;
+using number = float;
+
+Resources resources{};
+Canvas24 canvas(640, 480);
+
+auto img_1 = resources.loadImageFromCompressedPath("images/dog_32bit.png");
+
+Texture32 tex_uv_32{new bitmap<coder::RGBA8888_ARRAY>(img_1.data, img_1.width, img_1.height)};
+
+auto render = [&]() -> void {
+    canvas.clear({255,255,255,255});
+    canvas.drawRect<blendmode::Normal, porterduff::FastSourceOverOnOpaque, false, number>(
+            tex_uv_32,
+            0, 0, 300, 300);
+};
+
+example_run(&canvas, render);
+```
+
+> a texture will automatically use the **rgba** info of the bitmap it samples from 
+
+
+# Flat Color Sampler
+- defined at `<microgl/samplers/flat_color.h>`
+- example at `/examples/example_sampler_flat_color.cpp`
+
+<img src="/images/sampler_flat.png" style={{height:"250px", margin: "auto"}} />
+
+this is a very trivial sampler that samples a single color, it's declaration is
+
+### Usage Example
+```cpp
+#include "src/example.h"
+#include <microgl/canvas.h>
+#include <microgl/pixel_coders/RGB888_PACKED_32.h>
+#include <microgl/samplers/flat_color.h>
+
+using namespace microgl::sampling;
+
+using Canvas24= canvas<bitmap<coder::RGB888_PACKED_32>>;
+using number = float;
+// using number = Q<12>;
+
+Canvas24 canvas(640, 480);
+flat_color<> color_sampler{{255,122,0}};
+
+auto render = [&]() -> void {
+    canvas.clear({255,255,255,255});
+    canvas.drawRect<blendmode::Normal, porterduff::None<>, false, number>(
+            color_sampler,
+            0, 0, 400, 400);
+};
+
+example_run(&canvas, render);
+```
+
+# Mask Sampler
+- defined at `<microgl/samplers/mask_sampler.h>`
+- example at `/examples/example_sampler_masking_sampler.cpp`
+
+<img src="/images/sampler_masking.png" style={{height:"250px", margin: "auto"}} />
+
+This sampler can mask a sampler with a different sampler, this is very useful if you want to 
+draw a masked image on the canvas.
+
+### Usage Example
+```cpp
+#include "src/example.h"
+#include <microgl/canvas.h>
+#include <microgl/pixel_coders/RGB888_PACKED_32.h>
+#include <microgl/pixel_coders/RGB888_ARRAY.h>
+#include <microgl/pixel_coders/RGBA8888_ARRAY.h>
+#include <microgl/samplers/mask_sampler.h>
+#include <microgl/samplers/flat_color.h>
+
+using namespace microgl::sampling;
+
+using Canvas24= canvas<bitmap<coder::RGB888_PACKED_32>>;
+using Texture24= texture<bitmap<coder::RGB888_ARRAY>>;
+using Texture32= texture<bitmap<coder::RGBA8888_ARRAY>>;
+using MaskingSampler= mask_sampler<masks::chrome_mode::alpha_channel_inverted, Texture24, Texture32>;
+
+using number = float;
+// using number = Q<12>;
+
+Resources resources{};
+Canvas24 canvas(640, 480);
+
+auto img_2 = resources.loadImageFromCompressedPath("images/uv_256.png");
+auto img_mask = resources.loadImageFromCompressedPath("images/dog_32bit.png");
+
+Texture24 tex_uv{new bitmap<coder::RGB888_ARRAY>(img_2.data, img_2.width, img_2.height)};
+Texture32 tex_mask{new bitmap<coder::RGBA8888_ARRAY>(img_mask.data, img_mask.width, img_mask.height)};
+
+MaskingSampler ms{tex_uv, tex_mask};
+
+flat_color<rgba_t<8,8,8,0>> color_red{{255, 255, 0}};
+
+auto render = [&]() -> void {
+    canvas.clear({255, 255, 255, 255});
+    canvas.drawRect<blendmode::Normal, porterduff::None<>, false, number>(
+            color_red,
+            0, 0, 300, 300);
+    canvas.drawRect<blendmode::Normal, porterduff::FastSourceOverOnOpaque, false, number>(
+            ms,
+            0, 0, 300, 300);
+};
+
+example_run(&canvas, render);
+```
+

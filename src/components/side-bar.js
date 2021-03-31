@@ -21,7 +21,7 @@ const SideGroup = ( props ) => {
           items.map((item, index) => {
             const isSelected = item.route===selectedSlug
             return (
-            <Link key={index} w="100%" href={`${item.route}`} passHref>
+            <Link key={index} w="100%" href={`${item.route}`} as={`${item.route}`} passHref>
               <Box as="a" 
                    fontSize={itemFontSize} 
                    fontWeight="medium" w="100%" my={1} px={2} py={1}
@@ -48,7 +48,7 @@ const SideBar = ( props ) => {
                                     itemFontSize, ...rest } = props
 
   return (
-    <Stack {...rest} as="nav" direction='column' overflowY="auto">
+    <Stack {...rest} as="nav" direction='column' overflowY="auto" pb="100px">
         { 
           groups.map((group, index) => (
             <SideGroup pt={2} w="100%" key={index} 

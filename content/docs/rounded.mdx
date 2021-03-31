@@ -1,0 +1,137 @@
+# Introduction
+
+**Rounded Shapes** come in two flavours:
+- Rounded Rectangles
+- Circles
+- both support fast anti-aliasing
+- both support sampler for stroking outlines
+
+> Example at **`/examples/example_draw_rounded_rectangle.cpp`**
+
+> Example at **`/examples/example_draw_circles.cpp`**
+
+<div style={{margin: "auto" }}>
+<img src="/images/canvas_rounded_rect.png" style={{height:"250px", display: "inline-block"}} />
+<img src="/images/canvas_circle.png" style={{height:"250px", display:"inline-block"}} />
+<img src="/images/canvas_rounded_2.png" style={{height:"250px", display:"inline-block"}} />
+</div>
+
+# Usage Example
+
+```cpp
+#include <microgl/canvas.h>
+#include <microgl/pixel_coders/RGB888_PACKED_32.h>
+#include <microgl/samplers/fast_radial_gradient.h>
+#include <microgl/samplers/linear_gradient_2_colors.h>
+#include <microgl/pixel_coders/RGB888_ARRAY.h>
+
+
+using Canvas24= canvas<bitmap<coder::RGB888_PACKED_32>>;
+// using number = Q<12>;
+using number = float;
+
+fast_radial_gradient<float, 4, Canvas24::rgba> gradient{0.5, 0.5, 0.75};
+linear_gradient_2_colors<120, Canvas24::rgba> gradient2Colors{{255,0,255}, {255,0,0}};
+
+Canvas24 canvas(W, H);
+
+gradient.addStop(0.0f, {255,0,0});
+gradient.addStop(0.45f, {255,0,0});
+gradient.addStop(0.50f, {0,255,0});
+gradient.addStop(1.f, {255,0,255});
+
+canvas.clear({255,255,255,255});
+canvas.drawRoundedRect<blendmode::Normal, porterduff::FastSourceOverOnOpaque, true, number>(
+        gradient,
+        gradient2Colors,
+        10, 10, 300, 300, // l,t,r,b
+        50, 10);          // radius, stroke-size      
+
+```
+
+# Signature API
+
+```cpp
+/**
+ * @tparam bitmap_type  the bitmap type
+ * @tparam options      the options bitset
+ */
+template<typename bitmap_type, uint8_t options=CANVAS_OPT_default>
+class canvas {
+public:
+
+    /**
+     * Draw a rounded rectangle
+     *
+     * @tparam BlendMode        the blend mode struct
+     * @tparam PorterDuff       the alpha compositing struct
+     * @tparam antialias        antialiasing flag
+     * @tparam number1          number type of position
+     * @tparam number2          number type of uv coords
+     * @tparam Sampler1         sampler type for fill
+     * @tparam Sampler2         sampler type for stroke
+     *
+     * @param sampler_fill      fill sampler reference
+     * @param sampler_stroke    stroke sampler reference
+     * @param left              left distance
+     * @param top               top distance
+     * @param right             right distance
+     * @param bottom            bottom distance
+     * @param radius            radius of corners
+     * @param stroke_size       stroke size in pixels
+     * @param opacity           opacity [0..255]
+     * @param u0                uv coord
+     * @param v0                uv coord
+     * @param u1                uv coord
+     * @param v1                uv coord
+     */
+    template<typename BlendMode=blendmode::Normal,
+             typename PorterDuff=porterduff::FastSourceOverOnOpaque, 
+             bool antialias=false, typename number1, typename number2=number1, 
+             typename Sampler1, typename Sampler2>
+    void drawRoundedRect(const Sampler1 & sampler_fill,
+                         const Sampler2 & sampler_stroke,
+                         const number1 &left, const number1 &top,
+                         const number1 &right, const number1 &bottom,
+                         const number1 &radius, const number1 &stroke_size,
+                         opacity_t opacity= 255,
+                         const number2 &u0= number2(0), const number2 &v0= number2(1),
+                         const number2 &u1= number2(1), const number2 &v1= number2(0));
+
+    /**
+     * Draw a circle shape with fill and stroke
+     *
+     * @tparam BlendMode        the blend mode struct
+     * @tparam PorterDuff       the alpha compositing struct
+     * @tparam antialias        antialiasing flag
+     * @tparam number1          number type of position
+     * @tparam number2          number type of uv coords
+     * @tparam Sampler1         sampler type for fill
+     * @tparam Sampler2         sampler type for stroke
+     *
+     * @param sampler_fill      fill sampler reference
+     * @param sampler_stroke    stroke sampler reference
+     * @param centerX           the center x-coord of the circle
+     * @param centerY           the center y-coord of the circle
+     * @param radius            the radius of the circle
+     * @param stroke_size       the stroke size in pixels
+     * @param opacity           opacity [0..255]
+     * @param u0                uv coord
+     * @param v0                uv coord
+     * @param u1                uv coord
+     * @param v1                uv coord
+     */
+    template<typename BlendMode=blendmode::Normal,
+             typename PorterDuff=porterduff::FastSourceOverOnOpaque, 
+             bool antialias=false,
+             typename number1, typename number2=number1, 
+             typename Sampler1, typename Sampler2>
+    void drawCircle(const Sampler1 & sampler_fill,
+                    const Sampler2 & sampler_stroke,
+                    const number1 &centerX, const number1 &centerY,
+                    const number1 &radius, const number1 &stroke_size, opacity_t opacity=255,
+                    const number2 &u0=number2(0), const number2 &v0=number2(1),
+                    const number2 &u1=number2(1), const number2 &v1=number2(0));
+
+```
+

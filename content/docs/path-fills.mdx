@@ -1,0 +1,115 @@
+# Introduction
+
+**Paths** are vector graphics shapes defined by lines, bezier paths, elliptic arcs and more.
+With them you can define multiple shapes, that when combined might for a complex polygon.
+after tessalation, the paths are filled using the **`non-zero`** or **`even-odd`** criterion
+
+`microgl` uses an original implementation of some known ideas about trapeze decomposition and
+planar sub-division.
+
+### Tessalation fill rule
+Tessalation fill rule can be controlled via **`tessellation::fill_rule`** enum:
+- **`tessellation::fill_rule::even_odd`** - use the even-odd rule for deciding if a pixel is inside the polygon
+- **`tessellation::fill_rule::non_zero`** - use the non-zero rule for deciding if a pixel is inside the polygon
+
+### Tessalation Quality
+Tessalation quality can be fine tuned for memory efficency vs quality.  
+**`tessellation::tess_quality`** enum holds:
+- **`tessellation::tess_quality::fine`** - the fastest algorithm, but nay produce zero area triangles on the 
+boundary. might be a problem if you are using SDF based AA
+- **`tessellation::tess_quality::better`** - a bit slower and might be susceptible for other issues, 
+but produces triangles out of each trapeze in a way similar to ear clipping, this fights zero 
+area triangles on the boundary, so you can use SDF AA
+
+> Examples at **`/examples/example_draw_path.cpp`** 
+
+<div style={{margin: "auto" }}>
+<img src="/images/canvas_path.png" style={{height:"250px", display: "inline-block"}} />
+<img src="/images/canvas_path_fill_2.png" style={{height:"250px", display:"inline-block"}} />
+</div>
+
+# Usage Example
+
+```cpp
+#include <microgl/canvas.h>
+#include <microgl/pixel_coders/RGB888_PACKED_32.h>
+
+using number = float;
+// using number = double;
+// using number = Q<12>;
+// using number = Q<4>;
+
+using Canvas24= canvas<bitmap<coder::RGB888_PACKED_32>>;
+
+sampling::flat_color<> color_red {{255, 0, 255, 255}};
+Canvas24 canvas(W, H);
+
+path<number, dynamic_array> path{};
+path.lineTo({150, 150})
+    .quadraticCurveTo({450, 0}, {450, 150})
+    .lineTo({200,450})
+    .lineTo({300,50})
+    .lineTo({400,450})
+    .closePath();
+
+canvas.clear({255, 255, 255, 255});
+canvas.drawPathFill<blendmode::Normal, porterduff::FastSourceOverOnOpaque, true, false>(
+        color_red,
+        matrix_3x3<number>::identity(),
+        path,
+        tessellation::fill_rule::even_odd,
+        tessellation::tess_quality::prettier_with_extra_vertices,
+        // tessellation::tess_quality::better,
+        255
+);
+
+```
+
+# Signature API
+
+```cpp
+/**
+ * @tparam bitmap_type  the bitmap type
+ * @tparam options      the options bitset
+ */
+template<typename bitmap_type, uint8_t options=CANVAS_OPT_default>
+class canvas {
+public:
+    /**
+     * Draw a vector graphics path fill
+     *
+     * @tparam BlendMode        the blend mode struct
+     * @tparam PorterDuff       the alpha compositing struct
+     * @tparam antialias        enable/disable anti-aliasing, currently NOT supported
+     * @tparam debug            debug mode ?
+     * @tparam number1          number type of path
+     * @tparam number2          number type of uv coords
+     * @tparam Sampler          Sampler type
+     *
+     * @param sampler           sampler reference
+     * @param transform         3x3 matrix for transform
+     * @param path              the path reference
+     * @param rule              fill rule {non_zero, even_odd}
+     * @param quality           quality of tessellation {fine, better, prettier_with_extra_vertices}
+     * @param opacity           opacity [0..255]
+     * @param u0                uv coord
+     * @param v0                uv coord
+     * @param u1                uv coord
+     * @param v1                uv coord
+     */
+    template<typename BlendMode=blendmode::Normal, 
+             typename PorterDuff=porterduff::FastSourceOverOnOpaque,
+             bool antialias=false, bool debug=false, 
+             typename number1=float, typename number2=float, 
+             typename Sampler>
+    void drawPathFill(const Sampler &sampler,
+                      const matrix_3x3<number1> &transform,
+                      tessellation::path<number1> &path,
+                      const tessellation::fill_rule &rule=tessellation::fill_rule::non_zero,
+                      const tessellation::tess_quality &quality=tessellation::tess_quality::better,
+                      opacity_t opacity=255,
+                      number2 u0=number2(0), number2 v0=number2(1),
+                      number2 u1=number2(1), number2 v1=number2(0));
+
+```
+

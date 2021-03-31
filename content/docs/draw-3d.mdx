@@ -1,0 +1,291 @@
+# Introduction
+
+**3D** is fully supported in `microgl`. with the following objects:
+- **Matrix** transformations, both Affine and projection
+- **Camera** utilities for creating **View** and **Projection** matrices
+- Modern **3D Shaders** support
+- **Face Culling** algorithms
+- **3D Clipping** algorithms
+- **Z Buffering**
+
+> Camera utils is at at **`<microgl/camera.h>`**
+
+# Color Shader Example
+This shader interpolates per vertex color and produces **gradients**
+
+<img src="/images/3d_shader_color.png" style={{height:"250px", margin: "auto"}} />
+
+```cpp
+#include "src/Resources.h"
+#include "src/example.h"
+#include <microgl/camera.h>
+#include <microgl/canvas.h>
+#include <microgl/z_buffer.h>
+#include <microgl/pixel_coders/RGB888_PACKED_32.h>
+#include <microgl/shaders/color_shader.h>
+#include "data/model_3d_cube.h"
+
+using number = float;
+//    using number = Q<5>;
+//    using number = Q<10>;
+//    using number = Q<15>;
+//    using number = Q<16>;
+
+using Canvas24= canvas<bitmap<coder::RGB888_PACKED_32>>;
+Canvas24 canvas(640, 480);
+float t = -30.0;
+
+auto test_shader_texture_3d = [&](const model_3d<number> & object) {
+
+    using vertex = vec3<number>;
+    using camera = microgl::camera;
+    using mat4 = matrix_4x4<number>;
+    using math = microgl::math;
+    using shader_ = color_shader<number, rgba_t<8,8,8,0>>;
+    using vertex_attributes = shader_::vertex_attributes;
+
+    t-=0.0425;
+
+    // setup mvp matrix
+    number radians = math::deg_to_rad(t / 2);
+    vertex rotation = {radians, radians, radians};
+    vertex translation = {-5,0, 0};
+    vertex scale = {10,10,10};
+    mat4 model = mat4::transform(rotation, translation, scale);
+    mat4 view = camera::lookAt<number>({0, 0, 70}, {0,0, 0}, {0,1,0});
+    mat4 projection = camera::perspective<number>(math::deg_to_rad(60),
+                                canvas.width(), canvas.height(), 20, 100);
+    mat4 mvp= projection * view * model;
+
+    // setup shader
+    shader_ shader;
+    shader.matrix= mvp;
+
+    // model to vertex buffers
+    dynamic_array<vertex_attributes> vertex_buffer{object.vertices.size()};
+    for (unsigned ix = 0; ix < object.vertices.size(); ++ix) {
+        shader_::vertex_attributes v{};
+        channel_t r= (ix%3)==0 ? 255:0;
+        channel_t g= (ix%3)==1 ? 255:0;
+        channel_t b= (ix%3)==2 ? 255:0;
+        v.point= object.vertices[ix];
+        v.color={r,g,b,255};
+        vertex_buffer.push_back(v);
+    }
+
+    // draw model_1
+    canvas.clear({255,255,255,255});
+    canvas.drawTriangles<blendmode::Normal, porterduff::None<>, true, true, false>(
+            shader,
+            canvas.width(), canvas.height(),
+            vertex_buffer.data(),
+            object.indices.data(),
+            object.indices.size(),
+            object.type,
+            triangles::face_culling::ccw,
+            (z_buffer<0> *)nullptr);
+};
+
+auto render = [&]() {
+    test_shader_texture_3d(cube_3d<number>);
+};
+
+example_run(&canvas, render);
+```
+
+# Sampler Shader Example
+
+This shader can use any [sampler](/docs/concepts/samplers) object such as the ones implemented
+at **`<microgl/samplers/>`** (or your own custom sampler)
+
+<img src="/images/3d_shader_sampler.png" style={{height:"250px", margin: "auto"}} />
+
+## Usage Example
+This example demos the **sampler** shader to draw a texture, it also uses the **Z-Buffer**,
+to draw two overlapping 3d cubes
+
+```cpp
+#include "src/Resources.h"
+#include "src/example.h"
+#include <microgl/camera.h>
+#include <microgl/z_buffer.h>
+#include <microgl/canvas.h>
+#include <microgl/pixel_coders/RGB888_PACKED_32.h>
+#include <microgl/pixel_coders/RGB888_ARRAY.h>
+#include <microgl/shaders/sampler_shader.h>
+#include <microgl/samplers/texture.h>
+#include "data/model_3d_cube.h"
+
+using number = float;
+// using number = Q<5>;
+// using number = Q<10>;
+// using number = Q<15>;
+// using number = Q<16>;
+
+using Canvas24= canvas<bitmap<coder::RGB888_PACKED_32>, CANVAS_OPT_2d_raster_FORCE_32_BIT>;
+using Texture24= sampling::texture<bitmap<coder::RGB888_ARRAY>, sampling::texture_filter::NearestNeighboor>;
+
+Canvas24 canvas(W, H);
+Resources resources{};
+
+auto img = resources.loadImageFromCompressedPath("images/uv_256.png");
+Texture24 tex{new bitmap<coder::RGB888_ARRAY>(img.data, img.width, img.height)};
+z_buffer<12> depth_buffer(canvas.width(), canvas.height());
+
+float t = -0.0;
+constexpr bool enable_z_buffer = true;
+
+auto test_shader_texture_3d = [&](const model_3d<number> & object) {
+
+    using vertex = vec3<number>;
+    using camera = microgl::camera;
+    using mat4 = matrix_4x4<number>;
+    using math = microgl::math;
+    using Shader = sampler_shader<number, Texture24>;
+    using vertex_attributes = Shader::vertex_attributes;
+
+    t-=0.425;
+
+    // setup mvp matrix
+    number radians = math::deg_to_rad(t / 2);
+    vertex rotation = {radians, radians, radians};
+    vertex translation = {-5,0, -t/30.f};
+    vertex scale = {10,10,10};
+
+    mat4 model_1 = mat4::transform(rotation, translation, scale);
+    mat4 model_2 = mat4::transform(rotation*2, translation + vertex{10,0,0}, scale);
+    mat4 view = camera::lookAt<number>({0, 0, 70}, {0,0, 0}, {0,1,0});
+    mat4 projection = camera::perspective<number>(math::deg_to_rad(60),
+                                                canvas.width(), canvas.height(), 20, 100);
+
+    mat4 mvp_1= projection*view*model_1;
+    mat4 mvp_2= projection*view*model_2;
+
+    // setup shader
+    Shader shader;
+    shader.matrix= mvp_1;
+    shader.sampler= &tex;
+
+    // model to vertex buffers
+    dynamic_array<vertex_attributes> vertex_buffer{object.vertices.size()};
+    for (unsigned ix = 0; ix < object.vertices.size(); ++ix) {
+        vertex_attributes v{};
+        v.point= object.vertices[ix];
+        v.uv= object.uvs[ix];
+        vertex_buffer.push_back(v);
+    }
+
+    canvas.clear({255,255,255,255});
+    depth_buffer.clear();
+    // draw model_1
+    canvas.drawTriangles<blendmode::Normal, porterduff::None<>, true, true, enable_z_buffer>(
+            shader,
+            canvas.width(), canvas.height(),
+            vertex_buffer.data(),
+            object.indices.data(),
+            object.indices.size(),
+            object.type,
+            triangles::face_culling::ccw,
+            &depth_buffer);
+
+    // draw model_2
+    shader.matrix= mvp_2;
+    canvas.drawTriangles<blendmode::Normal, porterduff::None<>, true, true, enable_z_buffer>(
+            shader,
+            canvas.width(), canvas.height(),
+            vertex_buffer.data(),
+            object.indices.data(),
+            object.indices.size(),
+            object.type,
+            triangles::face_culling::ccw,
+            &depth_buffer);
+
+};
+
+auto render = [&]() {
+    test_shader_texture_3d(cube_3d<number>);
+};
+
+example_run(&canvas, render);
+```
+
+# Flat Color Shader Example
+
+This only outputs a **single color** and therefore is very fast
+
+<img src="/images/3d_shader_flat.png" style={{height:"250px", margin: "auto"}} />
+
+```cpp
+#include "src/Resources.h"
+#include "src/example.h"
+#include <microgl/camera.h>
+#include <microgl/canvas.h>
+#include <microgl/z_buffer.h>
+#include <microgl/pixel_coders/RGB888_PACKED_32.h>
+#include <microgl/shaders/flat_color_shader.h>
+#include <microgl/samplers/texture.h>
+#include "data/model_3d_cube.h"
+
+using number = float;
+// using number = Q<5>;
+// using number = Q<10>;
+// using number = Q<15>;
+// using number = Q<16>;
+
+using Canvas24= canvas<bitmap<coder::RGB888_PACKED_32>>;
+
+Canvas24 canvas(640, 480);
+float t = -30.0;
+
+auto test_shader_texture_3d = [&](const model_3d<number> & object) {
+
+    using vertex = vec3<number>;
+    using camera = microgl::camera;
+    using mat4 = matrix_4x4<number>;
+    using math = microgl::math;
+    using Shader = flat_color_shader<number, rgba_t<8,8,8,0>>;
+    using vertex_attributes = Shader::vertex_attributes;
+
+    t-=0.0425;
+
+    // setup mvp matrix
+    number radians = math::deg_to_rad(t / 2);
+    vertex rotation = {radians, radians, radians};
+    vertex translation = {-5, 0, 0};
+    vertex scale = {10, 10, 10};
+
+    mat4 model = mat4::transform(rotation, translation, scale);
+    mat4 view = camera::lookAt<number>({0, 0, 70}, {0,0, 0}, {0,1,0});
+    mat4 projection = camera::perspective<number>(math::deg_to_rad(60),
+                                          canvas.width(), canvas.height(), 20, 100);
+    // mat4 projection= camera::orthographic<number>(-canvas->width()/2, canvas->width()/2,
+                                            //  -canvas->height()/2, canvas->height()/2, 1, 500);
+    mat4 mvp = projection * view * model;
+
+    // setup shader
+    Shader shader;
+    shader.matrix= mvp;
+    shader.color= {0, 255, 255, 255};
+
+    // model to vertex buffers
+    dynamic_array<vertex_attributes> vertex_buffer{object.vertices.size()};
+    for (unsigned ix = 0; ix < object.vertices.size(); ++ix) {
+        vertex_attributes v{};
+        v.point= object.vertices[ix];
+        vertex_buffer.push_back(v);
+    }
+
+    // draw model_1
+    canvas.clear({255, 255, 255, 255});
+    canvas.drawTriangles<blendmode::Normal, porterduff::None<>, true, true, false>(
+            shader,
+            canvas.width(), canvas.height(),
+            vertex_buffer.data(),
+            object.indices.data(),
+            object.indices.size(),
+            object.type,
+            triangles::face_culling::ccw,
+            (z_buffer<0> *)nullptr);
+};
+
+```

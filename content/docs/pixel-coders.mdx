@@ -1,64 +1,120 @@
-pixel coders are objects that can encode color or intensity into pixel representation
+# Introduction
+
+Pixel coders are objects that can encode color or intensity into pixel representation
 and also decode a pixel into a color.  
 
 `microgl` can support any color configuration and any pixel format you can think of.
 
+# How to define pixel coder
+
+## 1. Implement the basic interface
+at it's simplest form, you have to implement the following interface. the struct/class have to be
+**default constructable**.
 here is a basic pixel coder, that encodes **RGB** 8-bit color channels into a packed
-32 bit integer
+32 bit integer. This is the minimal interface you have to implement to have a pixel coder.
+
 ```cpp
-#include <microgl/PixelCoder.h>
+#include <microgl/rgba.h>
 
-class RGB888_PACKED_32 : public PixelCoder<uint32_t, 8,8,8,0, RGB888_PACKED_32> {
-public:
-    using PixelCoder::decode;
-    using PixelCoder::encode;
+struct RGB888_PACKED_32 {
+    using rgba = rgba_t<8, 8, 8, 0>; // rgba info
+    using pixel = uint32_t; // pixel type
 
-    inline void encode(const color_t &input, uint32_t &output) const {
+    // these methods can be static if they do not access any variable
+    // this encodes a color object into a pixel of type uint32_t
+    inline void encode(const color_t &input, pixel &output) const {
         output = (input.r << 16) + (input.g << 8) + input.b;
     }
 
-    inline void decode(const uint32_t &input, color_t &output) const {
+    // this decodes a uint32_t integer into a color object
+    inline void decode(const pixel &input, color_t &output) const {
         output.r = (input & 0x00FF0000) >> 16;
         output.g = (input & 0x0000FF00) >> 8;
         output.b = (input & 0x000000FF);
-    };
-
-};
-```
-
-here is another pixel coder, that encodes/decodes a single 8-bit color channel into
-8 bit integer
-```cpp
-#include <microgl/PixelCoder.h>
-
-class RGB8 : public PixelCoder<uint8_t, 8, 8, 8, 0, RGB8> {
-public:
-    using PixelCoder::decode;
-    using PixelCoder::encode;
-
-    inline void encode(const color_t &input, uint8_t &output) const {
-        output = input.r;
     }
 
-    inline void decode(const uint8_t &input, color_t &output) const {
-        output.r = output.g = output.b = input;
-    };
-
-};
+}
 ```
 
-The above examples demonstrate how simple it is to create pixel coders with any  
-color depth configuration and any pixel format desired.  
+## 2. instantiate the `RGBA_PACKED` template
+this template is a generic and simple way to define a pixel coder, that can be packed
+inside the smallest fitting integer type. you can also define the ordering of the channels.
+at it's simplest, the signature of the template is:
+```cpp
+// defined at <microgl/pixel_coders/RGBA_PACKED.h>
+template<u8 r, u8 g, u8 b, u8 a=0, u8 ri=0, u8 gi=1, u8 bi=2, u8 ai=3>
+struct RGBA_PACKED { 
+    // the rgba info is here
+    using rgba = rgba_t<r, g, b, a>;
+    // the pixel type is here
+    using pixel = ... // will automatically be uint8_t, uint16_t, uint32_t, uint64_t
+    ... 
+    ... 
+}
+```
+the `r/g/b/a` template arguments are used to define the bit depth of the color channels.  
+while the `ri/gi/bi/ai` template arguments are used to define the ordering of the channels
+so you can be flexible about the layout. here is an example, you can use:
 
+```cpp
+#include <microgl/pixel_coders/RGBA_PACKED.h>
+
+using RGB_565 = RGBA_PACKED<5, 6, 5, 0>;
+```
+
+## 3. Instantiate the `RGBA_UNPACKED` template
+the `RGBA_UNPACKED` struct defines a trivial pixel coder, that encodes the color into an array,
+the array size is inferred at compile-time according to non-zero channels. it's signature
+```cpp
+// defined at <microgl/pixel_coders/RGBA_PACKED.h>
+template<uint8_t r, uint8_t g, uint8_t b, uint8_t a, bool delete_zero_channel=true>
+struct RGBA_UNPACKED {
+    using rgba = rgba_t<r,g,b,a>;
+    using pixel = array<count> ;
+    static constexpr uint8_t count;
+    ...
+    ...
+}
+```
+
+you can use this coder simply with
+```cpp
+#include <microgl/pixel_coders/RGBA_UNPACKED.h>
+
+using RGB_888 = RGBA_UNPACKED<8, 8, 8, 0>;
+// the inferred pixel type which is an array
+using pixel = typename RGB_888::pixel;
+pixel output;
+// encode a color object into 8 bits array
+RGB_888::encode({31, 63, 31}, output)
+
+uint8_t r = output.data[0];
+uint8_t g = output.data[1];
+uint8_t b = output.data[2];
+// now let's decode
+color_t decoded_color;
+RGB_888::decode(output, decoded_color);
+
+```
+using the `RGBA_UNPACKED` can save memory if you have an `rgba=(8,8,8,0)`, in which case
+they are better suited to be stored in a 3 element array rather than a packed a `uint32_t`
+type (using a packed `uint32_t` will have a wasted byte).
+
+## 4. extend the `pixel_coder` class
+you can also extend `pixel_coder` class defined at `<microgl/pixel_coder.h>`.
+using this can boost your pixel coder with extra utility methods, it uses compile-time
+inheritance via `crpt` design pattern, but it will cause your class to be less compact,
+because of template issues.
+
+## 5. use prebuilt pixel coders
 > out of the box, **<microgl/pixel_coders>** is packed with the following pixel coders for your conveniance
 
 ## True color coders (32 bit coders)
 for pixels stored in a *4 bytes* data structure
 - `RGB888_PACKED_32.h` - **rgb(8|8|8)** channels into a 32 bit unsigned integer
 - `RGBA8888_PACKED_32.h` - **rgba(8|8|8|8)** channels into a 32 bit unsigned integer
-- `RGBA8888_ARRAY.h` - **rgba(8|8|8|8)** channels into a 4d vector (faster reads)
-- `RGB888_ARRAY.h` - **rgb(8|8|8)** channels into a 4d vector (faster reads)
-- `RGB8.h` - **rgb(8|8|8)** grayscale into 8 bits unsigned integer
+- `RGBA8888_ARRAY.h` - **rgba(8|8|8|8)** channels into array (faster io)
+- `RGB888_ARRAY.h` - **rgb(8|8|8)** channels into array (faster io)
 
 ## 16 bit coders
 for pixels stored in a *2 bytes* data structure
@@ -75,14 +131,147 @@ for pixels stored in a *1 bytes* data structure
 ## Memory friendly coders
 the following coders are very handy for packed bitmaps, they also use a lookup table for
 fast conversions
-- `BPP_RGB.h` - arbitrary single channel bits scaled into any rgb depth
+- **`BPP_RGBA.h`** - this will map/scale 1,2,4,8 bits pixel to a defined alpha channel bits, rgb values will stay
+fixed on maximum value. Uses a single lookup table only if needed at compile time. Good for optimized bitmap fonts.
+- `BPP_RGB.h` - this will map 1,2,4,8 bits to predefined RGB channels bits, uses 
+3 lookup tables only if needed. Alpha channel is discarded.
 - `BPP_1_RGB.h` - 1 bit channel (2 colors) scaled into any rgb depth
 - `BPP_2_RGB.h` - 2 bit channel (4 colors) scaled into any rgb depth
 - `BPP_4_RGB.h` - 4 bit channel (16 colors) scaled into any rgb depth
 - `BPP_8_RGB.h` - 8 bit channel (256 colors) scaled into any rgb depth
+- `BPP_1_RGBA.h` - 1 bit channel (2 colors) scaled into any rgba depth
+- `BPP_2_RGBA.h` - 2 bit channel (4 colors) scaled into any rgba depth
+- `BPP_4_RGBA.h` - 4 bit channel (16 colors) scaled into any rgba depth
+- `BPP_8_RGBA.h` - 8 bit channel (256 colors) scaled into any rgba depth
 
 
-## Converting Coders
+## Special Coders
 this coders can transform a coder to another rgba depth
 - `coder_rgba.h` - convert a given coder to a different rgba color depth
 - `coder_converter.h` - convert one coder to the color depth of another coder
+- `GRAYSCALE.h` - a pixel coder template, that saves one channel, also supports alpha channel
+- `SINGLE.h` - defines 4 single channel pixel coders structs `R`, `G`, `B`, `A` literaly
+
+
+## `microgl::coder` namespace
+
+### encode intensity into a pixel with a pixel coder
+```cpp
+/**
+* encode intensity into a pixel with a pixel coder
+*
+* @tparam number underlying intensity number type
+* @tparam Coder the pixel coder type to use
+*
+* @param input input intensity
+* @param output output pixel
+* @param $coder the coder reference
+*/
+template <typename number, class Coder>
+void inline
+encode(const intensity<number> &input, typename Coder::pixel &output, const Coder & $coder)
+```
+
+### decode pixel into intensity using a coder
+```cpp
+/**
+* decode pixel into intensity using a coder
+*
+* @tparam number underlying intensity number type
+* @tparam Coder the pixel coder type to use
+*
+* @param input input pixel
+* @param output output intensity
+* @param $coder the coder reference
+*/
+template <typename number, class Coder>
+void decode(const typename Coder::pixel &input, intensity<number> &output, const Coder & $coder) {
+```
+
+### `pixel_coder` class
+a base pixel coder that can boost your pixel coder with extra utilities.
+inheritance is via crpt design pattern.
+```cpp
+/**
+*
+* @tparam pixel_ the pixel storage type
+* @tparam rgba_ the {rgba_t} info object
+* @tparam impl the type of the derived class
+*/
+template<typename pixel_, typename rgba_, typename impl>
+class pixel_coder : public crpt<impl> {
+    using pixel= pixel_;
+    using rgba= rgba_;
+
+    // this will encode in your derived class
+    void encode(const color_t &input, pixel &output) const
+    // this will decode in your derived class
+    void decode(const pixel &input, color_t &output) const
+
+    /**
+    * encode intensity to pixel of the coder
+    *
+    * @tparam number underlying intensity number type
+    *
+    * @param input input intensity
+    * @param output output pixel
+    */
+    template <typename number>
+    void encode(const intensity<number> &input, pixel &output) const
+
+    /**
+    * decode pixel into intensity
+    *
+    * @tparam number underlying intensity number type
+    *
+    * @param input input pixel
+    * @param output output intensity
+    */
+    template <typename number>
+    void decode(const pixel &input, intensity<number> &output) const
+
+    /**
+    * convert intensity to color of space defined but this coder
+    *
+    * @tparam number underlying intensity number type
+    * @param input intensity
+    * @param output color
+    */
+    template <typename number>
+    void convert(const intensity<number> &input, color_t &output) const
+
+    /**
+    * convert color to intensity
+    *
+    * @tparam number underlying intensity number type
+    *
+    * @param input color
+    * @param output intensity
+    */
+    template <typename number>
+    void convert(const color_t &input, intensity<number> &output) const
+
+    /**
+    * convert a color of this coder space into a space of another coder
+    *
+    * @tparam CODER2 the other coder
+    *
+    * @param input color
+    * @param output color output
+    */
+    template<typename CODER2>
+    void convert(const color_t &input, color_t &output) const
+    /**
+    * convert a pixel from this coder to a pixel of another coder
+    *
+    * @tparam CODER2 the other coder
+    *
+    * @param input input pixel of my coder
+    * @param output the output pixel
+    * @param coder2 the other coder reference
+    */
+    template<typename CODER2>
+    void convert(const pixel &input, typename CODER2::pixel &output, const CODER2 &coder2) const
+
+}
+```

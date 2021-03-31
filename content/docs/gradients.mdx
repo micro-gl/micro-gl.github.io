@@ -1,0 +1,214 @@
+# Introduction
+
+**Many** of the [samplers](/docs/concepts/samplers) shipped with `microgl` have many
+efficient **Gradients** samplers, we show them here.
+
+# Line Gradient Sampler
+- defined at `<microgl/samplers/line_linear_gradient.h>`
+- example at `/examples/example_sampler_gradient_line.cpp`
+
+<img src="/images/sampler_line_linear_gradient.png" style={{height:"250px", margin: "auto"}} />
+
+the line gradient defines color stops on a line on which it samples. The line definition
+is relative to unit rectangle. 
+
+### Usage Example
+```cpp
+#include <microgl/canvas.h>
+#include <microgl/pixel_coders/RGB888_PACKED_32.h>
+#include <microgl/samplers/line_linear_gradient.h>
+
+using Canvas24= canvas<bitmap<coder::RGB888_PACKED_32>>;
+using number = float;
+// using number = Q<12>;
+
+Canvas24 canvas(640, 640);
+line_linear_gradient<number, 3, Canvas24::rgba> gradient{{0, 1}, {2, 0}};
+
+gradient.addStop(0.0f, {255, 0,   0});
+gradient.addStop(0.5f, {0,   255, 0});
+gradient.addStop(1.f, {0,    0,   255});
+
+canvas.clear({255, 255, 255, 255});
+canvas.drawRect<blendmode::Normal, porterduff::None<>, false, number>(
+                        gradient, 
+                        0, 0, 400, 400);
+
+```
+
+# Angular Linear Gradient Sampler
+
+- defined at `<microgl/samplers/angular_linear_gradient.h>`
+- example at `/examples/example_sampler_gradient_angular_linear.cpp`
+
+<img src="/images/sampler_angular_linear_gradient.png" style={{height:"250px", margin: "auto"}} />
+
+This gradient is inferred by a given angle to create a line at the unit rectangle. the user can then 
+define the color stops.
+
+### Usage Example
+```cpp
+#include "src/example.h"
+#include <microgl/canvas.h>
+#include <microgl/pixel_coders/RGB888_PACKED_32.h>
+#include <microgl/samplers/angular_linear_gradient.h>
+
+using namespace microgl::sampling;
+
+using Canvas24= canvas<bitmap<coder::RGB888_PACKED_32>>;
+using number = float;
+// using number = Q<12>;
+
+Canvas24 canvas(640, 640);
+angular_linear_gradient<number, 3, Canvas24::rgba> gradient{45};
+
+auto render = [&]() -> void {
+    static float number t = 0;
+    t+=number(0.01);
+
+    gradient.setAngle(t);
+    gradient.addStop(0.0f, {255, 0,   0});
+    gradient.addStop(0.5f, {0,   255, 0});
+    gradient.addStop(1.0f, {0,   0,   255});
+
+    canvas.clear({255, 255, 255, 255});
+    canvas.drawRect<blendmode::Normal, porterduff::None<>, false, number>(
+        gradient, 
+        0, 0, 400, 400);
+};
+
+example_run(&canvas, render);
+```
+
+# Axial Linear Gradient Sampler
+- defined at `<microgl/samplers/axial_linear_gradient.h>`
+- example at `/examples/example_sampler_gradient_axial.cpp`
+
+<img src="/images/sampler_grad_axial.png" style={{height:"250px", margin: "auto"}} />
+
+This gradient is a faster variant if you need any number of stops but with angle, 
+that is a modulu of 45 (0, 45, 90, 135, 180, 225, 270, 315, 360)
+
+### Usage Example
+
+```cpp
+#include "src/example.h"
+#include <microgl/canvas.h>
+#include <microgl/pixel_coders/RGB888_PACKED_32.h>
+#include <microgl/samplers/axial_linear_gradient.h>
+
+using namespace microgl::sampling;
+
+using Canvas24= canvas<bitmap<coder::RGB888_PACKED_32>>;
+using number = float;
+// using number = Q<12>;
+
+Canvas24 canvas(640, 640);
+axial_linear_gradient<135, 3, Canvas24::rgba> gradient;
+
+gradient.addStop(0.0f, {255, 0,   0});
+gradient.addStop(0.5f, {0,   255, 0});
+gradient.addStop(1.f,  {0,   0,   255});
+
+auto render = [&]() -> void {
+    canvas.clear({255,255,255,255});
+    canvas.drawRect<blendmode::Normal, porterduff::None<>, false, number>(
+            gradient,
+            0, 0, 400, 400);
+};
+
+example_run(&canvas, render);
+```
+
+
+# 2 Colors Gradient Sampler
+- defined at `<microgl/samplers/linear_gradient_2_colors.h>`
+- example at `/examples/example_sampler_gradient_2_colors_fast.cpp`
+
+<img src="/images/sampler_grad_2_colors_fast.png" style={{height:"250px", margin: "auto"}} />
+
+This gradient is a very fast variant if you need only 2 colors stops but with angle, 
+that is a modulu of 45 (0, 45, 90, 135, 180, 225, 270, 315, 360)
+
+### Usage Example
+
+```cpp
+#include "src/example.h"
+#include <microgl/canvas.h>
+#include <microgl/pixel_coders/RGB888_PACKED_32.h>
+#include <microgl/samplers/linear_gradient_2_colors.h>
+
+using namespace microgl;
+using namespace microgl::sampling;
+
+using Canvas24= canvas<bitmap<coder::RGB888_PACKED_32>>;
+using number = float;
+//    using number = Q<12>;
+
+Canvas24 canvas(640, 640);
+linear_gradient_2_colors<45> gradient{{255,0,0}, {0,0,255}};
+
+auto render = [&]() -> void {
+    canvas.clear({255,255,255,255});
+    canvas.drawRect<blendmode::Normal, porterduff::None<>, false, number>(
+            gradient, 
+            0, 0, 400, 400);
+};
+
+example_run(&canvas, render);
+```
+
+# Fast Radial Gradient Sampler
+- defined at `<microgl/samplers/fast_radial_gradient.h>`
+- example at `/examples/example_sampler_gradient_radial.cpp`
+
+<img src="/images/sampler_grad_radial.png" style={{height:"250px", margin: "auto"}} />
+<img src="/images/sampler_radial_2.png" style={{height:"250px", margin: "auto"}} />
+
+This gradient is a fast radial gradient.
+
+
+```cpp
+#include "src/example.h"
+#include <microgl/canvas.h>
+#include <microgl/pixel_coders/RGB888_PACKED_32.h>
+#include <microgl/samplers/fast_radial_gradient.h>
+
+using namespace microgl;
+using namespace microgl::sampling;
+
+using Canvas24= canvas<bitmap<coder::RGB888_PACKED_32>>;
+using number = float;
+// using number = Q<12>;
+
+Canvas24 canvas(640, 640);
+fast_radial_gradient<number, 4, rgba_t<8,8,8,0>, precision::high> gradient{0.5, 0.5, 0.5};
+
+gradient.addStop(0.0f,  {255, 0,   0});
+gradient.addStop(0.45f, {255, 0,   0});
+gradient.addStop(0.50f, {0,   255, 0});
+gradient.addStop(1.f,   {255, 0,   255});
+
+auto render = [&]() -> void {
+    canvas.clear({255,255,255,255});
+    canvas.drawRect<blendmode::Normal, porterduff::None<>, false, number>(
+            gradient,
+            0, 0, 400, 400);
+};
+
+auto render2 = [&]() -> void {
+    canvas.clear({255,255,255,255});
+    canvas.drawQuadrilateral<blendmode::Normal, porterduff::FastSourceOverOnOpaque, true, number>(
+            gradient,
+            0,       0,     0.0f,   1.0f,
+            556,     0,     1.0f,   1.0f,
+            256,     256,   1.0f,   0.0f,
+            0,       256,   0.0f,   0.0f,
+            255);
+};
+
+auto & render3 = render2;
+
+example_run(&canvas, render3);
+```
+
