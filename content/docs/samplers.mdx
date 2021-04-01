@@ -303,6 +303,41 @@ the `chrome` template argument is enum with the following values:
 
 <img src="/images/sampler_masking.png" style={{height:"250px", margin: "auto"}} />
 
+### 8. Checker Board Sampler
+- defined at `<microgl/samplers/checker_board.h>`
+- example at `/examples/example_sampler_checkerboard.cpp`
+
+This sampler can draw a checker board pattern with
+- Configurable two colors
+- Configurable horizontal and vertical splits
+
+```cpp
+/**
+  * checker board pattern sampler
+  *
+  * @tparam rgba_ the rgba info
+  */
+template<typename rgba_=rgba_t<8,8,8,0>>
+struct checker_board {
+    using rgba = rgba_;
+    
+    /**
+      * constructor
+      *
+      * @param color1 1st color
+      * @param color2 2nd color
+      * @param horizontal horizontal splits count
+      * @param vertical vertical split count
+      */
+    explicit checker_board(const color_t & color1,
+                            const color_t & color2,
+                            unsigned horizontal=2,
+                            unsigned vertical=2)
+    }
+```
+
+<img src="/images/sampler_checker_board.png" style={{height:"250px", margin: "auto"}} />
+
 ## `microgl::sampling` namespace
 This namespace also defines the following utility methods
 
