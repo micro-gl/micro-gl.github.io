@@ -12,7 +12,6 @@ const CodeBlock = ({children, className, ...rest}) => {
   style.hljs.paddingLeft = "20px"
   style.hljs.paddingTop = "20px"
   // style.hljs.backgroundColor="red"
-  console.log(rest) 
   return (
     <SyntaxHighlighter language={language} style={style}>
       {children}

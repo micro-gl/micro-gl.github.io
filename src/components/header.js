@@ -4,10 +4,10 @@ import { HiOutlineLightBulb } from "react-icons/hi"
 
 const Header = (props) => {
   const { colorMode, toggleColorMode } = useColorMode()
-  let { slug, widthAll, widthSide, plSide, onMenuClick, ...rest } = props
+  let { slug, prefix, widthAll, widthSide, plSide, onMenuClick, ...rest } = props
   const medium_screen = useBreakpointValue({ base: true, md: false})
   const small_screen = useBreakpointValue({ base: true, sm: false})
-  const microgl = '[micro{gl}]'
+  const microgl = prefix
   return (
     <Flex as="header" {...rest}  justifyContent="center">
       <Flex w={widthAll} h="100%" ml={2} justifyContent="space-between">

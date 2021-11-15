@@ -1,0 +1,25 @@
+name: docs
+
+groups:
+
+  - title: Getting Started
+    items:
+    - title: Setup
+      route: getting-started/setup
+      path: content/docs/micro-tess/setup.mdx
+
+    - title: Features
+      route: getting-started/features
+      path: content/docs/micro-tess/features.mdx
+
+  - title: Concepts
+    items:
+    - title: Numbers
+      route: concepts/numbers
+      path: content/docs/micro-tess/numbers.mdx
+
+  - title: Algorithms
+    items:
+    - title: Ear Clipping
+      route: drawing/rectangles
+      path: content/docs/microgl/rectangles.mdx

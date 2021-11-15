@@ -1,25 +1,35 @@
 import path from 'path'
 import fs from 'fs'
 import matter from 'gray-matter'
-import hydrate from 'next-mdx-remote/hydrate'
 import renderToString from 'next-mdx-remote/render-to-string'
-import components from '../../src/components/mdx-components'
-import Layout from '../../src/components/layout'
-import {import_folder} from '../../src/utils/folder'
-console.log(import_folder)
+import components from '../components/mdx-components'
+import yaml from 'js-yaml'
 
-export default function PostPage( props ) {
-  const { data } = props
-  const data_ = { ...data, content : hydrate(data.content, { components })}
-  return (
-    <Layout data={data_} widthSide="180px" widthContent="800px"/>
-  )
+const import_folder = function(folder_path) {
+  let doc = undefined
+  try {
+    doc = yaml.load(fs.readFileSync(path.join(folder_path, 'index.yaml'), 'utf8'));
+    // console.log(doc);
+  } catch (e) {
+    console.error(e);
+  }
+
+  const paths = doc.groups.map(group => group.items).flat() 
+  let __map = {}
+  paths.forEach(item => {
+    if(__map[item.route]!==undefined)
+      console.log(`processor warning:: route ${item.route} is overriden`)
+    __map[item.route] = item.path
+  })
+  // __map[""] = document.groups[0].items[0].path
+  // __map["/"] = document.groups[0].items[0].path
+  // __map["b"] = document.groups[0].items[0].path
+  return { ...doc, __map }
 }
 
-export const getStaticProps = async ({ params }) => {
+export const _getStaticProps = async (path_of_content_folder, { params }) => {
   console.log('getStaticProps')
-  // console.log(params)
-  const docs = import_folder(path.join(process.cwd(), 'content', 'docs'), fs, path)
+  const docs = import_folder(path.join(process.cwd(), path_of_content_folder))
   const { slug } = params
   const route = slug ? slug.reduce((acc, curr) => path.join(acc, curr), '') : 
                                                     docs.groups[0].items[0].route
@@ -35,6 +45,7 @@ export const getStaticProps = async ({ params }) => {
     },
     scope: data,
   }) 
+  // console.log(docs)
 
   return {
     props: {
@@ -48,13 +59,10 @@ export const getStaticProps = async ({ params }) => {
   }
 }
 
-export const getStaticPaths = async () => {
+export const _getStaticPaths = async (path_of_content_folder) => {
   console.log('creating docs pages')
-  const docs = import_folder(path.join(process.cwd(), 'content', 'docs'), fs, path)
-  const to_optional = (path) => {
-    return path.replace(/\.mdx?$/, '').split('/')
-  }
-
+  const docs = import_folder(path.join(process.cwd(), path_of_content_folder))
+  const to_optional = (path) => path.replace(/\.mdx?$/, '').split('/')
   const paths = Object.keys(docs.__map)
                        .map(item => (
                         { params: { 
@@ -64,9 +72,6 @@ export const getStaticPaths = async () => {
     slug: [""],
   }})
 
-                          
-  // console.log(docs)
- 
   return {
     paths,
     fallback: false,

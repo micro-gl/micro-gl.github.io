@@ -6,115 +6,115 @@ groups:
     items:
     - title: Setup
       route: getting-started/setup
-      path: content/docs/setup.mdx
+      path: content/docs/microgl/setup.mdx
 
     - title: Features
       route: getting-started/features
-      path: content/docs/features.mdx
+      path: content/docs/microgl/features.mdx
 
   - title: Concepts
     items:
     - title: Numbers
       route: concepts/numbers
-      path: content/docs/numbers.mdx
+      path: content/docs/microgl/numbers.mdx
 
     - title: Math
       route: concepts/math
-      path: content/docs/math.mdx
+      path: content/docs/microgl/math.mdx
 
     - title: RGBA
       route: concepts/rgba
-      path: content/docs/rgba.mdx
+      path: content/docs/microgl/rgba.mdx
 
     - title: Pixel Coders
       route: concepts/pixel-coders
-      path: content/docs/pixel-coders.mdx
+      path: content/docs/microgl/pixel-coders.mdx
 
     - title: Samplers
       route: concepts/samplers
-      path: content/docs/samplers.mdx
+      path: content/docs/microgl/samplers.mdx
 
     - title: Composition
       route: concepts/composition
-      path: content/docs/composition.mdx
+      path: content/docs/microgl/composition.mdx
     
     - title: Bitmaps
       route: concepts/bitmaps
-      path: content/docs/bitmaps.mdx
+      path: content/docs/microgl/bitmaps.mdx
 
     - title: 3D Shaders
       route: concepts/3d
-      path: content/docs/3d.mdx
+      path: content/docs/microgl/3d.mdx
 
     - title: Canvas
       route: concepts/canvas
-      path: content/docs/canvas.mdx
+      path: content/docs/microgl/canvas.mdx
     
   - title: Drawing
     items:
     - title: Rectangles
       route: drawing/rectangles
-      path: content/docs/rectangles.mdx
+      path: content/docs/microgl/rectangles.mdx
 
     - title: Rounded Shapes
       route: drawing/rounded
-      path: content/docs/rounded.mdx
+      path: content/docs/microgl/rounded.mdx
 
     - title: Quadrilaterals
       route: drawing/quadrilaterals
-      path: content/docs/quadrilaterals.mdx
+      path: content/docs/microgl/quadrilaterals.mdx
 
     - title: Triangle
       route: drawing/triangle
-      path: content/docs/triangle.mdx
+      path: content/docs/microgl/triangle.mdx
 
     - title: Triangle Batches
       route: drawing/triangle-batches
-      path: content/docs/triangle-batches.mdx
+      path: content/docs/microgl/triangle-batches.mdx
 
     - title: Polygons
       route: drawing/polygons
-      path: content/docs/polygons.mdx
+      path: content/docs/microgl/polygons.mdx
 
     - title: Masks
       route: drawing/masks
-      path: content/docs/masks.mdx
+      path: content/docs/microgl/masks.mdx
     
     - title: Path Fills
       route: drawing/path-fills
-      path: content/docs/path-fills.mdx
+      path: content/docs/microgl/path-fills.mdx
 
     - title: Path Strokes
       route: drawing/path-stroke
-      path: content/docs/path-stroke.mdx
+      path: content/docs/microgl/path-stroke.mdx
 
     - title: Bezier Patches
       route: drawing/bezier-patches
-      path: content/docs/patches.mdx
+      path: content/docs/microgl/patches.mdx
 
     - title: Lines
       route: drawing/lines
-      path: content/docs/lines.mdx
+      path: content/docs/microgl/lines.mdx
 
     - title: Text
       route: drawing/text
-      path: content/docs/text.mdx
+      path: content/docs/microgl/text.mdx
 
     - title: Gradients
       route: drawing/gradients
-      path: content/docs/gradients.mdx
+      path: content/docs/microgl/gradients.mdx
 
     - title: More Samplers
       route: drawing/more-samplers
-      path: content/docs/more-samplers.mdx
+      path: content/docs/microgl/more-samplers.mdx
 
     - title: 3D
       route: drawing/3d
-      path: content/docs/draw-3d.mdx
+      path: content/docs/microgl/draw-3d.mdx
 
   - title: Geometry
     items:
     - title: Intro
       route: geometry/intro
-      path: content/docs/wip.mdx
+      path: content/docs/microgl/wip.mdx
   
