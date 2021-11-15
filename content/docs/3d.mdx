@@ -89,14 +89,20 @@ struct color_shader {
 This only outputs a single color and therefore is very fast
 <img src="/images/3d_shader_flat.png" style={{height:"250px", margin: "auto"}} />
 
+> Example at **`/examples/example_3d_shaders_flat_color.cpp`**
+
 #### Color shader
 This shader interpolates per vertex color and produces gradients
 <img src="/images/3d_shader_color.png" style={{height:"250px", margin: "auto"}} />
+
+> Example at **`/examples/example_3d_shader_color.cpp`**
 
 #### Sampler shader
 This shader can use any [sampler](samplers) object such as the ones implemented
 at **`<microgl/samplers/>`** (or your own custom sampler)
 <img src="/images/3d_shader_sampler.png" style={{height:"250px", margin: "auto"}} />
+
+> Example at **`/examples/example_3d_sampler_shader_and_z_buffer.cpp`**
 
 
 ## Camera and Perspective
@@ -244,4 +250,6 @@ public:
 ## Z-Buffer
 - Implemented at **`<microgl/z_buffer.h>`**
 - Example at **`/examples/example_3d_sampler_shader_and_z_buffer.cpp`**
+- Example at **`/examples/example_3d_shader_color.cpp`**
+- Example at **`/examples/example_3d_shaders_flat_color.cpp`**
 
