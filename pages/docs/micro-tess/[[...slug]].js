@@ -7,7 +7,9 @@ export default function PostPage( props ) {
   const { data } = props
   const data_ = { ...data, content : hydrate(data.content, { components })}
   return (
-    <Layout data={data_} header_prefix="[micro{tess}]" widthSide="180px" widthContent="800px"/>
+    <Layout data={data_} header_prefix="[micro{tess}]" 
+            widthSide="180px" widthContent="800px"
+            github_link='https://github.com/micro-gl/micro-tess'/>
   )
 }
 

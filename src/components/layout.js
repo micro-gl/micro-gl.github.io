@@ -1,12 +1,13 @@
 import matter from 'gray-matter'
 import SideBar from './side-bar'
 import Header from './header'
-import { Flex, Box, chakra } from '@chakra-ui/react'
+import Copyright from './copyright'
+import { Flex, Box, chakra, Center } from '@chakra-ui/react'
 import { useBreakpointValue } from '@chakra-ui/react'
 import useToggle from '../hooks/useToggle'
 
 export default function Layout( props ) {
-  let { data, widthSide, widthContent, header_prefix } = props
+  let { data, widthSide, widthContent, header_prefix, github_link } = props
   let { slug, content, document, frontMatter } = data
   let { name, groups } = document
   const { title, description } = frontMatter
@@ -22,7 +23,8 @@ export default function Layout( props ) {
     <>
       <Header boxShadow="sm" w="100%" slug={slug} prefix={header_prefix}
               h={headerHeight} widthAll={widthAll} widthSide={widthSide} 
-              plSide={plSide} onMenuClick={toggleMenu} />
+              plSide={plSide} onMenuClick={toggleMenu} 
+              github_link={github_link} />
 
       {!menu && 
         <Flex as="main" direction="row" justifyContent="center" 
@@ -40,6 +42,10 @@ export default function Layout( props ) {
               w={widthContent} overflowY="auto" className="mdx">
             <h1>{ title }</h1>
             { content }
+            <Copyright w='100%'/>
+            {/* <Center w='100%' pt={10} pb={10} fontSize="md">
+              {`All Rights Reserved, Tomer Shalev, (2020-${new Date().getFullYear()})`}
+            </Center> */}
           </Box>
         </Flex>}
     
