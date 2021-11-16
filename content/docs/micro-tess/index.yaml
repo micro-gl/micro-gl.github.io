@@ -20,6 +20,9 @@ groups:
 
   - title: Algorithms
     items:
-    - title: Ear Clipping
-      route: drawing/rectangles
-      path: content/docs/microgl/rectangles.mdx
+    - title: Ear Clipping Triangulation
+      route: algorithms/ear-clipping
+      path: content/docs/micro-tess/ear-clipping.mdx
+    - title: Monotone Triangulation
+      route: algorithms/monotone
+      path: content/docs/micro-tess/monotone.mdx

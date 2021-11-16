@@ -1,12 +1,12 @@
 # Introduction
 
-most of `microgl` algorithms can use any of the following numbers types at compile-time:
+most of `micro-tess` algorithms can use any of the following numbers types at compile-time:
 - `Q` numbers
 - `float` numbers
 - `double` numbers
 - any custom user defined number types
 
-> most of the methods in `microgl` are templates that use a generic `number` template argument
+> most of the methods in `micro-tess` are templates that use a generic `number` template argument
 to abstract away the number type.
 
 ## Q numbers
@@ -14,7 +14,7 @@ Q numbers are fixed point integers, that have configurable number of bits
 for the precision of the number.
 
 ```cpp
-#include <microgl/math/Q.h>
+#include <micro-tess/Q.h>
 // q_15 have 15 bits of precision
 using q_15 = Q<15, int32_t>;
 
@@ -44,53 +44,15 @@ Q<15> q2 = 3.14f
 you can also apply math function on them
 ```cpp
 
-#include <microgl/math/Q.h>
-#include <microgl/math.h>
+#include <micro-tess/Q.h>
+#include <micro-tess/math.h>
 // q_15 have 15 bits of precision
 using q_15 = Q<15>;
 
 Q<15> q1{9.32f};
 
-auto q_sqrt = microgl::math::sqrt(q1);
-auto q_abs = microgl::math::abs(q1);
-```
-
-you can use them inside a matrix
-```cpp
-
-#include <microgl/math/Q.h>
-#include <microgl/matrix_3x3.h>
-
-using q = Q<12>;
-
-using mat = matrix_3x3<q>;
-using mat_float = matrix_3x3<float>;
-
-q angle{3.14f/2.f}
-sine = microgl::math::sin(t*2);
-
-mat identity = mat::identity();
-mat rotation_pivot = mat::rotation(angle, 50, 50, 1, 1);
-mat translate = mat::translate(100, 100);
-mat scale = mat::scale(number_scale, number_scale);
-mat shear_x = mat::shear_x(1.7f);
-
-mat transform_matrix = translate * rotation_pivot;
-```
-
-you can use them inside other containers
-```cpp
-
-#include <microgl/math/Q.h>
-#include <microgl/math/vec2.h>
-
-using q = Q<12>;
-using vec2 = vec2<q>;
-
-vec2 vertex{5, 6};
-
-vec2 v2 = transform_matrix * vertex;
-auto v3 = v2.dot(vertex);
+auto q_sqrt = microtess::math::sqrt(q1);
+auto q_abs = microtess::math::abs(q1);
 ```
 
 ## Custom number types
@@ -104,4 +66,4 @@ just make sure your type has all the opertor overloads suitable for a number:
 - Implements **comparison** operators `==, !=, <, <=, >, >=`
 - Implements **casting** operators for most integral types
 
-> Please, see **`<microgl/math/Q.h>`** for an example
+> Please, see **`<micro-tess/Q.h>`** for an example
