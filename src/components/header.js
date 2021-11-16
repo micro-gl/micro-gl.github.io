@@ -7,7 +7,6 @@ const Header = (props) => {
   let { slug, prefix, widthAll, widthSide, plSide, onMenuClick, ...rest } = props
   const medium_screen = useBreakpointValue({ base: true, md: false})
   const small_screen = useBreakpointValue({ base: true, sm: false})
-  const microgl = prefix
   return (
     <Flex as="header" {...rest}  justifyContent="center">
       <Flex w={widthAll} h="100%" ml={2} justifyContent="space-between">
@@ -15,7 +14,7 @@ const Header = (props) => {
               fontFamily="PressStart2P-Regular"
               fontSize="md" fontWeight="bold" 
               h="100%" >
-          { microgl }
+          { prefix }
           {!medium_screen && <Box as="span" color="purple.500">::{slug}</Box>}
         </Flex>
 
