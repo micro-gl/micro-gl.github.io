@@ -32,3 +32,6 @@ groups:
     - title: Bezier Curve Divider
       route: algorithms/bezier-curve-divider
       path: content/docs/micro-tess/bezier-curve-divider.mdx
+    - title: Elliptic Arc Divider
+      route: algorithms/elliptic-arc-divider
+      path: content/docs/micro-tess/elliptic-arc-divider.mdx
