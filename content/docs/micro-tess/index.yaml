@@ -17,6 +17,9 @@ groups:
     - title: Numbers
       route: concepts/numbers
       path: content/docs/micro-tess/numbers.mdx
+    - title: Triangles
+      route: concepts/triangles
+      path: content/docs/micro-tess/triangles.mdx
 
   - title: Algorithms
     items:
@@ -35,3 +38,6 @@ groups:
     - title: Elliptic Arc Divider
       route: algorithms/elliptic-arc-divider
       path: content/docs/micro-tess/elliptic-arc-divider.mdx
+    - title: Bezier Patch
+      route: algorithms/bezier-patch
+      path: content/docs/micro-tess/bezier-patch.mdx
