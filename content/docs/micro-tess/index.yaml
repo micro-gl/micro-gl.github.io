@@ -44,3 +44,9 @@ groups:
     - title: Stroke Tessellation
       route: algorithms/stroke
       path: content/docs/micro-tess/stroke.mdx
+    - title: Planar Subdivision
+      route: algorithms/planar-subdivision
+      path: content/docs/micro-tess/planar-subdivision.mdx
+
+
+      

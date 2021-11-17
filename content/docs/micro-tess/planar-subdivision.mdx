@@ -1,0 +1,227 @@
+# Introduction
+**Planarize Division** Tessellates any collection of polygons of any type
+- Supports **Fill Rules** - **`even-odd`** and **`non-zero`**
+- **Numerically stable**. Can tessellate with any number **precision**: **`Q`** (fixed point), **`float`** and **`double`**
+- Includes geometric optimizations
+- **Allocator-aware** so you can use it in any computer memory model
+- **3** Configurable tessellation **qualities**
+- Debuggable messages flag with macro definition (this will require stdlib)
+- Debuggable optional approximate trapezes output
+- Optional boundary info output
+- If randomization is incorporated at the algorithm edge-wise, this is the fastest algorithm on
+average with `O(n*log(n))` performance for any type of polygons and multi-polygons. Currently, the
+per edge randomization was disabled because it might make the implementation less stable, but I might
+re-add it with a flag. Also, partial randomization can be accomplished by randomizing the polygon.
+
+### Fill Rules
+These can be chosen by the Enum **`microtess::fill_rule`**
+- **`fill_rule::non_zero`** - only includes subdivisions, which have a non-zero winding number.
+- **`fill_rule::even_odd`** - only includes subdivisions, which have odd winding number.
+
+### Tessellation Quality
+These can be chosen by the Enum **`microtess::tess_quality`**
+- **`tess_quality::fine`** - The fastest algorithm, but may produce zero area triangles on the 
+boundary because it fan triangulates the approximate trapezes. might be a problem if you are using SDF based AA
+- **`tess_quality::better`** - A bit slower and might be susceptible for other issues, but produces 
+triangles out of each trapeze in a way similar to ear clipping, this 
+fights zero area triangles on the boundary, so you can use SDF AA
+- **`tess_quality::prettier_with_extra_vertices`** - fast algorithm, that produces eye pleasing results, 
+but uses around x2 memory for indices because it adds a center vertex in a trapeze and therefore adds 
+two more triangles per trapeze on average
+- **`tess_quality::worst_visuals_but_fast_and_constant_memory`** (TBD) - the worst algorithm visually, as it will 
+create 2 triangles per trapeze, BUT let's not forget each trapeze is an approximation, therefore cracks will 
+show up in many cases. Also, this will have 2 triangles per trapeze so this is the most memory efficient
+
+### Input
+Input to the algorithm is
+- Fill rule enum **`microtess::fill_rule`**
+- Tess quality enum **`microtess::tess_quality`**
+- Any iterable container which stores collections of collections of vertices, Each collection is a single polygon,
+and you can have as many as you want. In this example, I use my brewed container `chunker`, but you can
+use any standard one like a vector of vectors of vertices (**`std::vector<vector<vec2<number_type>>>`**).
+- Output variables to be filled by the algorithm
+- Optional **allocator** for computation
+
+### Output
+The algorithm output in the example below:
+- Will fill The **`output_triangles_type`** for you to know how to iterate the triangles (*TRIANGLES/FAN/STRIP*)
+- Will fill the user supplied **`output_vertices`** container with triangulation vertices.
+- Will fill the user supplied **`output_indices`** container with triangulation indices.
+- Will (**optionally**) fill the user supplied **`output_boundary_info`** container for you to know how to identify the boundary.
+- Will (**optionally**) fill the user supplied **`output_optional_approximate_trapezes`** container for you to roughly understand the trapezes.
+
+### Debugging
+If you are seeing bugs with the tessellation, try the following
+- Set **`APPLY_MERGE`** template argument to `false`, this optimization might be producing problems.
+- Try increasing **`MAX_ITERATIONS`** template argument. Your algorithm might need more iterations if
+one of your polygons is huge. This argument is a fail safe way to exit an infinite loop if one shoudl occur.
+- Add **`#define MICROTESS_PLANAR_DEBUG_MESSAGES`** before all other includes. This should give messages and throw
+exceptions when the algorithm 'feels' things are wrong, so this can give you info.
+- Try increasing the precision of the `number` type of the vertices:
+    - If using **`Q`**, try increasing precision bits. **Q<8> -> Q<15>**
+    - If using **`float`**, then try **`double`** etc..
+
+## Example
+
+> taken from `examples/example_geometry_complex_to_planar_subdivision.cpp`
+
+<div style={{margin: "auto" }}>
+<img src="/images/tess/planar-sub-1.png" style={{height:"250px",margin: "auto"}} />
+</div>
+
+The example demonstrates usage of different linear containers (including the packaged non standard `dynamic_array`).  
+The example also demonstrates different number types such as fixed point integer(**`Q`** numbers), float and doubles.     
+Tessellation computation is only **16** lines of code.  
+  
+I use the **`microgl`** project to render the tessellation.  
+
+Tessellation is happening at lines `#45`-`#65`
+```c++-lines_numbers
+#define MICROGL_USE_EXTERNAL_MICRO_TESS
+#include "src/example.h"
+#include <microgl/canvas.h>
+#include <microgl/bitmaps/bitmap.h>
+#include <microgl/pixel_coders/RGB888_PACKED_32.h>
+#include <microgl/samplers/flat_color.h>
+#include <microgl/math/Q.h>
+
+#include <micro-tess/planarize_division.h>
+#include <micro-tess/static_array.h>
+#include <micro-tess/dynamic_array.h>
+#include <micro-tess/chunker.h>
+#include <micro-tess/std_rebind_allocator.h>
+#include <vector>
+
+template<typename item>
+using fixed_static_array = static_array<item, 10000>;
+
+// containers for collections of points (polygons) 
+template<typename number>
+using chunker_t = allocator_aware_chunker<vertex2<number>, dynamic_array>;
+//using chunker_t = allocator_aware_chunker<vertex2<number>, std::vector>;
+//using chunker_t = non_allocator_aware_chunker<vertex2<number>, fixed_static_array>;
+
+// containers templates for output containers
+template<typename item>
+using container = dynamic_array<item>;
+//using container = std::vector<item>;
+//using container = static_array<item, 10000>;
+
+template <typename number>
+container<vertex2<number>> box(float left, float top, float right,
+                               float bottom, bool ccw=false) {
+    using il = std::initializer_list<vertex2<number>>;
+    if(!ccw)
+        return il{{left,top}, {right,top}, {right,bottom}, {left,bottom}};
+    return il{{left,top}, {left,bottom}, {right,bottom}, {right,top}};
+};
+
+template <typename number>
+chunker_t<number> poly_inter_star_2() {
+    using il = std::initializer_list<vertex2<number>>;
+    chunker_t<number> A;
+
+    A.push_back_and_cut(il{{150, 150}, {450,150},
+                            {200,450}, {300,50},
+                            {400,450}});
+
+    A.push_back_and_cut(il{{150/2, 150/2}, {450/2,150/2},
+                            {200/2,450/2}, {300/2,50/2},
+                            {400/2,450/2}});
+
+    A.push_back_and_cut(il{{150/10, 150/10}, {450/10,150/10},
+                            {200/10,450/10}, {300/10,50/10},
+                            {400/10,450/10}});
+
+    A.push_back_and_cut(box<number>(50,50,300,300, false));
+    A.push_back_and_cut(box<number>(50,250,600,300, true));
+    A.push_back_and_cut(box<number>(50,450,100,500, true));
+
+    return A;
+}
+
+int main() {
+    using number = float;
+    // using number = double;
+    // using number = Q<2>;
+    // using number = Q<4>;
+    // using number = Q<8>;
+    // using number = Q<12>;
+    // using number = Q<15>;
+    // using number = Q<16>;
+
+    // microgl drawing setup START
+    using Canvas24= canvas<bitmap<RGB888_PACKED_32>>;
+    sampling::flat_color<> color_red {{255, 0, 255, 255}};
+    Canvas24 canvas(640, 480);
+    // microgl drawing setup END
+
+    auto render_polygon = [&](const chunker_t<number> & pieces) {
+        using index = unsigned int;
+
+        // Algorithm START
+        // output tess vertices
+        container<vertex2<number>> output_vertices;
+        // output tess indices
+        container<index> output_indices;
+        // output optional approximate trapezes
+        container<vertex2<number>> output_optional_approximate_trapezes;
+        // output optional boundary info
+        container<microtess::triangles::boundary_info> output_boundary;
+        // output triangles indices type
+        microtess::triangles::indices output_triangles_type;
+        // optional computation allocator
+        microtess::std_rebind_allocator<> allocator;
+        // define algorithm
+        using psd = microtess::planarize_division<
+                            number,
+                            decltype(output_vertices),
+                            decltype(output_indices),
+                            decltype(output_boundary)>;
+                            decltype(allocator)>;
+        // compute algorithm
+        psd::template compute<decltype(pieces)>(pieces,
+                        microtess::fill_rule::even_odd,
+                        microtess::tess_quality::better,
+                        output_vertices, 
+                        output_triangles_type, 
+                        output_indices,
+                        &output_boundary, 
+                        &output_optional_approximate_trapezes,
+                        allocator);
+        // Algorithm END
+
+        canvas.clear({255, 255, 255, 255});
+        canvas.drawTriangles<blendmode::Normal, porterduff::None<>, false>(
+                color_red,
+                matrix_3x3<number>::identity(),
+                output_vertices.data(),
+                (vertex2<number> *)nullptr,
+                output_indices.data(),
+                output_boundary.data(),
+                output_indices.size(),
+                output_triangles_type,
+                255);
+
+        canvas.drawTrianglesWireframe({0,0,0,255},
+                            matrix_3x3<number>::identity(),
+                            output_vertices.data(),
+                            output_indices.data(),
+                            output_indices.size(),
+                            output_triangles_type,
+                            40);
+
+        for (index ix = 0; ix < output_optional_approximate_trapezes.size(); ix+=4)
+            canvas.drawWuLinePath({0, 0, 0, 255},
+                                  &output_optional_approximate_trapezes[ix], 4, true);
+    };
+
+    auto render = [&](void*, void*, void*) -> void {
+        static auto polygons = poly_inter_star_2<number>();
+        render_polygon(polygons);
+    };
+
+    example_run(&canvas, render);
+}
+
+```
