@@ -85,9 +85,11 @@ const mdx_style = (props) => ({
       },
     },
     code: {
+      fontFamily: "JetBrainsMono",
+      fontWeight: "400",
       rounded: "sm",
       px: "1",
-      fontSize: "0.875em",
+      fontSize: "0.8em",
       py: "2px",
       whiteSpace: "nowrap",
       lineHeight: "normal",

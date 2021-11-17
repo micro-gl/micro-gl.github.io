@@ -103,6 +103,19 @@ const FontFace = () => (
           src: url(/fonts/ConnectionIi-2wj8.otf) format("opentype");
         }
 
+        @font-face {
+          font-family: "SourceCodePro";
+          font-display: block;
+          src: url(/fonts/SourceCodePro-Regular.otf) format("opentype");
+        }
+
+        @font-face {
+          font-family: "JetBrainsMono";
+          font-display: block;
+          src: url(/fonts/JetBrainsMono-Regular.ttf) format("truetype");
+        }
+
+        
         
         
       `}

@@ -41,3 +41,6 @@ groups:
     - title: Bezier Patch
       route: algorithms/bezier-patch
       path: content/docs/micro-tess/bezier-patch.mdx
+    - title: Stroke Tessellation
+      route: algorithms/stroke
+      path: content/docs/micro-tess/stroke.mdx
