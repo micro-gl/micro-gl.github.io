@@ -1,0 +1,112 @@
+# Introduction
+**Bezier Curve Divider** can split/intepolate points on a `Quadrartic` and `Cubic` bezier curve.
+
+#### Algorithm input
+Input is
+- Plain simple array pointer of the bezier curve (3/4 points for quadratic/cubic respectively)
+- Enum specifying the curve type - **microtess::CurveType::Quadratic** or **microtess::CurveType::Cubic**
+- Enum specifying the algorithm subdivison strategy - **microtess::CurveDivisionAlgorithm::**
+- Output container for created vertices
+
+#### Algorithm startegy
+There are two types of subdivision startegies, **Uniform** and **Adaptive**, both have their pros  
+and cons. Uniform subdivisions are poplular and tend to create more points at cusps of curves,  
+while Adaptive subdivisions try to smartly subdivide the curve with fewer subdivisions to achieve  
+better results. For each type of startegy, we offer 3 quality levels. But remember, that the best  
+quality is usually application dependent
+- **microtess::CurveDivisionAlgorithm::Adaptive_tolerance_distance_Small** - Highest quality for adaptive based on distance to real curve
+- **microtess::CurveDivisionAlgorithm::Adaptive_tolerance_distance_Medium** - Medium quality for adaptive based on distance to real curve
+- **microtess::CurveDivisionAlgorithm::Adaptive_tolerance_distance_Large** - Lowest quality for adaptive based on distance to real curve
+- **microtess::CurveDivisionAlgorithm::Uniform_64** - Highest quality for uniform subdivision
+- **microtess::CurveDivisionAlgorithm::Uniform_32** - Medium quality for uniform subdivision
+- **microtess::CurveDivisionAlgorithm::Uniform_16** - Lowest quality for uniform subdivision
+
+## Example
+
+> taken from `examples/example_geometry_bezier_curve_divider.cpp`
+
+<img src="/images/tess/bezier_curve_divider.png" style={{height:"250px", margin: "auto"}} />
+
+The example demonstrates usage of different linear containers (including the packaged non standard `dynamic_array`).  
+The example also demonstrates different number types such as fixed point integer(`Q` numbers), float and doubles.  
+Tessellation computation is only **16** lines of code.  
+  
+I use the `microgl` project to render the tessellation.  
+The algorithm output:
+- Will fill The `output_vertices` container, which holds the subdivisions vertices
+
+Tessellation is happening at lines `#45`-`#54`
+```c++-lines_numbers
+#define MICROGL_USE_EXTERNAL_MICRO_TESS
+#include "src/example.h"
+#include <microgl/canvas.h>
+#include <microgl/bitmaps/bitmap.h>
+#include <microgl/pixel_coders/RGB888_PACKED_32.h>
+#include <microgl/samplers/flat_color.h>
+
+#include <micro-tess/curve_divider.h>
+#include <micro-tess/static_array.h>
+#include <micro-tess/dynamic_array.h>
+#include <vector>
+
+template<typename item_type>
+//using container = static_array<item_type, 100>;
+using container = dynamic_array<item_type>;
+//using container = std::vector<item_type>;
+
+#define W 640
+#define H 480
+
+template <typename number>
+container<vertex2<number>> curve_cubic_1() {
+    using il=std::initializer_list<vertex2<number>>;
+    using vertex=vertex2<number>;
+    return il{{5, H - 5}, {W/8, H/4}, {W/3, H/2}, {W/2, H/2}};
+}
+
+int main() {
+    using number = float;
+    // using number = Q<12>;
+
+    // microgl drawing setup START
+    using Canvas24= canvas<bitmap<coder::RGB888_PACKED_32>>;
+    sampling::flat_color<> red{{255, 0, 0, 255}};
+    Canvas24 canvas(W, H);
+    // microgl drawing setup END
+
+    const auto render_cubic_1 = [&](container<vertex2<number>> curve) {
+        static number t = 0;
+        t += number(0.08);
+        curve[1].y -= t;
+        
+        // Algorithm START
+        // output vertices
+        container<vertex2<number>> output_vertices;
+        // algorithm strategy
+        auto algo_type = microtess::CurveDivisionAlgorithm::Adaptive_tolerance_distance_Medium;
+        // the type of the curve
+        auto curve_type = microtess::CurveType::Cubic;
+        // define algorithm
+        using curve_divider = microtess::curve_divider<number, decltype(output_vertices)>;
+        // compute
+        curve_divider::compute(curve.data(), output_vertices, algo_type, curve_type);
+        // Algorithm END
+
+        canvas.clear({255,255,255,255});
+        canvas.drawWuLinePath(
+                {0,0,0,255},
+                output_vertices.data(), output_vertices.size(),
+                false);
+
+        for (auto & p : output_vertices)
+            canvas.drawCircle<blendmode::Normal, porterduff::FastSourceOverOnOpaque, true>(
+                    red, red, p.x, p.y, number{5}, number{0});
+    };
+
+    auto render = [&](void*, void*, void*) -> void {
+        render_cubic_1(curve_cubic_1<number>());
+    };
+
+    example_run(&canvas, render);
+}
+```

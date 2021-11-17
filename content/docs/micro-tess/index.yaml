@@ -26,3 +26,9 @@ groups:
     - title: Monotone Triangulation
       route: algorithms/monotone
       path: content/docs/micro-tess/monotone.mdx
+    - title: Fan Triangulation
+      route: algorithms/fan
+      path: content/docs/micro-tess/fan.mdx
+    - title: Bezier Curve Divider
+      route: algorithms/bezier-curve-divider
+      path: content/docs/micro-tess/bezier-curve-divider.mdx
