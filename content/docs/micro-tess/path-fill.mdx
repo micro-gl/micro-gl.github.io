@@ -1,0 +1,180 @@
+# Introduction
+**Path Fill** Tessellates any collection of polygons of any type  
+**Path** is a modern interface for vector graphics, where you can define multiple paths with tools such as:
+1. Lines, Rectangles
+2. Bezier curves
+3. Elliptic arcs
+And then you can tessellate them automatically using:
+1. Fill Tessellation [Planar Subdivision](planar-subdivision)
+2. Stroke Tessellation [Stroke Tessellation](stroke)
+
+It is best to see the example of usage below.
+
+### Notes:
+- Self contained and **`does not require stdlib`**
+- After Fill or Stroke Tessellation, internal buffers are cached, so re-tessellation
+will happen only if something is invalid. This is done to save energy.
+- Internal cache buffers can be drained using the **`drainBuffers()`** method
+- Supports **Fill Rules** - **`even-odd`** and **`non-zero`**
+- **Numerically stable**. Can tessellate with any number **precision**: **`Q`** (fixed point), **`float`** and **`double`**
+- Includes geometric optimizations
+- **Allocator-aware** so you can use it in any computer memory model (even on the stack)
+- **3** Configurable tessellation **qualities**
+- Debuggable messages flag with macro definition (this will require stdlib)
+- Debuggable optional approximate trapezes output
+- Optional boundary info output
+
+### Input
+Input to the algorithm is
+- Fill rule enum **`microtess::fill_rule`**
+- Tess quality enum **`microtess::tess_quality`**
+- extra flags for debug info and boundary info
+- You can decide which template for internal container is used (such as std::vector)
+- You can decide which allocator is used
+- You can even use an array that is on the stack with `static_array`
+
+### Output
+The algorithm outputs a **`buffers`** struct which holds containers for **`vertices`**,
+**`indices`**, **`triangles type`**, **`boundary info`**, **`debug trapezes`**
+
+### Debugging
+If you are seeing bugs with the tessellation, try the following
+- Set **`APPLY_MERGE`** template argument to `false` in **`tessellateFill`** method, this optimization might be producing problems.
+- Try increasing **`MAX_ITERATIONS`** template argument in **`tessellateFill`** method. Your algorithm might need more iterations if
+one of your polygons is huge. This argument is a fail safe way to exit an infinite loop if one shoudl occur.
+- Add **`#define MICROTESS_PLANAR_DEBUG_MESSAGES`** before all other includes. This should give messages and throw
+exceptions when the algorithm 'feels' things are wrong, so this can give you info.
+- Try increasing the precision of the `number` type of the vertices:
+    - If using **`Q`**, try increasing precision bits. **Q<8> -> Q<15>**
+    - If using **`float`**, then try **`double`** etc..
+
+## Example
+
+> taken from `examples/example_draw_path_fill.cpp`
+
+<div style={{margin: "auto" }}>
+<img src="/images/tess/path-fill-1.png" style={{height:"250px",margin: "auto"}} />
+</div>
+
+The example demonstrates usage of different linear containers (including the packaged non standard `dynamic_array`), 
+also a usage with a static array, that manages all memory on the stack.  
+  
+The example also demonstrates different number types such as fixed point  
+integer(**`Q`** numbers), float and doubles. Of particular interest is **`Q<4>`**, a very low 4 bit precision, 
+that can compute the tessellation, **This is the first published tessellator, that can do that**. 
+Tessellation computation is only few lines of code.  
+  
+I use the **`microgl`** project to render the tessellation.  
+
+Tessellation is happening at line `#71`
+```c++-lines_numbers
+#define MICROGL_USE_STD_MATH
+#define MICROGL_USE_EXTERNAL_MICRO_TESS
+
+#include "src/example.h"
+#include <microgl/canvas.h>
+#include <microgl/bitmaps/bitmap.h>
+#include <microgl/pixel_coders/RGB888_PACKED_32.h>
+#include <microgl/samplers/flat_color.h>
+#include <microgl/math/Q.h>
+
+#include <micro-tess/path.h>
+#include <micro-tess/std_rebind_allocator.h>
+#include <micro-tess/dynamic_array.h>
+#include <micro-tess/static_array.h>
+#include <vector>
+
+using microtess::path;
+float t = 0;
+
+// stack container with fake allocator
+template<class item, class fake_allocator>
+using static_array_with_fake_allocator = static_array<item, 10000, fake_allocator>;
+
+template<typename number>
+//using path_t = path<number, static_array_with_fake_allocator>;
+//using path_t = path<number, std::vector>;
+using path_t = path<number, dynamic_array>;
+
+template <typename number>
+path_t<number> path_arc_animation() {
+    path_t<number> path{};
+    int div=32;
+    path.arc({200,200}, 100,
+             microgl::math::deg_to_rad(0.0f),
+             microgl::math::deg_to_rad(360.0f),
+             false, div).closePath();
+    path.arc({250,200}, 50,
+             microgl::math::deg_to_rad(0.0f),
+             microgl::math::deg_to_rad(360.0f),
+             true, div).closePath();
+    t+=1.82f;
+    path.moveTo({150,150})
+        .arc({150+0,150}, 50+t-0,
+             math::deg_to_rad(0.0f),
+             math::deg_to_rad(360.0f),
+             false, div);
+    return path;
+}
+
+int main() {
+    using number = float;
+    // using number = double;
+    // using number = Q<15, long long>;
+    // using number = Q<8, int32_t, int64_t, 0>;
+    // using number = Q<2, int64_t>;
+    // using number = Q<4, int32_t>;
+    // using number = Q<12>;
+
+    // microgl drawing setup START
+    using index = unsigned int;
+    using Canvas24= canvas<bitmap<RGB888_PACKED_32>>;
+    sampling::flat_color<> color_red {{255,0,255,255}};
+    Canvas24 canvas(640, 480);
+    // microgl drawing setup END
+
+    constexpr auto debug = true;
+
+    auto render_path = [&](path_t<number> & path) {
+
+        // Algorithm START
+        const auto & buffers= path.tessellateFill(
+                microtess::fill_rule::even_odd,
+                microtess::tess_quality::prettier_with_extra_vertices,
+                true, debug);
+        // Algorithm END
+
+        canvas.clear({255, 255, 255, 255});
+        canvas.drawTriangles<blendmode::Normal, porterduff::FastSourceOverOnOpaque, true>(
+                color_red,
+                matrix_3x3<number>::identity(),
+                buffers.output_vertices.data(),
+                static_cast<vertex2<number> *>(nullptr),
+                buffers.output_indices.data(),
+                buffers.output_boundary.data(),
+                buffers.output_indices.size(),
+                buffers.output_indices_type,
+                255);
+
+        if(debug) {
+            canvas.drawTrianglesWireframe(
+                   {0, 0, 0, 255}, matrix_3x3<number>::identity(),
+                   buffers.output_vertices.data(),
+                   buffers.output_indices.data(),
+                   buffers.output_indices.size(),
+                   buffers.output_indices_type,
+                   40);
+            for (index ix = 0; ix < buffers.DEBUG_output_trapezes.size(); ix+=4)
+                canvas.drawWuLinePath<number>({0, 0, 0, 255},
+                                 &buffers.DEBUG_output_trapezes[ix], 4, true);
+        }
+    };
+
+    auto render = [&](void*, void*, void*) -> void {
+        auto path = path_arc_animation<number>();
+        render_path(path);
+    };
+
+    example_run(&canvas, render);
+}
+```

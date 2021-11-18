@@ -47,6 +47,9 @@ groups:
     - title: Planar Subdivision
       route: algorithms/planar-subdivision
       path: content/docs/micro-tess/planar-subdivision.mdx
+    - title: Path Fill
+      route: algorithms/path-fill
+      path: content/docs/micro-tess/path-fill.mdx
 
 
       
