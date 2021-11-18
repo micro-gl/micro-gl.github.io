@@ -23,6 +23,18 @@ groups:
 
   - title: Algorithms
     items:
+    - title: Path Fill
+      route: algorithms/path-fill
+      path: content/docs/micro-tess/path-fill.mdx
+    - title: Path Stroke
+      route: algorithms/path-stroke
+      path: content/docs/micro-tess/path-stroke.mdx
+    - title: Planar Subdivision
+      route: algorithms/planar-subdivision
+      path: content/docs/micro-tess/planar-subdivision.mdx
+    - title: Stroke Tessellation
+      route: algorithms/stroke
+      path: content/docs/micro-tess/stroke.mdx
     - title: Ear Clipping Triangulation
       route: algorithms/ear-clipping
       path: content/docs/micro-tess/ear-clipping.mdx
@@ -41,15 +53,6 @@ groups:
     - title: Bezier Patch
       route: algorithms/bezier-patch
       path: content/docs/micro-tess/bezier-patch.mdx
-    - title: Stroke Tessellation
-      route: algorithms/stroke
-      path: content/docs/micro-tess/stroke.mdx
-    - title: Planar Subdivision
-      route: algorithms/planar-subdivision
-      path: content/docs/micro-tess/planar-subdivision.mdx
-    - title: Path Fill
-      route: algorithms/path-fill
-      path: content/docs/micro-tess/path-fill.mdx
 
 
       

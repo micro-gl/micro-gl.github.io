@@ -1,0 +1,158 @@
+# Introduction
+**Path Stroke** Tessellates strokes of any collection of polygons of any type  
+**Path** is a modern interface for vector graphics, where you can define multiple paths with tools such as:
+1. Lines, Rectangles
+2. Bezier curves
+3. Elliptic arcs
+And then you can tessellate them automatically using:
+1. Fill Tessellation [Planar Subdivision](planar-subdivision)
+2. Stroke Tessellation [Stroke Tessellation](stroke)
+
+It is best to see the example of usage below.
+
+### Notes:
+- Self contained and **`does not require stdlib`**
+- After Fill or Stroke Tessellation, internal buffers are cached, so re-tessellation
+will happen only if something is invalid. This is done to save energy.
+- Internal cache buffers can be drained using the **`drainBuffers()`** method
+- **Numerically stable**. Can tessellate with any number **precision**: **`Q`** (fixed point), **`float`** and **`double`**
+- **`Path`** is **Allocator-aware** through construction so you can use it in any computer memory model (even on the stack)
+- Optional boundary info output
+
+### Input
+Input to the algorithm is
+- **`Stroke Width`** value
+- **`Stroke Cap`** enum `microtess::stroke_cap`
+- **`Stroke Line Join`** enum `microtess::stroke_line_join`
+- **`Miter Limit`** value
+- **`Stroke Dash Array`** container to specify dashes pattern
+- **`Dash Offset`** value
+
+### Output
+The algorithm outputs a **`buffers`** struct which holds containers for **`vertices`**,
+**`indices`**, **`triangles type`**, **`boundary info`**
+
+### Debugging
+If you are seeing bugs with the tessellation, try the following
+- Try increasing the precision of the `number` type of the vertices:
+    - If using **`Q`**, try increasing precision bits. **Q<8> -> Q<15>**
+    - If using **`float`**, then try **`double`** etc..
+
+## Example
+
+> taken from `examples/example_draw_path_stroke.cpp`
+
+<div style={{margin: "auto" }}>
+<img src="/images/tess/path-stroke-2.png" style={{height:"250px", display: 'inline-block'}} />
+<img src="/images/tess/path-stroke-1.png" style={{height:"250px", display: 'inline-block'}} />
+</div>
+
+The example demonstrates usage of different linear containers (including the packaged non standard `dynamic_array`), 
+also a usage with a static array, that manages all memory on the stack.  
+  
+The example also demonstrates different number types such as fixed point  
+integer(**`Q`** numbers), float and doubles. Of particular interest is **`Q<4>`**, a very low 4 bit precision, 
+that can compute the tessellation, **This is the first published tessellator, that can do that**. 
+Tessellation computation is only few lines of code.  
+  
+I use the **`microgl`** project to render the tessellation.  
+
+Tessellation is happening at line `#60`
+```c++-lines_numbers
+//#define MICROGL_USE_STD_MATH
+#define MICROGL_USE_EXTERNAL_MICRO_TESS
+#include "src/example.h"
+#include <microgl/canvas.h>
+#include <microgl/bitmaps/bitmap.h>
+#include <microgl/pixel_coders/RGB888_PACKED_32.h>
+#include <microgl/samplers/flat_color.h>
+
+#include <micro-tess/path.h>
+#include <micro-tess/dynamic_array.h>
+#include <micro-tess/static_array.h>
+#include <vector>
+
+using microtess::path;
+
+template<class item, class fake_allocator>
+using static_array_with_fake_allocator = static_array<item, 10000, fake_allocator>;
+
+template<typename number>
+//using path_t = path<number, static_array_with_fake_allocator, std_rebind_allocator<>>;
+//using path_t = path<number, std::vector, std_rebind_allocator<>>;
+using path_t = path<number, dynamic_array, std_rebind_allocator<>>;
+
+template <typename number>
+path_t<number> path_star() {
+    path_t<number> path{};
+    path.lineTo({150, 150})
+        .lineTo({450, 150})
+        .lineTo({200,450})
+        .lineTo({300,50})
+        .lineTo({400,450})
+        .closePath();
+    return path;
+}
+
+int main() {
+    // using number = float;
+    // using number = double;
+    // using number = Q<8>;
+    // using number = Q<8>;
+    // using number = Q<14, long long>;
+    // using number = Q<12, int32_t>;
+    // using number = Q<4, int64_t>;
+    using number = Q<4, int32_t, int32_t, 0>;
+
+    // microgl drawing setup START
+    using Canvas24 = canvas<bitmap<RGB888_PACKED_32>>;
+    using il = std::initializer_list<int>;
+    sampling::flat_color<> color_red {{255,0,255,255}};
+    sampling::flat_color<> color_green {{22,22,22,255}};
+    Canvas24 canvas(640, 480);
+    // microgl drawing setup END
+
+    constexpr auto debug = false;
+    number offset = 0;
+
+    auto render_path = [&](path_t<number> & path) {
+        offset+=number(0.125f);
+        // Algorithm START
+        const auto & buffers= path.template tessellateStroke<>(
+                number(12), // stroke width
+                microtess::stroke_cap::round,
+                microtess::stroke_line_join::round,
+                10, // miter limit
+                il{50, 50}, // dash container
+                int(offset)); // dash offset
+        // Algorithm END
+
+        canvas.clear({255, 255, 255, 255});
+        canvas.drawTriangles<blendmode::Normal, porterduff::FastSourceOverOnOpaque, true>(
+                color_green,
+                matrix_3x3<number>::identity(),
+                buffers.output_vertices.data(),
+                static_cast<vertex2<number> *>(nullptr),
+                buffers.output_indices.data(),
+                buffers.output_boundary.data(),
+                buffers.output_indices.size(),
+                buffers.output_indices_type,
+                122);
+        if(debug)
+            canvas.drawTrianglesWireframe({0, 0, 0, 255},
+                               matrix_3x3<number>::identity(),
+                               buffers.output_vertices.data(),
+                               buffers.output_indices.data(),
+                               buffers.output_indices.size(),
+                               buffers.output_indices_type,
+                               255);
+    };
+
+    auto render = [&](void*, void*, void*) -> void {
+        static auto path = path_star<number>();
+        render_path(path);
+    };
+
+    example_run(&canvas, render);
+}
+```
