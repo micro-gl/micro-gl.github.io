@@ -14,11 +14,11 @@ export default function PostPage( props ) {
 }
 
 export const getStaticProps = async ({ params }) => {
-  console.log('getStaticProps')
+  // console.log('getStaticProps')
   return _getStaticProps('content/docs/microgl', {params})
 }
 
 export const getStaticPaths = async () => {
-  console.log('creating docs pages')
+  // console.log('creating docs pages')
   return _getStaticPaths('content/docs/microgl')
 }

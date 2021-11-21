@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { useColorMode, useColorModeValue, useBreakpointValue, Stack, Box, Center } from '@chakra-ui/react'
 import Header from '../src/components/header'
-import Copyright from '../src/components/Copyright'
+import Copyright from '../src/components/copyright'
 
 const Item = ( props ) => {
   let { item, groupFontSize, itemFontSize, ...rest } = props
