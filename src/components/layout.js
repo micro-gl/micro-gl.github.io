@@ -24,7 +24,7 @@ export default function Layout( props ) {
   const [menu, toggleMenu] = useToggle(false)
   if(menu && !small_screen) toggleMenu()
   const myRef = useRef(null)
-  useEffect(() => {myRef.current.scrollTo(0,0)})
+  useEffect(() => {myRef.current.scrollTo(0,0)}, [slug])
   useEffect(() => {console.log(menu)})
   console.log(menu)
   return (

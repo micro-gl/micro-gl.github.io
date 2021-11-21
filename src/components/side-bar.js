@@ -22,7 +22,7 @@ const SideGroup = ( props ) => {
             const isSelected = item.route===selectedSlug
             return (
             <Link key={index} w="100%" href={`${item.route}`} as={`${item.route}`} passHref>
-              <Box as="a" onClick={(e) => onSelect(item) } 
+              <Box as="a" onClick={(e) => {if(onSelect) onSelect(item)} } 
                    fontSize={itemFontSize} 
                    fontWeight="medium" w="100%" my={1} px={2} py={1}
                    bg={isSelected ? selectedBgColor : "transparent"}
