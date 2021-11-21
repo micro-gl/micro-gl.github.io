@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { useColorMode, useColorModeValue, Stack, Box } from '@chakra-ui/react'
 
 const SideGroup = ( props ) => {
-  let { selectedSlug, group, groupFontSize, itemFontSize, ...rest } = props
+  let { selectedSlug, group, groupFontSize, itemFontSize, onSelect, ...rest } = props
   const {title, items} = group
   groupFontSize = groupFontSize ?? "sm"
   itemFontSize = itemFontSize ?? "md"
@@ -22,7 +22,7 @@ const SideGroup = ( props ) => {
             const isSelected = item.route===selectedSlug
             return (
             <Link key={index} w="100%" href={`${item.route}`} as={`${item.route}`} passHref>
-              <Box as="a" 
+              <Box as="a" onClick={(e) => onSelect(item) } 
                    fontSize={itemFontSize} 
                    fontWeight="medium" w="100%" my={1} px={2} py={1}
                    bg={isSelected ? selectedBgColor : "transparent"}
@@ -45,14 +45,14 @@ const SideBar = ( props ) => {
   const { colorMode, toggleColorMode } = useColorMode()
   const isDark = colorMode === 'dark'
   const { selectedSlug, groups, name, groupFontSize, 
-                                    itemFontSize, ...rest } = props
+        onSelect, itemFontSize, ...rest } = props
 
   return (
-    <Stack {...rest} as="nav" direction='column' overflowY="auto" pb="100px">
+    <Stack {...rest} as="nav" direction='column' overflowY="auto" pb="100px" >
         { 
           groups.map((group, index) => (
             <SideGroup pt={2} w="100%" key={index} 
-                      group={group}
+                      group={group} onSelect={onSelect}
                       groupFontSize={groupFontSize}
                       itemFontSize={itemFontSize} 
                       selectedSlug={selectedSlug} />  

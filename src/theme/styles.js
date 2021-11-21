@@ -1,12 +1,12 @@
 import { mode } from '@chakra-ui/theme-tools'
 import mdx_style from './mdx-style'
+import colors from './colors'
 
 const styles = {
   global: (props) => ({
 
     body: {
-      color: mode("gray.800", "whiteAlpha.900")(props),
-      bg: mode("whiteAlpha.900", "gray.800")(props),
+      ...colors(mode(false, true)(props)),
       fontSize: "md",
 
     },
