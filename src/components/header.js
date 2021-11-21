@@ -4,10 +4,10 @@ import { HiOutlineLightBulb } from "react-icons/hi"
 
 const Header = (props) => {
   const { colorMode, toggleColorMode } = useColorMode()
-  let { slug, widthAll, widthSide, plSide, onMenuClick, ...rest } = props
+  let { slug, prefix, widthAll, widthSide, plSide, 
+    github_link, onMenuClick, ...rest } = props
   const medium_screen = useBreakpointValue({ base: true, md: false})
   const small_screen = useBreakpointValue({ base: true, sm: false})
-  const microgl = '[micro{gl}]'
   return (
     <Flex as="header" {...rest}  justifyContent="center">
       <Flex w={widthAll} h="100%" ml={2} justifyContent="space-between">
@@ -15,7 +15,7 @@ const Header = (props) => {
               fontFamily="PressStart2P-Regular"
               fontSize="md" fontWeight="bold" 
               h="100%" >
-          { microgl }
+          { prefix }
           {!medium_screen && <Box as="span" color="purple.500">::{slug}</Box>}
         </Flex>
 
@@ -26,7 +26,7 @@ const Header = (props) => {
             <Icon w={6} h={6} color="black.500"
                   as={HiOutlineLightBulb} />
           </Button>
-          <Button as="a" p={0} mx={1} onClick={(e)=> window.open("https://github.com/micro-gl/micro-gl",'_blank')}
+          <Button as="a" p={0} mx={1} onClick={(e)=> window.open(github_link,'_blank')}
                   bg="transparent">
             <Icon w={6} h={6} color="black.500"
                   as={AiFillGithub} />

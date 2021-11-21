@@ -1,0 +1,58 @@
+name: docs
+
+groups:
+
+  - title: Getting Started
+    items:
+    - title: Setup
+      route: getting-started/setup
+      path: content/docs/micro-tess/setup.mdx
+
+    - title: Features
+      route: getting-started/features
+      path: content/docs/micro-tess/features.mdx
+
+  - title: Concepts
+    items:
+    - title: Numbers
+      route: concepts/numbers
+      path: content/docs/micro-tess/numbers.mdx
+    - title: Triangles
+      route: concepts/triangles
+      path: content/docs/micro-tess/triangles.mdx
+
+  - title: Algorithms
+    items:
+    - title: Path Fill
+      route: algorithms/path-fill
+      path: content/docs/micro-tess/path-fill.mdx
+    - title: Path Stroke
+      route: algorithms/path-stroke
+      path: content/docs/micro-tess/path-stroke.mdx
+    - title: Planar Subdivision
+      route: algorithms/planar-subdivision
+      path: content/docs/micro-tess/planar-subdivision.mdx
+    - title: Stroke Tessellation
+      route: algorithms/stroke
+      path: content/docs/micro-tess/stroke.mdx
+    - title: Ear Clipping Triangulation
+      route: algorithms/ear-clipping
+      path: content/docs/micro-tess/ear-clipping.mdx
+    - title: Monotone Triangulation
+      route: algorithms/monotone
+      path: content/docs/micro-tess/monotone.mdx
+    - title: Fan Triangulation
+      route: algorithms/fan
+      path: content/docs/micro-tess/fan.mdx
+    - title: Bezier Curve Divider
+      route: algorithms/bezier-curve-divider
+      path: content/docs/micro-tess/bezier-curve-divider.mdx
+    - title: Elliptic Arc Divider
+      route: algorithms/elliptic-arc-divider
+      path: content/docs/micro-tess/elliptic-arc-divider.mdx
+    - title: Bezier Patch
+      route: algorithms/bezier-patch
+      path: content/docs/micro-tess/bezier-patch.mdx
+
+
+      

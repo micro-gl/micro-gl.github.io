@@ -1,0 +1,126 @@
+# Introduction
+**Monotone polygon** tesselation on X or Y Axis.
+1. O(n) computation, and O(n) memory.
+2. Memory usage is reused and you have to read the code comments to understand some  
+   of the smart memory decisions, which include:
+   - First, turn the polygon into a linked list
+   - Saving both original index and chain B status in a single number by making indices even.
+   - Then, sorting the vertices and re-arranging the linked list in-place
+   - Then, re-using the pool node's prev member as a stack holder, because this field is NOT used anymore.
+   - All of the above, contribute to compact memory allocation and then reusing it.
+3. The algorithm is **Allocator-aware** and uses an allocator for an internal linked list.
+
+## Example
+
+> taken from `examples/example_geometry_monotone_triangulation.cpp`
+
+<img src="/images/tess/monotone.png" style={{height:"250px", margin: "auto"}} />
+
+The example demonstrates usage of different linear containers (including the packaged non standard `dynamic_array`).  
+It uses a regular allocator (that relies on `new`/`delete` operators), but you can use your own,  
+which is very helpful for embedded projects. The example also demonstrates different  
+number types such as fixed point integer(`Q` numbers), float and doubles.    
+Tessellation computation is only **16** lines of code.  
+  
+I use the `microgl` project to render the tessellation.  
+The algorithm output:
+- Will fill The `output_type` for you to know how to iterate the triangles (*TRIANGLES/FAN/STRIP*)
+- Will fill the user supplied `output_indices` container with triangulation indices.
+- Will (optionally) fill the user supplied `output_boundary_info` container for you to know how to identify the boundary.
+
+Tessellation is happening at lines `#41`-`#62`
+```c++-lines_numbers
+#define MICROGL_USE_EXTERNAL_MICRO_TESS
+#include "src/example.h"
+#include <microgl/canvas.h>
+#include <microgl/bitmaps/bitmap.h>
+#include <microgl/pixel_coders/RGB888_PACKED_32.h>
+#include <microgl/samplers/flat_color.h>
+
+#include <micro-tess/monotone_polygon_triangulation.h>
+#include <micro-tess/static_array.h>
+#include <micro-tess/dynamic_array.h>
+#include <vector>
+
+template<typename item_type>
+using container = dynamic_array<item_type>;
+//using container = static_array<item_type, 800>;
+//using container = std::vector<item_type>;
+
+template <typename number>
+container<vertex2<number>> poly_1_x_monotone() {
+    using il = std::initializer_list<vertex2<number>>;
+    return il{
+      {50,100}, {100,50}, {150,100}, {200,50}, {300,100}, 
+      {400,50}, {500,100}, {500,200}, {400,100+50}, {300,100+100}, 
+      {200,100+50}, {150,100+100}, {100,100+50}, {50,100+100},
+    };
+}
+
+int main() {
+    using number = float;
+    // using number = Q<12>;
+
+    // microgl drawing setup START
+    using Canvas24 = canvas<bitmap<coder::RGB888_PACKED_32>>;
+    sampling::flat_color<> color_red{{255,0,0,255}};
+    Canvas24 canvas(640, 480);
+    // microgl drawing setup END
+
+    auto render_polygon = [&](const container<vertex2<number>> & polygon) {
+        // ALGORITHM START
+        // output indices type
+        microtess::triangles::indices output_type;
+        // output indices container
+        container<unsigned int> output_indices;
+        // output boundary info container
+        container<boundary_info> output_boundary_buffer;
+        // allocator for internal computation
+        microtess::std_rebind_allocator<> allocator;
+        // define algorithm
+        using mpt = microtess::monotone_polygon_triangulation<
+                        number,
+                        container<unsigned int>,
+                        container<boundary_info>,
+                        microtess::std_rebind_allocator<>>;
+        // compute algorithm
+        mpt::compute(polygon.data(),
+                     polygon.size(),
+                     mpt::monotone_axis::x_monotone,
+                     output_indices,
+                     &output_boundary_buffer,
+                     output_type,
+                     allocator);
+        // ALGORITHM END
+
+        // draw triangles batch
+        canvas.clear({255,255,255,255});
+        canvas.drawTriangles<blendmode::Normal, porterduff::None<>, false>(
+                color_red,
+                matrix_3x3<number>::identity(),
+                polygon.data(),
+                (vertex2<number> *)nullptr,
+                output_indices.data(),
+                output_boundary_buffer.data(),
+                output_indices.size(),
+                output_type,
+                255);
+
+        // draw triangulation
+        canvas.drawTrianglesWireframe(
+                {0,0,0,255},
+                matrix_3x3<number>::identity(),
+                polygon.data(),
+                output_indices.data(),
+                output_indices.size(),
+                output_type,
+                255);
+    };
+
+    auto render = [&](void*, void*, void*) -> void {
+        render_polygon(poly_1_x_monotone<number>());
+    };
+
+    example_run(&canvas, render);
+}
+```

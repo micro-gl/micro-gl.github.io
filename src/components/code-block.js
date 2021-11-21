@@ -5,16 +5,18 @@ import SyntaxHighlighter from 'react-syntax-highlighter';
 import theme from 'react-syntax-highlighter/dist/cjs/styles/hljs/an-old-hope';
 
 const CodeBlock = ({children, className, ...rest}) => {
-  const language = className.replace(/language-/, '')
+  // const language = className.replace(/language-/, '')
+  const parts = className.split('-')
+  const language = parts[1]
+  const line_numbers = parts.length==3 && parts[2]==='lines_numbers'
   // const language = className ? className.replace(/language-/, '') : 'text'
   const style = {...theme}
   style.hljs.borderRadius = "10px"
   style.hljs.paddingLeft = "20px"
   style.hljs.paddingTop = "20px"
   // style.hljs.backgroundColor="red"
-  console.log(rest) 
   return (
-    <SyntaxHighlighter language={language} style={style}>
+    <SyntaxHighlighter language={language} style={style} showLineNumbers={line_numbers} {...rest} >
       {children}
     </SyntaxHighlighter>
   );

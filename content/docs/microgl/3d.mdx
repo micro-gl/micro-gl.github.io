@@ -1,0 +1,255 @@
+# Introduction
+
+3D rendering is supported in microgl. microgl can emulate the GPU pipeline with:
+- 3D Shaders
+- 3D Clipping
+- Z-Buffer
+- Camera utilities: Perspective/Orthographic projection
+- 4x4 matrix class
+
+## 3D Shaders
+> examples at **`examples/example_3d_*.cpp`**
+
+**3D Shaders** are objects that emulate the way the **GPU** draws objects. microgl
+has a built in 3d pipeline, that you can use by implementing shaders or using the
+shaders, that are shipped with microgl.
+
+Shaders have 4 components:
+1. **vertex attributes buffer** - holds the input to the shader, this might be vertices position, colors, 
+ normals etc..
+2. **vertex varying attributes** - these are per vertex attributes that are passed from vertex shader to
+fragment/pixel shader for interpolation purposes.
+3. **vertex shader** - a function, that given vertex attributes, will :
+    - return the transformed position of a vertex in homogeneous 4D space (Clip space)
+    - pass varying attributes to the pixel shader
+4. **pixel shader** - a function, that receives the interpolated varying attributes and
+outputs a pixel color.
+5. decleration of the main number type and rgba info
+
+Here is an example of the interface needed for a shader
+
+```cpp
+template<typename number_, typename rgba_>
+struct color_shader {
+    // the main number type
+    using number = number_;
+    // the rgba info
+    using rgba = rgba_;
+    using gl_position= vec4<number>;
+
+    // per vertex attributes
+    struct vertex_attributes {
+        vec3<number> point;
+        microgl::color::color_t color;
+    };
+
+    // varying attributes
+    struct varying {
+        microgl::color::color_t color{255,0,0};
+
+        // you must implement the interpolation function
+        void interpolate(const varying &varying_a,
+                            const varying &varying_b,
+                            const varying &varying_c,
+                            const vec4<int> &bary) {
+            color.r = int(vec4<number>{varying_a.color.r, varying_b.color.r, varying_c.color.r, 0}.dot(vec4<number>(bary))/bary.w);
+            color.g = int(vec4<number>{varying_a.color.g, varying_b.color.g, varying_c.color.g, 0}.dot(vec4<number>(bary))/bary.w);
+            color.b = int(vec4<number>{varying_a.color.b, varying_b.color.b, varying_c.color.b, 0}.dot(vec4<number>(bary))/bary.w);
+            color.a = int(vec4<number>{varying_a.color.a, varying_b.color.a, varying_c.color.a, 0}.dot(vec4<number>(bary))/bary.w);
+        }
+    };
+
+    // this is a uniform global
+    matrix_4x4<number> matrix;
+
+    // vertex shader
+    inline gl_position
+    vertex(const vertex_attributes &attributes, varying &output) {
+        // pass varying on to the pixel shader so they can be interpolated
+        output.color = attributes.color;
+
+        // tag the transformed position
+        return matrix * gl_position{attributes.point};
+    }
+
+    // pixel shader
+    inline color::color_t
+    fragment(const varying &input) {
+        return input.color;
+    }
+
+};
+
+
+```
+
+### The following shaders are shipped with **`microgl`**
+
+#### Flat Color shader
+This only outputs a single color and therefore is very fast
+<img src="/images/3d_shader_flat.png" style={{height:"250px", margin: "auto"}} />
+
+> Example at **`/examples/example_3d_shaders_flat_color.cpp`**
+
+#### Color shader
+This shader interpolates per vertex color and produces gradients
+<img src="/images/3d_shader_color.png" style={{height:"250px", margin: "auto"}} />
+
+> Example at **`/examples/example_3d_shader_color.cpp`**
+
+#### Sampler shader
+This shader can use any [sampler](samplers) object such as the ones implemented
+at **`<microgl/samplers/>`** (or your own custom sampler)
+<img src="/images/3d_shader_sampler.png" style={{height:"250px", margin: "auto"}} />
+
+> Example at **`/examples/example_3d_sampler_shader_and_z_buffer.cpp`**
+
+
+## Camera and Perspective
+> Implemented at **`<microgl/camera.h>`**
+
+Every vertex shader has to transform world-space 3d coords into clip-space, the so called
+**`mvp = model-view-projection`** matrix. `microgl` comes is packed with utility methods
+to construct such a matrix easily.
+
+- *Model Matrix* - transform a model from object space (relative to origin(0,0,0)) into 
+world space.
+- *View Matrix* - defines the inverse tranform of the camera space to the origin (world space to camera space)
+- *Projection Matrix* - defines transformation from camera/view space into 3d rectangle and inverts the z-axis,
+this is the so called homogenous clip space. The `w` components are divisors, that when used, they will transform 
+the coordinates from clip space into `NDC = Normalized Device Coordinates` unit cube, from there we can apply the viewport
+transform, which will convert NDC space into `raster` space.
+
+### Supported Camera View transformations
+Out of the box, `microgl` supports, the following:
+```cpp
+class camera {
+public:
+    /**
+     * compute the camera view given position of camera and angular info
+     *
+     * @tparam number the number type
+     *
+     * @tparam position 3d position of camera
+     * @tparam pitch    x-axis rotation
+     * @tparam yaw      y-axis rotation
+     * @tparam roll     z-axis rotation
+     **/
+    template <typename number>
+    static matrix_4x4<number> angleAt(const vec3<number> &position,
+                                      const number & pitch, 
+                                      const number & yaw, 
+                                      const number & roll)
+
+
+    /**
+     * set camera view matrix equivalent to gluLookAt() VIEW MATRIX
+     *
+     * @tparam number   the number type
+     *
+     * @param position  3d position of camera
+     * @param target    look at 3d position
+     * @param up        the vector pointing up
+     * @return
+     */
+    template <typename number>
+    static matrix_4x4<number> lookAt(const vec3<number> & position,
+                                        const vec3<number>& target,
+                                        const vec3<number>& up)
+
+}
+```
+<img src="/images/pitch_yaw_roll.png" style={{height:"250px", margin: "auto"}} />
+
+
+### Supported Projection Matrices
+Out of the box, `microgl` supports, the following:
+```cpp
+class camera {
+public:
+    /**
+    * compute perspective projection matrix
+    *
+    * @tparam number                   number type
+    *
+    * @param horizontal_fov_radians    horizontal angle of the camera frustum
+    * @param screen_width              surface width
+    * @param screen_height             surface height
+    * @param near                      near plane
+    * @param far                       far plane
+    *
+    * @return matrix_4x4<number> result
+    */
+    template <typename number>
+    static
+    matrix_4x4<number> perspective(const number &horizontal_fov_radians,
+                                    const number & screen_width, const number & screen_height,
+                                    const number & near, const number & far)
+
+    /**
+    * compute perspective projection matrix
+    *
+    * @tparam number                   number type
+    *
+    * @param horizontal_fov_radians    horizontal angle of the camera frustum
+    * @param aspect_ratio              aspect ratio of the surface
+    * @param near                      near plane
+    * @param far                       far plane
+    *
+    * @return matrix_4x4<number> result
+    */
+    template <typename number>
+    static
+    matrix_4x4<number> perspective(const number & horizontal_fov_radians,
+                                    const number & aspect_ratio,
+                                    const number & near, const number & far)
+
+    /**
+    * compute perspective projection matrix
+    *
+    * @tparam number   number type
+    * 
+    * @param l         left plane
+    * @param r         right plane
+    * @param b         bottom plane
+    * @param t         top plane
+    * @param n         near plane
+    * @param f         far plane
+    * 
+    * @return matrix_4x4<number> result
+    */
+    template <typename number>
+    static
+    matrix_4x4<number> perspective(const number & l, const number & r,
+                                   const number & b, const number & t,
+                                   const number & n, const number & f)
+
+    /**
+    * compute orthographic projection
+    * 
+    * @tparam number number type
+    * 
+    * @param l         left plane
+    * @param r         right plane
+    * @param b         bottom plane
+    * @param t         top plane
+    * @param n         near plane
+    * @param f         far plane
+    * 
+    * @return matrix_4x4<number> result
+    */
+    template <typename number>
+    static
+    matrix_4x4<number> orthographic(const number & l, const number & r,
+                                    const number & b, const number & t,
+                                    const number & n, const number & f)
+
+}
+```
+
+## Z-Buffer
+- Implemented at **`<microgl/z_buffer.h>`**
+- Example at **`/examples/example_3d_sampler_shader_and_z_buffer.cpp`**
+- Example at **`/examples/example_3d_shader_color.cpp`**
+- Example at **`/examples/example_3d_shaders_flat_color.cpp`**
+

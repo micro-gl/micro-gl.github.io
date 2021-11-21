@@ -1,0 +1,105 @@
+# Introduction
+
+All algorithms in **`micro{tess}`** have two types of output:
+1. Triangles tessellation
+2. Arc dividing
+
+## Triangles
+
+> Look at **`<microtess/triangles.h>`**
+
+Triangulation is essentially just a set of triangles, that can be happily rendered using well 
+known rasterization algorithms, they are used everywhere because of it.  
+In order to define a single triangle, we just need three points, but in order to define a  
+batch of triangles we need more than that:
+- A list of points 
+- Additional list of indices, that point to vertices' list
+- A strategy to help us interpret how to fetch triangles
+
+### Indices types
+There are three major strategies to interpret the list of indices defined by  
+**microtess::triangles::indices** enum at the file **<microtess/triangles.h>**  
+
+<img src="/images/tess/triangles.gif" style={{height:"250px", margin: "auto"}} />
+
+### 1. **`indices::TRIANGLES`**
+This is the simplest, every 3 consecutive indices define a triangle, for example:  
+Suppose list of indices is **`[0,1,2,3,4,5,6,7,8,9,10,11]`**, then there are 4 triangles.
+- First triangle has indices **`[0, 1, 2]`**
+- Second triangle has indices **`[3, 4, 5]`**
+- Third triangle has indices **`[6, 7, 8]`**
+- And so on
+#### **Advanatages**
+- This method is very intuitive.
+- Can encode any batch of triangles.
+
+#### **Disadvanatages**
+- Consumes the most memory. If we have **`n`** triangles, then we will need **`3*n`** indices to encode them.
+
+### 2. **`indices::TRIANGLES_FAN`**
+This one is the simple as well. We pick a base index (usually the first) and then pick every 
+consecutive 2 indices.  
+Suppose list of indices is **`[0,1,2,3,4,5,6,7,8,9,10,11,12]`**, then there are 6 triangles.
+- First triangle has indices **`[0, 1, 2]`**
+- Second triangle has indices **`[0, 2, 3]`**
+- Third triangle has indices **`[0, 4, 5]`**
+- And so on
+#### **Advanatages**
+- This method is intuitive. 
+- It is easy on memory. If we have **`n`** triangles, then we will need  
+**`2*n + 1`** indices. Much better than **`indices::TRIANGLES`**  
+#### **Disadvanatages**  
+- Cannot encode all triangle batches with it.
+- May produce silver triangles
+
+### 3. **`indices::TRIANGLES_STRIP`**
+This one is the hardest. Every group of 3 adjacent vertices forms a triangle. The face direction of the  
+strip is determined by the winding of the first triangle. Each successive triangle will have its effective 
+face order reversed, so the system compensates for that by testing it in the opposite way.  
+Suppose list of indices is **`[0,1,2,3,4,5,6,7,8,9,10,11,12]`**, then there are 6 triangles.
+- First triangle has indices **`[0, 1, 2]`**
+- Second triangle has indices **`[3, 2, 1]`**
+- Third triangle has indices **`[2, 3, 4]`**
+- And so on
+#### **Advanatages**
+- It is the best on memory. If we have **`n`** triangles, then we will need  
+**`n + 2`** indices.
+- Can encode any batch with this method using degenerate triangles trick.
+#### **Disadvanatages**
+- This method is not intuitive. 
+
+## Triangles Iteration
+One can easily iterate triangles encoded in an indices list using the **`microtess::triangles::iterate_triangles`** method.
+
+```c
+/**
+  * Iterate triangles encoded in a list of indices
+  * @tparam iterator_callback a callback struct or lambda
+  * @param indices pointer to indices array
+  * @param size size of indices list
+  * @param type the type of triangles
+  * @param callback the callback instance
+  */
+template<typename iterator_callback>
+void iterate_triangles(const index *indices,
+                       const index &size,
+                       const enum triangles::indices &type,
+                       const iterator_callback & callback);
+
+```
+
+#### Example
+```c
+using index = unsigned int;
+index indices[6] {0, 1, 2, 3, 4, 5};
+
+iterate_triangles(indices, 6, indices::TRIANGLES,
+      [&](const index triangle_index, 
+          const index first_index, const index second_index, const index third_index,
+          const index edge_0_id, const index edge_1_id, const index edge_2_id) {
+            std::cout << 'outputing triangle #' << triangle_index << std::endl
+                      << 'triangle is (' << first_index << '-' << second_index << '-'
+                      << third_index << ')' << std::endl;
+          }
+```
+If you don't like lambdas, you can implement a `struct` that implements the `operator()`
