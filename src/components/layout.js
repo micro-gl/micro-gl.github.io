@@ -58,7 +58,7 @@ export default function Layout( props ) {
           </Box>
         </Flex>}
     
-      { 
+      { menu && 
         // <Fade in={menu} out={!menu}>bg={colors(is_dark_mode).bg}
         <Slide in={menu} direction="right" 
             style={{ zIndex: 100, position: 'absolute', top: headerHeight, left: '0px', 
