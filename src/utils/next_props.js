@@ -28,7 +28,7 @@ const import_folder = function(folder_path) {
 }
 
 export const _getStaticProps = async (path_of_content_folder, { params }) => {
-  console.log('getStaticProps')
+  // console.log('getStaticProps')
   const docs = import_folder(path.join(process.cwd(), path_of_content_folder))
   const { slug } = params
   const route = slug ? slug.reduce((acc, curr) => path.join(acc, curr), '') : 
@@ -60,7 +60,7 @@ export const _getStaticProps = async (path_of_content_folder, { params }) => {
 }
 
 export const _getStaticPaths = async (path_of_content_folder) => {
-  console.log('creating docs pages')
+  // console.log('creating docs pages')
   const docs = import_folder(path.join(process.cwd(), path_of_content_folder))
   const to_optional = (path) => path.replace(/\.mdx?$/, '').split('/')
   const paths = Object.keys(docs.__map)

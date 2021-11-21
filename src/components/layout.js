@@ -7,6 +7,7 @@ import { useBreakpointValue, useStyles, useColorModeValue } from '@chakra-ui/rea
 import { Fade, Slide } from '@chakra-ui/transition'
 import useToggle from '../hooks/useToggle'
 import colors from '../theme/colors'
+import {useCallback, useEffect, useRef } from 'react'
 
 export default function Layout( props ) {
   let { data, widthSide, widthContent, header_prefix, github_link } = props
@@ -22,6 +23,10 @@ export default function Layout( props ) {
   const widthAll = `calc(${widthSide} + ${widthContent} + ${pl} + 100px)`
   const [menu, toggleMenu] = useToggle(false)
   if(menu && !small_screen) toggleMenu()
+  const myRef = useRef(null)
+  useEffect(() => {myRef.current.scrollTo(0,0)})
+  useEffect(() => {console.log(menu)})
+  console.log(menu)
   return (
     <>
       <Header boxShadow="sm" w="100%" slug={slug} prefix={header_prefix}
@@ -42,8 +47,8 @@ export default function Layout( props ) {
                   selectedSlug={slug}
                   groups={groups} name={name} />}
 
-          <Box h="100%"  pt={0} mt={0} px={2} id="content"
-              w={widthContent} overflowY="auto" className="mdx">
+          <Box h="100%"  pt={0} mt={0} px={2} id="content" id='_content'
+              w={widthContent} overflowY="auto" className="mdx" ref={myRef}>
             <h1>{ title }</h1>
             { content }
             <Copyright w='100%'/>
@@ -56,7 +61,8 @@ export default function Layout( props ) {
       { 
         // <Fade in={menu} out={!menu}>bg={colors(is_dark_mode).bg}
         <Slide in={menu} direction="right" 
-            style={{ zIndex: 100, position: 'absolute', top: headerHeight, left: '0px', width:"100%", height:`calc(100vh - ${headerHeight})` }}>
+            style={{ zIndex: 100, position: 'absolute', top: headerHeight, left: '0px', 
+            width:"100%", height:`calc(100vh - ${headerHeight})` }}>
           {<SideBar px={2} pt={1} bg={colors(is_dark_mode).bg}
                   w="100%" h='100%'
                   groupFontSize="1.2rem" itemFontSize="1.0rem"
