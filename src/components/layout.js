@@ -57,11 +57,11 @@ export default function Layout( props ) {
         // <Fade in={menu} out={!menu}>bg={colors(is_dark_mode).bg}
         <Slide in={menu} direction="right" 
             style={{ zIndex: 100, position: 'absolute', top: headerHeight, left: '0px' }}>
-          <SideBar px={2} pt={1} bg={colors(is_dark_mode).bg}
+          {menu && <SideBar px={2} pt={1} bg={colors(is_dark_mode).bg}
                   w="100%" h="100vh" 
                   groupFontSize="1.2rem" itemFontSize="1.0rem"
                   selectedSlug={slug}
-                  groups={groups} name={name} onSelect={toggleMenu}  />
+                  groups={groups} name={name} onSelect={toggleMenu}  />}
         </Slide>
       }
 
