@@ -24,7 +24,7 @@ const components = {
   // pre: props => <Pre {...props} />,
   inlineCode: (props) => (
     <InlineCode {...props} 
-                color={useColorModeValue("purple.600", "purple.300")} 
+                color={useColorModeValue("pink.600", "pink.500")} 
     />
   ),
   code: props => <CodeBlock {...props} />,
