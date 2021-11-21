@@ -36,7 +36,7 @@ The algorithm output:
 - Will fill The `output_vertices` container, which holds the subdivisions vertices
 
 Tessellation is happening at lines `#45`-`#54`
-```c++-lines_numbers
+```c++
 #define MICROGL_USE_EXTERNAL_MICRO_TESS
 #include "src/example.h"
 #include <microgl/canvas.h>
@@ -54,9 +54,6 @@ template<typename item_type>
 using container = dynamic_array<item_type>;
 //using container = std::vector<item_type>;
 
-#define W 640
-#define H 480
-
 template <typename number>
 container<vertex2<number>> curve_cubic_1() {
     using il=std::initializer_list<vertex2<number>>;
@@ -71,7 +68,7 @@ int main() {
     // microgl drawing setup START
     using Canvas24= canvas<bitmap<coder::RGB888_PACKED_32>>;
     sampling::flat_color<> red{{255, 0, 0, 255}};
-    Canvas24 canvas(W, H);
+    Canvas24 canvas(640, 480);
     // microgl drawing setup END
 
     const auto render_cubic_1 = [&](container<vertex2<number>> curve) {
@@ -87,9 +84,13 @@ int main() {
         // the type of the curve
         auto curve_type = microtess::CurveType::Cubic;
         // define algorithm
-        using curve_divider = microtess::curve_divider<number, decltype(output_vertices)>;
+        using curve_divider = microtess::curve_divider<
+                                    number, 
+                                    decltype(output_vertices)>;
         // compute
-        curve_divider::compute(curve.data(), output_vertices, algo_type, curve_type);
+        curve_divider::compute(curve.data(), 
+                               output_vertices, 
+                               algo_type, curve_type);
         // Algorithm END
 
         canvas.clear({255,255,255,255});
@@ -99,7 +100,7 @@ int main() {
                 false);
 
         for (auto & p : output_vertices)
-            canvas.drawCircle<blendmode::Normal, porterduff::FastSourceOverOnOpaque, true>(
+            canvas.drawCircle<>(
                     red, red, p.x, p.y, number{5}, number{0});
     };
 
