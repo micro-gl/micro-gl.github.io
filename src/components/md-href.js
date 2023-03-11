@@ -1,14 +1,12 @@
-import { Link as NextLink } from 'next/link'
-import { Link } from '@chakra-ui/react'
+import Link from 'next/link'
+// import { Link } from '@chakra-ui/react'
 
-export default function CustomLink({ as, href, children, ...otherProps }) {
-  const props = {as, href, children, ...otherProps}
-  // console.log(props)
+export default function CustomLink({ href, children, ...rest }) {
+  console.log('children ', href)
   return (
-    <>
-      <Link {...otherProps} as={NextLink} href={href} color="purple.500" >
-        {children}
-      </Link>
-    </>
+    <Link passHref href={href} 
+          className='text-kf-500'
+          children={children} 
+          {...rest} />
   )
 }

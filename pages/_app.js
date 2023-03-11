@@ -1,14 +1,15 @@
-import { ChakraProvider, ColorModeProvider } from '@chakra-ui/react'
+// import { ChakraProvider, ColorModeProvider } from '@chakra-ui/react'
 
-import theme from '../src/theme'
-import Fonts from '../src/components/font-face'
+// import theme from '../src/theme'
+// import Fonts from '../src/components/font-face'
+import  '../src/theme/index.scss'
 
 function MyApp({ Component, pageProps }) {
   return (
-    <ChakraProvider resetCSS theme={theme}>
-      <Fonts />
+    // <ChakraProvider resetCSS theme={theme}>
+      // <Fonts />
         <Component {...pageProps} />
-    </ChakraProvider>
+    // </ChakraProvider>
   )
 }
 
