@@ -27,7 +27,7 @@ const CodeBlock = ({ children }) => {
       className=''
 		>
 			{({ className, style, tokens, getLineProps, getTokenProps }) => (
-				<pre className={`rounded-lg font-code ${className}`} style={{ ...style, padding: '20px' }}>
+				<pre className={`rounded-lg font-code overflow-auto ${className}`} style={{ ...style, padding: '20px' }}>
 					{tokens.map((line, i) => (
 						<div key={i} {...getLineProps({ line, key: i })}>
 							{line.map((token, key) => (

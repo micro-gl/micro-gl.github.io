@@ -1,11 +1,8 @@
-// import { chakra, useBreakpointValue, useColorModeValue, Box } from '@chakra-ui/react'
 import dynamic from 'next/dynamic'
 import Head from 'next/head'
 import CustomLink from './md-href'
 import CodeBlock from './code-block'
 import BlockQuote from './block-quote'
-import Pre from './pre'
-import InlineCode from './inline-code'
 
 const components = {
   h1: (props) => <h1 {...props} />,
@@ -28,7 +25,7 @@ const components = {
   //   />
   // ),
   pre: props => <CodeBlock {...props} />,
-  code: props => <code className='inline bg-white text-pink-600' {...props} />,
+  code: props => <code className='inline --bg-white text-pink-600' {...props} />,
   blockquote: props => <BlockQuote {...props} />,
   a: CustomLink,
   // TestComponent: dynamic(() => import('./TestComponent')),

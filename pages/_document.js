@@ -7,9 +7,7 @@ export default class Document extends NextDocument {
     return (
       <Html lang="en">
         <Head />
-        <body sstyle={{overflow:"hidden"}}>
-          {/* Make Color mode to persists when you refresh the page. */}
-          {/* <ColorModeScript initialColorMode={theme.config.initialColorMode} /> */}
+        <body>
           <Main />
           <NextScript />
         </body>

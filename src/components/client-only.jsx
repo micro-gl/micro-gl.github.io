@@ -9,9 +9,9 @@ export default function ClientOnly({ children, ...rest }) {
     return null;
   }
   return (
-    <div {...rest}>
+    <>
       {children}
-    </div>
+    </>
   )
 }
 

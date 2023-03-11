@@ -1,6 +1,6 @@
 // import matter from 'gray-matter'
-// import SideBar from './side-bar'
-// import Header from './header'
+import SideBar from './side-bar'
+import Header from './header'
 // import Copyright from './copyright'
 // import { Flex, Box, chakra, Center } from '@chakra-ui/react'
 // import { useBreakpointValue, useStyles, useColorModeValue } from '@chakra-ui/react'
@@ -29,11 +29,22 @@ export default function Layout( props ) {
   // useEffect(() => {console.log(menu)})
   // console.log(menu)
   return (
-    <div className='w-full h-full overflow-y-scroll '>
-      <div className='w-full h-fit --bg-red-200 mdx '>
-            { content }
+    <div className='w-full h-screen flex flex-col font-open_sans'>
+      <Header className='shadow-sm --bg-gray-400 flex-shrink-0 w-full h-[70px] ' 
+              slug={slug} prefix={header_prefix}
+              onMenuClick={toggleMenu} 
+              github_link={github_link} />
 
-      </div>
+      <main className='flex flex-row justify-center w-full overflow-auto flex-1 '>
+        <SideBar className='w-52 h-full overflow-auto pt-1 flex-shrink-0'
+                  groupFontSize="1.2rem" itemFontSize="0.9rem"
+                  selectedSlug={slug}
+                  groups={groups} name={name} />
+        <div className='overflow-auto w-full max-w-[800px] h-full --bg-green-400'>
+          <div className='w-full px-2 md:px-5 max-h-full mdx --bg-green-400'
+                children={content} />
+        </div>
+      </main>
       
     </div>
   )
