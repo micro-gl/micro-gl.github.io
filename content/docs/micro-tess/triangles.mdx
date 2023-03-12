@@ -18,7 +18,7 @@ batch of triangles we need more than that:
 
 ### Indices types
 There are three major strategies to interpret the list of indices defined by  
-**microtess::triangles::indices** enum at the file **<microtess/triangles.h>**  
+**microtess::triangles::indices** enum at the file **`<microtess/triangles.h>`**  
 
 <img src="/images/tess/triangles.gif" style={{height:"250px", margin: "auto"}} />
 
@@ -71,7 +71,7 @@ Suppose list of indices is **`[0,1,2,3,4,5,6,7,8,9,10,11,12]`**, then there are 
 ## Triangles Iteration
 One can easily iterate triangles encoded in an indices list using the **`microtess::triangles::iterate_triangles`** method.
 
-```c
+```lang=cpp
 /**
   * Iterate triangles encoded in a list of indices
   * @tparam iterator_callback a callback struct or lambda
@@ -89,7 +89,7 @@ void iterate_triangles(const index *indices,
 ```
 
 #### Example
-```c
+```lang=cpp
 using index = unsigned int;
 index indices[6] {0, 1, 2, 3, 4, 5};
 

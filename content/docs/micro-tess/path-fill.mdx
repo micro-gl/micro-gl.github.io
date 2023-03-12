@@ -45,7 +45,7 @@ one of your polygons is huge. This argument is a fail safe way to exit an infini
 - Add **`#define MICROTESS_PLANAR_DEBUG_MESSAGES`** before all other includes. This should give messages and throw
 exceptions when the algorithm 'feels' things are wrong, so this can give you info.
 - Try increasing the precision of the `number` type of the vertices:
-    - If using **`Q`**, try increasing precision bits. **Q<8> -> Q<15>**
+    - If using **`Q`**, try increasing precision bits. **`Q<8> -> Q<15>`**
     - If using **`float`**, then try **`double`** etc..
 
 ## Example
@@ -67,7 +67,7 @@ Tessellation computation is only few lines of code.
 I use the **`microgl`** project to render the tessellation.  
 
 Tessellation is happening at line `#71`
-```c++-lines_numbers
+```lang=cpp&lines=71
 #define MICROGL_USE_STD_MATH
 #define MICROGL_USE_EXTERNAL_MICRO_TESS
 

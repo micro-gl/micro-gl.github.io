@@ -10,7 +10,7 @@
 Canvas can be found at **`<microgl/canvas.h>`** and using it is a template, that can be instantieated 
 with the following signature:
 
-```cpp
+```lang=cpp
 /**
  * @tparam bitmap_type  the bitmap type
  * @tparam options      the options bitset
@@ -119,7 +119,7 @@ public:
 # Usage
 Canvas can be simply used with the following c++ code
 
-```cpp
+```lang=cpp
 #include <microgl/canvas.h>
 #include <microgl/pixel_coders/RGB888_PACKED_32.h>
 
@@ -136,7 +136,7 @@ Canvas implements a clipping feature where you can specify a rectangle, that wil
 pixel inside it and NOT draw outside of it, by default, the clip rectangle is the dimensions
 of the canvas window, which by default is the size of the underlying bitmap.
 
-```cpp
+```lang=cpp
 public:
     /**
      * update the clipping rectangle of the canvas
@@ -160,7 +160,7 @@ another position. This can be leveraged to do the following:
 - This is more memory friendly in memory constrained environments.
 - Use it when the underlying bitmap is smaller than the clip rect
 
-```cpp
+```lang=cpp
 public:
     /**
      * @param left relative to x=0
@@ -214,7 +214,7 @@ CANVAS_OPT_2d_raster_USE_BIG_INT | CANVAS_OPT_2d_raster_AVOID_RENDER_WITH_OVERFL
 
 ### Usage
 
-```cpp
+```lang=cpp
 #include <microgl/canvas.h>
 #include <microgl/pixel_coders/RGB888_PACKED_32.h>
 
@@ -228,13 +228,13 @@ Canvas24 canvas_1(640, 480);
 # Rendering Options
 At any moment you can fine tune the precision (count of bits), that is spent on
 the 2d and 3d rasterizer via aquiring the rendering options
-```cpp
+```lang=cpp
 public:
   render_options_t & renderingOptions();
 ```
 Which return the `render_options_t` struct
 
-```cpp
+```lang=cpp
 struct render_options_t {
     uint8_t _2d_raster_bits_sub_pixel= options_big_integers() ? 8 : 4;
     uint8_t _2d_raster_bits_uv= options_big_integers() ? 15 : 10;

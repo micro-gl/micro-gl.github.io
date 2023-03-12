@@ -1,15 +1,22 @@
 import components from '../../../src/components/mdx-components'
 import Layout from '../../../src/components/layout'
-import hydrate from 'next-mdx-remote/hydrate'
-import { _getStaticProps, _getStaticPaths } from '../../../src/utils/next_props'
+import { MDXRemote } from 'next-mdx-remote'
+import { _getStaticProps, 
+  _getStaticPaths } from '../../../src/utils/next_props'
+import ClientOnly from '../../../src/components/client-only'
 
 export default function PostPage( props ) {
   const { data } = props
-  const data_ = { ...data, content : hydrate(data.content, { components })}
+  const data_ = { 
+    ...data, 
+    content : <MDXRemote {...data.content} components={components} /> 
+  }
+
   return (
-    <Layout data={data_} header_prefix="[micro{gl}]" 
-            widthSide="180px" widthContent="800px"
-            github_link='https://github.com/micro-gl/micro-gl'/>
+    <ClientOnly>
+      <Layout data={data_} header_prefix="[micro{gl}]" 
+              github_link='https://github.com/micro-gl/micro-gl'/>
+    </ClientOnly>
   )
 }
 

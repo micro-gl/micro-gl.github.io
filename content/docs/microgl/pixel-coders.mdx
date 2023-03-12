@@ -13,7 +13,7 @@ at it's simplest form, you have to implement the following interface. the struct
 here is a basic pixel coder, that encodes **RGB** 8-bit color channels into a packed
 32 bit integer. This is the minimal interface you have to implement to have a pixel coder.
 
-```cpp
+```lang=cpp
 #include <microgl/rgba.h>
 
 struct RGB888_PACKED_32 {
@@ -40,7 +40,7 @@ struct RGB888_PACKED_32 {
 this template is a generic and simple way to define a pixel coder, that can be packed
 inside the smallest fitting integer type. you can also define the ordering of the channels.
 at it's simplest, the signature of the template is:
-```cpp
+```lang=cpp
 // defined at <microgl/pixel_coders/RGBA_PACKED.h>
 template<u8 r, u8 g, u8 b, u8 a=0, u8 ri=0, u8 gi=1, u8 bi=2, u8 ai=3>
 struct RGBA_PACKED { 
@@ -56,7 +56,7 @@ the `r/g/b/a` template arguments are used to define the bit depth of the color c
 while the `ri/gi/bi/ai` template arguments are used to define the ordering of the channels
 so you can be flexible about the layout. here is an example, you can use:
 
-```cpp
+```lang=cpp
 #include <microgl/pixel_coders/RGBA_PACKED.h>
 
 using RGB_565 = RGBA_PACKED<5, 6, 5, 0>;
@@ -65,7 +65,7 @@ using RGB_565 = RGBA_PACKED<5, 6, 5, 0>;
 ## 3. Instantiate the `RGBA_UNPACKED` template
 the `RGBA_UNPACKED` struct defines a trivial pixel coder, that encodes the color into an array,
 the array size is inferred at compile-time according to non-zero channels. it's signature
-```cpp
+```lang=cpp
 // defined at <microgl/pixel_coders/RGBA_PACKED.h>
 template<uint8_t r, uint8_t g, uint8_t b, uint8_t a, bool delete_zero_channel=true>
 struct RGBA_UNPACKED {
@@ -78,7 +78,7 @@ struct RGBA_UNPACKED {
 ```
 
 you can use this coder simply with
-```cpp
+```lang=cpp
 #include <microgl/pixel_coders/RGBA_UNPACKED.h>
 
 using RGB_888 = RGBA_UNPACKED<8, 8, 8, 0>;
@@ -107,7 +107,7 @@ inheritance via `crpt` design pattern, but it will cause your class to be less c
 because of template issues.
 
 ## 5. use prebuilt pixel coders
-> out of the box, **<microgl/pixel_coders>** is packed with the following pixel coders for your conveniance
+> out of the box, **{'<microgl/pixel_coders>'}** is packed with the following pixel coders for your conveniance
 
 ## True color coders (32 bit coders)
 for pixels stored in a *4 bytes* data structure
@@ -156,7 +156,7 @@ this coders can transform a coder to another rgba depth
 ## `microgl::coder` namespace
 
 ### encode intensity into a pixel with a pixel coder
-```cpp
+```lang=cpp
 /**
 * encode intensity into a pixel with a pixel coder
 *
@@ -173,7 +173,7 @@ encode(const intensity<number> &input, typename Coder::pixel &output, const Code
 ```
 
 ### decode pixel into intensity using a coder
-```cpp
+```lang=cpp
 /**
 * decode pixel into intensity using a coder
 *
@@ -191,7 +191,7 @@ void decode(const typename Coder::pixel &input, intensity<number> &output, const
 ### `pixel_coder` class
 a base pixel coder that can boost your pixel coder with extra utilities.
 inheritance is via crpt design pattern.
-```cpp
+```lang=cpp
 /**
 *
 * @tparam pixel_ the pixel storage type
