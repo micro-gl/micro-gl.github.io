@@ -3,7 +3,6 @@ import fs from 'fs'
 import matter from 'gray-matter'
 // import renderToString from 'next-mdx-remote/render-to-string'
 import { serialize } from 'next-mdx-remote/serialize'
-import { MDXRemote } from 'next-mdx-remote'
 import components from '../components/mdx-components'
 import yaml from 'js-yaml'
 

@@ -18,12 +18,6 @@ const components = {
   ul: (props) => <ul  {...props} />,
   ol: (props) => <ol  {...props} />,
   li: (props) => <li className='pb-4' {...props} />,
-  // pre: props => <pre {...props} />,
-  // inlineCode: (props) => (
-  //   <InlineCode  {...props} 
-  //               /*color={useColorModeValue("pink.600", "pink.500")} */ 
-  //   />
-  // ),
   pre: props => <CodeBlock {...props} />,
   code: props => <code className='inline --bg-white text-pink-600' {...props} />,
   blockquote: props => <BlockQuote {...props} />,

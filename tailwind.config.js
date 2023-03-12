@@ -4,6 +4,7 @@ const resolveConfig = require("tailwindcss/resolveConfig")
 const screens = require('./screens.js')
 
 const config = {
+	darkMode: 'class',
 	content: [
 		"./pages/**/*.{js,ts,jsx,tsx}",
 		"./src/**/*.{js,ts,jsx,tsx}",

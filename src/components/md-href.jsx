@@ -1,11 +1,10 @@
 import Link from 'next/link'
-// import { Link } from '@chakra-ui/react'
 
 export default function CustomLink({ href, children, ...rest }) {
   console.log('children ', href)
   return (
     <Link passHref href={href} 
-          className='text-kf-500'
+          className='text-teal-600 underline'
           children={children} 
           {...rest} />
   )
