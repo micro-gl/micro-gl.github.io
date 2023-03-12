@@ -1,0 +1,1 @@
+(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[81],{4015:function(n,u,t){(window.__NEXT_P=window.__NEXT_P||[]).push(["/index2",function(){return t(5145)}])},5145:function(n,u,t){"use strict";function e(n){let{name:u,groups:t}=n;return"index2"}t.r(u),t.d(u,{default:function(){return e}})}},function(n){n.O(0,[774,888,179],function(){return n(n.s=4015)}),_N_E=n.O()}]);
