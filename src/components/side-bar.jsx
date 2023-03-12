@@ -40,7 +40,7 @@ const SideBar =
 
   return (
     <nav {...rest} className={className} >
-      <div className='flex flex-col w-full h-full gap-6'>
+      <div className='flex flex-col w-full gap-6 h-fit pb-10'>
         { 
           groups.map(
             (group, index) => 

@@ -79,7 +79,7 @@ const CodeBlock = ({ children }) => {
 		>
 			{
         ({ className, style, tokens, getLineProps, getTokenProps }) => (
-          <pre className={`rounded-lg font-code overflow-auto ${className}`} 
+          <pre className={`rounded-lg font-code overflow-auto text-sm ${className}`} 
               style={{ ...style, padding: '20px' }}>
             {
               tokens.map(

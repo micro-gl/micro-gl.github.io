@@ -57,7 +57,7 @@ const Layout =
       </main>
       { 
         <SideBar className={`absolute left-0 top-[70px] block md:hidden w-full 
-                             h-full overflow-auto 
+                             h-[calc(100vh-70px)] overflow-y-auto 
                              bg-white dark:bg-gray-900
                              pt-1 px-3 transition-transform duration-300
                              ${menu ? 'translate-x-0' : 'translate-x-full'}`}
