@@ -3,13 +3,11 @@ import { AiFillGithub,
 import { HiOutlineLightBulb } from 'react-icons/hi'
 import useDarkMode from '../hooks/useDarkMode'
 
-const Header = ({className, slug, prefix, widthAll, widthSide, plSide, 
-  github_link, onMenuClick, ...rest}) => {
-  // const { colorMode, toggleColorMode } = useColorMode()
+const Header = 
+  ({ className, slug, prefix, github_link, onMenuClick, ...rest}) => {
+
   const { darkMode, toggle } = useDarkMode()
 
-  // const medium_screen = useBreakpointValue({ base: true, md: false})
-  // const small_screen = useBreakpointValue({ base: true, sm: false})
   return (
 
     <header className={`flex flex-row justify-between items-center 
@@ -33,9 +31,12 @@ const Header = ({className, slug, prefix, widthAll, widthSide, plSide,
           <AiFillGithub className='text-black dark:text-white' />
         </a>
 
-        <AiOutlineMenu className='inline md:hidden cursor-pointer 
-                                text-black dark:text-white'
-                        onClick={onMenuClick} />
+        {
+          onMenuClick &&
+          <AiOutlineMenu className='inline md:hidden cursor-pointer 
+                                  text-black dark:text-white'
+                          onClick={onMenuClick} />
+        }
       </div>
 
     </header>
