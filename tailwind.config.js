@@ -86,7 +86,6 @@ const config = {
 	variants: {},
 	plugins: [
 		require( 'tailwindcss' ),
-		require( 'precss' ),
 		require( 'autoprefixer' ),
 	]
 }
