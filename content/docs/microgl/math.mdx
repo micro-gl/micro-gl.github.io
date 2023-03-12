@@ -7,7 +7,7 @@ any number type, which makes it for example easy to implement graphics without *
 
 ## Math functions
 We require to implement the following math functions overloads per a number type
-```c++
+```lang=cpp
 using number = ... // your type
 
 namesapce microgl {
@@ -54,7 +54,7 @@ For simplicity, suppose you want to override **float** point math.
 
 **First**, create an implementation of the math functions, example:
 
-```cpp
+```lang=cpp
 // hw_float_math.h
 namespace microgl {
     namespace math {
@@ -84,7 +84,7 @@ namespace microgl {
 (this will make `microgl` not to include it's own float point math files) and include your math declarations
  **BEFORE** the `microgl` header files in your source files, Example:
 
- ```cpp
+ ```lang=cpp
 #include "hw_float_math.h"
 // define this, so we will not clash with microgl default implementations
 #define MICROGL_AVOID_BUILTIN_MATH
@@ -100,7 +100,7 @@ namespace microgl {
  then it becomes a new type, therefore you will have to implement you own math functions as well. Essentially,
  for any new type you create, you have to provide math functions overloads like so:
 
- ```cpp
+ ```lang=cpp
 #include "my_number_math.h"
 #include <microgl/canvas.h>
 

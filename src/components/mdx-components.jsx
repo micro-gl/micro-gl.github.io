@@ -11,7 +11,7 @@ const components = {
   h4: (props) => <h4  {...props} />,
   hr: (props) => <hr {...props} />,
   strong: (props) => <strong fontWeight="semibold" {...props} />,
-  br: (props) => <div {...props} />,
+  br: (props) => <span {...props} />,
   p: props => <p {...props} />,
   a: (props) => <a  {...props} />,
   p: (props) => <p  {...props} />,

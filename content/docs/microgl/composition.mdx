@@ -8,7 +8,7 @@ Color blending is essentially a function that given two colors, a **backdrop** c
 will create a new color. The function can be anything you can think of.
 The basic struct interface for a blend mode is
 
-```cpp
+```lang=cpp
 struct Multiply_Blendmode {
 
     template<uint8_t R, uint8_t G, uint8_t B>
@@ -51,7 +51,7 @@ Out of the box, microgl is packed with the following *blend modes* implemented a
 Alpha compositing is the usage of alpha channel to implement compositing.
 The basic struct interface to implement is 
 
-```cpp
+```lang=cpp
 struct my_compositor {
 
     /**

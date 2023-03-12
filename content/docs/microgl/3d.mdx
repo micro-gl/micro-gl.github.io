@@ -28,7 +28,7 @@ outputs a pixel color.
 
 Here is an example of the interface needed for a shader
 
-```cpp
+```lang=cpp
 template<typename number_, typename rgba_>
 struct color_shader {
     // the main number type
@@ -122,7 +122,7 @@ transform, which will convert NDC space into `raster` space.
 
 ### Supported Camera View transformations
 Out of the box, `microgl` supports, the following:
-```cpp
+```lang=cpp
 class camera {
 public:
     /**
@@ -164,7 +164,7 @@ public:
 
 ### Supported Projection Matrices
 Out of the box, `microgl` supports, the following:
-```cpp
+```lang=cpp
 class camera {
 public:
     /**

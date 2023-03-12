@@ -17,7 +17,7 @@ tessalated geometry so they are very efficient for common usage.
 <img src="/images/canvas_rounded_2.png" style={{height:"250px", display:"inline-block"}} />
 </div>
 
-```cpp
+```lang=cpp
 #include <microgl/canvas.h>
 #include <microgl/pixel_coders/RGB888_PACKED_32.h>
 #include <microgl/samplers/fast_radial_gradient.h>
@@ -53,7 +53,7 @@ canvas.drawRoundedRect<blendmode::Normal, porterduff::FastSourceOverOnOpaque, tr
 
 <img src="/images/canvas_circle.png" style={{height:"250px", display:"inline-block"}} />
 
-```cpp
+```lang=cpp
 #include <microgl/canvas.h>
 #include <microgl/pixel_coders/RGB888_PACKED_32.h>
 #include <microgl/samplers/fast_radial_gradient.h>
@@ -87,7 +87,7 @@ canvas.drawCircle<blendmode::Normal, porterduff::FastSourceOverOnOpaque, true, n
 
 <img src="/images/canvas_arc.png" style={{height:"250px", display:"inline-block"}} />
 
-```cpp
+```lang=cpp
 using namespace microgl::sampling;
 
 using Canvas24= canvas<bitmap<coder::RGB888_PACKED_32>>;
@@ -113,7 +113,7 @@ canvas.drawArc<blendmode::Normal, porterduff::FastSourceOverOnOpaque, true, numb
 
 <img src="/images/canvas_pie.png" style={{height:"250px", display:"inline-block"}} />
 
-```cpp
+```lang=cpp
 using namespace microgl::sampling;
 
 using Canvas24= canvas<bitmap<coder::RGB888_PACKED_32>>;
@@ -136,7 +136,7 @@ canvas.drawPie<blendmode::Normal, porterduff::FastSourceOverOnOpaque, true, numb
 
 # Signature API
 
-```cpp
+```lang=cpp
 /**
  * @tparam bitmap_type  the bitmap type
  * @tparam options      the options bitset

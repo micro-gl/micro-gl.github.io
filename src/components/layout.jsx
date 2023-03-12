@@ -4,6 +4,8 @@ import Header from './header'
 import Copyright from './copyright'
 import useToggle from '../hooks/useToggle'
 import useDarkMode from '../hooks/useDarkMode'
+import { useEffect } from 'react'
+import { useRef } from 'react'
 
 const Layout = 
   ({ className, data, header_prefix, github_link }) => {
@@ -13,6 +15,17 @@ const Layout =
   const { title, description } = frontMatter
   const [menu, toggleMenu] = useToggle(false)
   const { darkMode } = useDarkMode()
+
+  const main_ref = useRef()
+  useEffect(
+    () => {
+      main_ref.current.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'smooth'
+      })
+    }, [slug]
+  )
 
   return (
   <div className={`${className} ${darkMode ? 'dark' : ''}`}>
@@ -29,14 +42,15 @@ const Layout =
       <main className='flex flex-row justify-center w-full overflow-auto flex-1 '>
         <SideBar className='hidden md:block w-52 h-full overflow-y-auto 
                             pt-1 flex-shrink-0 px-3'
-                  groupFontSize="1.2rem" itemFontSize="0.9rem"
                   selectedSlug={slug}
                   groups={groups} name={name} />
 
-        <div className='overflow-auto w-full max-w-[800px] h-full --bg-green-400'>
+        <div className='overflow-auto w-full max-w-[800px] h-full --bg-green-400'
+            ref={main_ref}>
           <div className='w-full block px-2 md:px-5 h-fit pb-20 mdx --bg-green-400
                           bg-transparent dark:bg-gray-900
                           text-gray-900 dark:text-gray-200'
+               
                children={content} />
           <Copyright />               
         </div>

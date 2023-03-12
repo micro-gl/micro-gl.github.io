@@ -35,7 +35,7 @@ The algorithm outputs a **`buffers`** struct which holds containers for **`verti
 ### Debugging
 If you are seeing bugs with the tessellation, try the following
 - Try increasing the precision of the `number` type of the vertices:
-    - If using **`Q`**, try increasing precision bits. **Q<8> -> Q<15>**
+    - If using **`Q`**, try increasing precision bits. **`Q<8> -> Q<15>`**
     - If using **`float`**, then try **`double`** etc..
 
 ## Example
@@ -58,7 +58,7 @@ Tessellation computation is only few lines of code.
 I use the **`microgl`** project to render the tessellation.  
 
 Tessellation is happening at line `#60`
-```c++-lines_numbers
+```lang=cpp&lines=60
 //#define MICROGL_USE_STD_MATH
 #define MICROGL_USE_EXTERNAL_MICRO_TESS
 #include "src/example.h"

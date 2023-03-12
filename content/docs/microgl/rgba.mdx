@@ -6,7 +6,7 @@ Currently, microgl works with the following objects to define color
 - Defined at `<microgl/color.h>`, at the `microgl` namespace
 
 The `rgba_t` template is roughly defined as 
-```cpp
+```lang=cpp
 template<uint8_t R, uint8_t G, uint8_t B, uint8_t A>
 struct rgba_t {
     static constexpr uint8_t r = R;
@@ -21,7 +21,7 @@ This structure holds info about the bit depth and is used by [pixel encoder](pix
 and perform correct and fast math operations.
 
 Usage is as simple as
-```cpp
+```lang=cpp
 #include <microgl/color.h>
 
 using RGB_5650 = microgl::rgba_t<5,6,5,0>;
@@ -37,7 +37,7 @@ auto b_bits = RGB_5650::b;
 **Color** is a simple struct that holds 4 channels of size 1 byte each.
 the color object does not hold the bit depth of the colors. It assumes,
 that it is known by the user.
-```cpp
+```lang=cpp
 struct color_t {
     color_t(channel_t $r=0, channel_t $g=0, channel_t $b=0, channel_t $a=255)
     color_t(const color_t &val)
@@ -68,7 +68,7 @@ the type of the channels to contain more bytes if needed.
 ## Intensity
 
 microgl also defines intensity template defined at `<microgl/color.h>`
-```cpp
+```lang=cpp
 
 intensity<float> in{0.3f, 0.2f, 1.0f}
 intensity<Q<15>> in{ Q<15>(1)/3, Q<15>(1)/5, Q<15>(1)}
@@ -81,7 +81,7 @@ in the pipeline.
 Here are some highlights
 
 ### convert_color
-```cpp
+```lang=cpp
 /**
 * convert a color of one depth space into another 
 * 
@@ -96,7 +96,7 @@ void convert_color(const color_t &input, color_t &output)
 
 ### convert_intensity_to_color
 
-```cpp
+```lang=cpp
 /**
 * convert an intensity to color, example :
 *
@@ -113,7 +113,7 @@ void convert_intensity_to_color(const intensity<number> &input, color_t &output)
 
 ### convert_color_to_intensity
 
-```cpp
+```lang=cpp
 /**
 * convert a color into intensity object
 *

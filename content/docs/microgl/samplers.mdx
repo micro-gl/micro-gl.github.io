@@ -16,7 +16,7 @@ Samplers can be though of as 2d shaders
 ## Sampler interface
 samplers are implemented as classes with the following interface. 
 
-```cpp
+```lang=cpp
 struct half_sampler_t {
     // rgba info
     using rgba = rgba_t<8, 8, 8, 0>;
@@ -36,7 +36,7 @@ struct half_sampler_t {
 ```
 
 at it's basic form, a sampler should publish it's rgba quantitized info and a sample method,
-```cpp
+```lang=cpp
 void sample(const int u, const int v, const unsigned bits, color_t &output)
 ```
 where `u` and `v` are `uv` coordinates handed as fixed point integers with `bits` precision, this means that:
@@ -45,7 +45,7 @@ where `u` and `v` are `uv` coordinates handed as fixed point integers with `bits
 - `float vf = float(v)/float(1u<<bits)`
 
 if you want to sample from a different number system such as float, double, q, you can use
-```cpp
+```lang=cpp
 #include <microgl/sampler.h>
 
 half_sampler_t half_sampler;
@@ -66,7 +66,7 @@ microgl is packed with the following samplers
 - example at `/examples/example_sampler_texture_wrap.cpp`
 
 This sampler holds a [bitmap](bitmap) and samples from it
-```cpp
+```lang=cpp
 template <typename Bitmap,
           texture_filter filter=texture_filter::NearestNeighboor,
           bool tint=false,
@@ -113,7 +113,7 @@ where:
 - example at `/examples/example_sampler_flat_color.cpp`
 
 this is a very trivial sampler that samples a single color, it's declaration is
-```cpp
+```lang=cpp
 template<typename rgba_=rgba_t<8,8,8,0>>
 struct flat_color {
     // rgba info
@@ -137,7 +137,7 @@ struct flat_color {
 the line gradient defines color stops on a line on which it samples. The line definition
 is relative to unit rectangle. 
 
-```cpp
+```lang=cpp
 template <typename number, // the number type
           unsigned N=10, // the number of stops
           typename rgba_=rgba_t<8,8,8,0>, // the rgba info
@@ -168,7 +168,7 @@ struct line_linear_gradient {
 This gradient is inferred by a given angle to create a line at the unit rectangle. the user can then 
 define the color stops.
 
-```cpp
+```lang=cpp
 template <typename number, // the number type
           unsigned N=10, // the number of stops
           typename rgba_=rgba_t<8,8,8,0>, // the rgba info
@@ -197,7 +197,7 @@ struct angular_linear_gradient : public line_linear_gradient<....> {
 This gradient is a faster variant if you need any number of stops but with angle, 
 that is a modulu of 45 (0, 45, 90, 135, 180, 225, 270, 315, 360)
 
-```cpp
+```lang=cpp
 template <unsigned degree=0, // the degree
           unsigned N=10, // the number of stops
           typename rgba_=rgba_t<8,8,8,0>, // the rgba info
@@ -220,7 +220,7 @@ struct axial_linear_gradient {
 This gradient is a very fast variant if you need only 2 colors stops but with angle, 
 that is a modulu of 45 (0, 45, 90, 135, 180, 225, 270, 315, 360)
 
-```cpp
+```lang=cpp
 template <unsigned degree=0, // the degree
           typename rgba_=rgba_t<8,8,8,0>, // the rgba info
           bool useBigIntegers=false> // big integers are required for high precision
@@ -243,7 +243,7 @@ struct linear_gradient_2_colors {
 This gradient is a fast radial gradient.
 
 
-```cpp
+```lang=cpp
 template <typename number, 
           unsigned N=10, 
           typename rgba_=rgba_t<8,8,8,0>,
@@ -270,7 +270,7 @@ struct fast_radial_gradient {
 This sampler can mask a sampler with a different sampler, this is very useful if you want to 
 draw a masked image on the canvas.
 
-```cpp
+```lang=cpp
 /**
 * a sampler that masks a sampler with another sampler
 *
@@ -311,7 +311,7 @@ This sampler can draw a checker board pattern with
 - Configurable two colors
 - Configurable horizontal and vertical splits
 
-```cpp
+```lang=cpp
 /**
   * checker board pattern sampler
   *
@@ -346,7 +346,7 @@ sample uv coords from sampler with a different number system.
 This is handy because samplers work in quantized space to be more
 efficient and sometimes it is not convenient. This method will convert
 the uv coords into fixed points and then sample from the sampler.
-```cpp
+```lang=cpp
 /**
 * @tparam Sampler the sampler type
 * @tparam number the number type
@@ -370,7 +370,7 @@ This is a nice container, that can wrap samplers and also invoke their sampling
 behaviour via `crpt` compile-time polymorphism. I prefer not to use it because it
 makes the definition a bit combersome and long with `c++` templates quirks 
 
-```cpp
+```lang=cpp
 /**
 * @tparam rgba_ the rgba_t info type
 * @tparam impl the type of the derived class

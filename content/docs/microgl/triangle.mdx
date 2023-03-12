@@ -9,7 +9,7 @@ triangles with [samplers](/docs/concepts/samplers), [3d-shaders](/docs/drawing/3
 
 # Usage Example
 
-```cpp
+```lang=cpp
 #include <microgl/canvas.h>
 #include <microgl/pixel_coders/RGB888_PACKED_32.h>
 #include <microgl/pixel_coders/RGB888_ARRAY.h>
@@ -36,7 +36,7 @@ canvas.drawTriangle<blendmode::Normal, porterduff::None<>, false, number, number
 
 # Signature API
 
-```cpp
+```lang=cpp
 /**
  * @tparam bitmap_type  the bitmap type
  * @tparam options      the options bitset
