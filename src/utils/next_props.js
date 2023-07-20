@@ -52,6 +52,7 @@ export const _getStaticProps = async (path_of_content_folder, { params }) => {
   return {
     props: {
       data : {
+        logo: docs.logo,
         slug : route,
         content: mdxSource,
         frontMatter: data,

@@ -10,7 +10,7 @@ import { useRef } from 'react'
 const Layout = 
   ({ className, data, header_prefix, github_link }) => {
 
-  let { slug, content, document, frontMatter } = data
+  let { slug, content, document, frontMatter, logo } = data
   let { name, groups } = document
   const { title, description } = frontMatter
   const [menu, toggleMenu] = useToggle(false)
@@ -34,7 +34,8 @@ const Layout =
                      transition-colors
                      bg-transparent dark:bg-gray-900`}>
       <Header className='shadow-sm  --bg-gray-400 flex-shrink-0 
-                         w-full h-[70px] ' 
+                         w-full h-[70px] '
+              logo={logo} 
               slug={slug} prefix={header_prefix}
               onMenuClick={toggleMenu} 
               github_link={github_link} />

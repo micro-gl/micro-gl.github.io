@@ -8,7 +8,7 @@ const SideGroup =
   return (
     <div {...rest}>
       <div 
-        className='text-2xl font-old2 opacity-95 font-normal 
+        className='text-xl font-old2 opacity-95 font-normal 
                  text-kf-500 dark:text-pink-500 w-full '
         children={title} />
       <div className='flex flex-col w-full gap-0 mt-3'>

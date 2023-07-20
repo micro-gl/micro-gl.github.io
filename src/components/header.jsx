@@ -4,7 +4,7 @@ import { HiOutlineLightBulb } from 'react-icons/hi'
 import useDarkMode from '../hooks/useDarkMode'
 
 const Header = 
-  ({ className, slug, prefix, github_link, onMenuClick, ...rest}) => {
+  ({ className, logo, slug, prefix, github_link, onMenuClick, ...rest}) => {
 
   const { darkMode, toggle } = useDarkMode()
 
@@ -13,8 +13,12 @@ const Header =
     <header className={`flex flex-row justify-between items-center 
                         w-full max-w-[1100px] mx-auto px-3 ${className}`}>
 
+
       <div className='h-fit w-fit flex flex-row items-center 
                       font-old text-base font-bold'>
+        <div className='h-20 p-3 opa'>
+          <img src={logo} className='h-full object-contain rounded-md border dark:border-pink-400/50'/>   
+        </div>                        
         <span children={prefix} className='text-black dark:text-white' />
         <span children={`::${slug}`} 
               className='hidden md:inline text-kf-500 whitespace-nowrap' />
