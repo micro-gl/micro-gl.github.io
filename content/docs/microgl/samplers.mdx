@@ -3,7 +3,7 @@
 **Samplers** are a first class citizen in `microgl`. think of them as an object,
 that can be sampled in the normalized unit square.
 
-<img src="/images/unit_square.png" style={{marginTop: '2rem'}}/>
+<Image src='/images/unit_square.png' className='w-[250px] h-[250px] my-10 mx-auto' imgClass=''  />
 
 Samplers can be anything, that can be sampled such as
 - a fixed color
@@ -106,7 +106,7 @@ where:
 
 > a texture will automatically use the **rgba** info of the bitmap it samples from 
 
-<img src="/images/sampler_texture.png" style={{height:"550px", margin: "auto"}} />
+<Image src='/images/sampler_texture.png' className='w-[250px] h-[250px] my-10 mx-auto' imgClass=''  />
 
 ### 2. Flat Color Sampler
 - defined at `<microgl/samplers/flat_color.h>`
@@ -128,7 +128,7 @@ struct flat_color {
 }
 ```
 
-<img src="/images/sampler_flat.png" style={{height:"250px", margin: "auto"}} />
+<Image src='/images/sampler_flat.png' className='w-[250px] h-[250px] my-10 mx-auto' imgClass=''  />
 
 ### 2. Line Gradient Sampler
 - defined at `<microgl/samplers/line_linear_gradient.h>`
@@ -159,7 +159,7 @@ struct line_linear_gradient {
 
 > the `number` template argument can be any type that implements a [number system](numbers)
 
-<img src="/images/sampler_line_linear_gradient.png" style={{height:"250px", margin: "auto"}} />
+<Image src='/images/sampler_line_linear_gradient.png' className='w-[250px] h-[250px] my-10 mx-auto' imgClass=''  />
 
 ### 3. Angular Linear Gradient Sampler
 - defined at `<microgl/samplers/angular_linear_gradient.h>`
@@ -188,7 +188,7 @@ struct angular_linear_gradient : public line_linear_gradient<....> {
 }    
 ```
 
-<img src="/images/sampler_angular_linear_gradient.png" style={{height:"250px", margin: "auto"}} />
+<Image src='/images/sampler_angular_linear_gradient.png' className='w-[250px] h-[250px] my-10 mx-auto' imgClass=''  />
 
 ### 4. Axial Linear Gradient Sampler
 - defined at `<microgl/samplers/axial_linear_gradient.h>`
@@ -211,7 +211,7 @@ struct axial_linear_gradient {
 }    
 ```
 
-<img src="/images/sampler_grad_axial.png" style={{height:"250px", margin: "auto"}} />
+<Image src='/images/sampler_grad_axial.png' className='w-[250px] h-[250px] my-10 mx-auto' imgClass=''  />
 
 ### 5. 2 Colors Gradient Sampler
 - defined at `<microgl/samplers/linear_gradient_2_colors.h>`
@@ -234,7 +234,7 @@ struct linear_gradient_2_colors {
 }    
 ```
 
-<img src="/images/sampler_grad_2_colors_fast.png" style={{height:"250px", margin: "auto"}} />
+<Image src='/images/sampler_grad_2_colors_fast.png' className='w-[250px] h-[250px] my-10 mx-auto' imgClass=''  />
 
 ### 6. Fast Radial Gradient Sampler
 - defined at `<microgl/samplers/fast_radial_gradient.h>`
@@ -261,7 +261,7 @@ struct fast_radial_gradient {
 }
 ```
 
-<img src="/images/sampler_grad_radial.png" style={{height:"250px", margin: "auto"}} />
+<Image src='/images/sampler_grad_radial.png' className='w-[250px] h-[250px] my-10 mx-auto' imgClass=''  />
 
 ### 7. Mask Sampler
 - defined at `<microgl/samplers/mask_sampler.h>`
@@ -301,7 +301,7 @@ the `chrome` template argument is enum with the following values:
 - [chrome_mode::blue_channel_inverted](#) - use the inverted blue channel
 - [chrome_mode::alpha_channel_inverted](#) - use the inverted alpha channel
 
-<img src="/images/sampler_masking.png" style={{height:"250px", margin: "auto"}} />
+<Image src='/images/sampler_masking.png' className='w-[250px] h-[250px] my-10 mx-auto' imgClass=''  />
 
 ### 8. Checker Board Sampler
 - defined at `<microgl/samplers/checker_board.h>`
@@ -336,7 +336,7 @@ struct checker_board {
     }
 ```
 
-<img src="/images/sampler_checker_board.png" style={{height:"250px", margin: "auto"}} />
+<Image src='/images/sampler_checker_board.png' className='w-[250px] h-[250px] my-10 mx-auto' imgClass=''  />
 
 ## `microgl::sampling` namespace
 This namespace also defines the following utility methods

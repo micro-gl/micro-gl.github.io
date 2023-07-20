@@ -12,10 +12,11 @@ tessalated geometry so they are very efficient for common usage.
 # Rounded Rectangle
 > Example at **`/examples/example_draw_rounded_rectangle.cpp`**
 
-<div style={{margin: "auto" }}>
-<img src="/images/canvas_rounded_rect.png" style={{height:"250px", display: "inline-block"}} />
-<img src="/images/canvas_rounded_2.png" style={{height:"250px", display:"inline-block"}} />
+<div className='w-full flex flex-row justify-center my-10 gap-10'>
+  <Image src='/images/canvas_rounded_rect.png' className='w-[250px] h-[250px] inline-block' imgClass=''  />
+  <Image src='/images/canvas_rounded_2.png' className='w-[250px] h-[250px] inline-block' imgClass=''  />
 </div>
+
 
 ```lang=cpp
 #include <microgl/canvas.h>
@@ -51,7 +52,7 @@ canvas.drawRoundedRect<blendmode::Normal, porterduff::FastSourceOverOnOpaque, tr
 # Circles 
 > Example at **`/examples/example_draw_circles.cpp`**
 
-<img src="/images/canvas_circle.png" style={{height:"250px", display:"inline-block"}} />
+<Image src='/images/canvas_circle.png' className='w-[250px] h-[250px] inline-block my-10 mx-auto' imgClass=''  />
 
 ```lang=cpp
 #include <microgl/canvas.h>
@@ -85,7 +86,7 @@ canvas.drawCircle<blendmode::Normal, porterduff::FastSourceOverOnOpaque, true, n
 # Arcs
 > Example at **`/examples/example_draw_arcs.cpp`**
 
-<img src="/images/canvas_arc.png" style={{height:"250px", display:"inline-block"}} />
+<Image src='/images/canvas_arc.png' className='w-[250px] h-[250px] my-10 mx-auto' imgClass=''  />
 
 ```lang=cpp
 using namespace microgl::sampling;
@@ -111,7 +112,7 @@ canvas.drawArc<blendmode::Normal, porterduff::FastSourceOverOnOpaque, true, numb
 # Pie
 > Example at **`/examples/example_draw_pie.cpp`**
 
-<img src="/images/canvas_pie.png" style={{height:"250px", display:"inline-block"}} />
+<Image src='/images/canvas_pie.png' className='w-[250px] h-[250px] my-10 mx-auto' imgClass=''  />
 
 ```lang=cpp
 using namespace microgl::sampling;

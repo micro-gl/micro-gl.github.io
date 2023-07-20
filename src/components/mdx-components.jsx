@@ -3,6 +3,7 @@ import Head from 'next/head'
 import CustomLink from './md-href'
 import CodeBlock from './code-block'
 import BlockQuote from './block-quote'
+import { Image } from './image'
 
 const components = {
   h1: (props) => <h1 {...props} />,
@@ -24,6 +25,7 @@ const components = {
   a: CustomLink,
   // TestComponent: dynamic(() => import('./TestComponent')),
   Head,
+  Image
 }
 
 export default components

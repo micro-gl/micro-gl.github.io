@@ -7,7 +7,7 @@ efficient **Gradients** samplers, we show them here.
 - defined at `<microgl/samplers/line_linear_gradient.h>`
 - example at `/examples/example_sampler_gradient_line.cpp`
 
-<img src="/images/sampler_line_linear_gradient.png" style={{height:"250px", margin: "auto"}} />
+<Image src='/images/sampler_line_linear_gradient.png' className='w-[250px] h-[250px] mx-auto my-10' imgClass=''  />
 
 the line gradient defines color stops on a line on which it samples. The line definition
 is relative to unit rectangle. 
@@ -41,7 +41,7 @@ canvas.drawRect<blendmode::Normal, porterduff::None<>, false, number>(
 - defined at `<microgl/samplers/angular_linear_gradient.h>`
 - example at `/examples/example_sampler_gradient_angular_linear.cpp`
 
-<img src="/images/sampler_angular_linear_gradient.png" style={{height:"250px", margin: "auto"}} />
+<Image src='/images/sampler_angular_linear_gradient.png' className='w-[250px] h-[250px]' imgClass=''  />
 
 This gradient is inferred by a given angle to create a line at the unit rectangle. the user can then 
 define the color stops.
@@ -84,7 +84,7 @@ example_run(&canvas, render);
 - defined at `<microgl/samplers/axial_linear_gradient.h>`
 - example at `/examples/example_sampler_gradient_axial.cpp`
 
-<img src="/images/sampler_grad_axial.png" style={{height:"250px", margin: "auto"}} />
+<Image src='/images/sampler_grad_axial.png' className='w-[250px] h-[250px] mx-auto my-10' imgClass=''  />
 
 This gradient is a faster variant if you need any number of stops but with angle, 
 that is a modulu of 45 (0, 45, 90, 135, 180, 225, 270, 315, 360)
@@ -125,7 +125,7 @@ example_run(&canvas, render);
 - defined at `<microgl/samplers/linear_gradient_2_colors.h>`
 - example at `/examples/example_sampler_gradient_2_colors_fast.cpp`
 
-<img src="/images/sampler_grad_2_colors_fast.png" style={{height:"250px", margin: "auto"}} />
+<Image src='/images/sampler_grad_2_colors_fast.png' className='w-[250px] h-[250px] mx-auto my-10' imgClass=''  />
 
 This gradient is a very fast variant if you need only 2 colors stops but with angle, 
 that is a modulu of 45 (0, 45, 90, 135, 180, 225, 270, 315, 360)
@@ -162,8 +162,8 @@ example_run(&canvas, render);
 - defined at `<microgl/samplers/fast_radial_gradient.h>`
 - example at `/examples/example_sampler_gradient_radial.cpp`
 
-<img src="/images/sampler_grad_radial.png" style={{height:"250px", margin: "auto"}} />
-<img src="/images/sampler_radial_2.png" style={{height:"250px", margin: "auto"}} />
+<Image src='/images/sampler_grad_radial.png' className='w-[250px] h-[250px] mx-auto my-10' imgClass=''  />
+<Image src='/images/sampler_radial_2.png' className='w-[250px] h-[250px] mx-auto my-10' imgClass=''  />
 
 This gradient is a fast radial gradient.
 

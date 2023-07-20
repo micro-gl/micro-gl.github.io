@@ -171,9 +171,9 @@ public:
 ```
 
 Here are 2 examples of renderings, that used 1/4 and 1/2 of the canvas size
-<div style={{margin: "auto" }}>
-<img src="/images/canvas_block_1.png" style={{height:"250px", display: "inline-block"}} />
-<img src="/images/canvas_block_2.png" style={{height:"250px", display:"inline-block"}} />
+<div className='flex flex-row gap-10 my-10 justify-center'>
+  <Image src='/images/canvas_block_1.png' className='w-[250px] h-[250px]' imgClass=''  />
+  <Image src='/images/canvas_block_2.png' className='w-[250px] h-[250px]' imgClass=''  />
 </div>
 
 > Examples at **`/examples/example_blocks_----.cpp`**
@@ -267,12 +267,12 @@ Canvas can draw the following shapes with a [sampler](samplers) and a matrix tra
 ## Rectangles
 > Example at **`/examples/example_draw_rect_transform.cpp`**
 
-<img src="/images/canvas_rect.png" style={{height:"250px", margin: "auto"}} />
+<Image src='/images/canvas_rect.png' className='w-[250px] h-[250px] mx-auto my-10' imgClass=''  />
 
 ## Rounded Rectangles
 > Example at **`/examples/example_draw_rounded_rectangle.cpp`**
 
-<img src="/images/canvas_rounded_rect.png" style={{height:"250px", margin: "auto"}} />
+<Image src='/images/canvas_rounded_rect.png' className='w-[250px] h-[250px] mx-auto my-10' imgClass=''  />
 
 ## Triangle
 > * Example at **`/examples/example_draw_triangle.cpp`** 
@@ -280,7 +280,7 @@ Canvas can draw the following shapes with a [sampler](samplers) and a matrix tra
 
 You can also draw triangles in batches
 
-<img src="/images/canvas_triangle.png" style={{height:"250px", margin: "auto"}} />
+<Image src='/images/canvas_triangle.png' className='w-[250px] h-[250px] mx-auto my-10' imgClass=''  />
 
 ## Polygon
 > Examples at **`/examples/example_draw_polygon.cpp`** 
@@ -288,32 +288,32 @@ You can also draw triangles in batches
 `microgl` can draw convex, concave, simple, monotone, self intersecting and complex polygon.
 i.e polygons of all types.
 
-<img src="/images/canvas_polygon.png" style={{height:"250px", margin: "auto"}} />
+<Image src='/images/canvas_polygon.png' className='w-[250px] h-[250px] mx-auto my-10' imgClass=''  />
 
 ## Circles
 > Examples at **`/examples/example_draw_circles.cpp`** 
 
-<img src="/images/canvas_circle.png" style={{height:"250px", margin: "auto"}} />
+<Image src='/images/canvas_circle.png' className='w-[250px] h-[250px] mx-auto my-10' imgClass=''  />
 
 ## Arcs
 > Examples at **`/examples/example_draw_arcs.cpp`** 
 
-<img src="/images/canvas_arc.png" style={{height:"250px", margin: "auto"}} />
+<Image src='/images/canvas_arc.png' className='w-[250px] h-[250px] mx-auto my-10' imgClass=''  />
 
 ## Pie
 > Examples at **`/examples/example_draw_pie.cpp`** 
 
-<img src="/images/canvas_pie.png" style={{height:"250px", margin: "auto"}} />
+<Image src='/images/canvas_pie.png' className='w-[250px] h-[250px] mx-auto my-10' imgClass=''  />
 
 ## Quadrilaterals (4 points with perspective)
 > Examples at **`/examples/example_draw_quadrilaterals.cpp`** 
 
-<img src="/images/canvas_quadri.png" style={{height:"250px", margin: "auto"}} />
+<Image src='/images/canvas_quadri.png' className='w-[250px] h-[250px] mx-auto my-10' imgClass=''  />
 
 ## Masks
 > Examples at **`/examples/example_draw_masks.cpp`** 
 
-<img src="/images/canvas_mask.png" style={{height:"250px", margin: "auto"}} />
+<Image src='/images/canvas_mask.png' className='w-[250px] h-[250px] mx-auto my-10' imgClass=''  />
 
 ## Path fills
 > Examples at **`/examples/example_draw_path.cpp`** 
@@ -322,7 +322,7 @@ Paths are vector graphics shapes defined by lines, bezier paths, elliptic arcs a
 With them you can define multiple shapes, that when combined might for a complex polygon.
 after tessalation, the paths are filled using the **`one-zero`** or **`even-odd`** criterion
 
-<img src="/images/canvas_path.png" style={{height:"250px", margin: "auto"}} />
+<Image src='/images/canvas_path.png' className='w-[250px] h-[250px] mx-auto my-10' imgClass=''  />
 
 ## Path Strokes
 > Examples at **`/examples/example_draw_path_stroke.cpp`** 
@@ -333,9 +333,9 @@ when tessalated, you can define things like:
 - stroke cap of `butt`, `round`, `square`
 - stroke line join of `none`, `miter`, `miter_clip`, `round`, `bevel`
 
-<div style={{margin: "auto" }}>
-<img src="/images/canvas_stroke.png" style={{height:"250px", display: "inline-block"}} />
-<img src="/images/canvas_stroke_dash.png" style={{height:"250px", display:"inline-block"}} />
+<div className='flex flex-row gap-10 my-10 justify-center'>
+  <Image src='/images/canvas_stroke.png' className='w-[250px] h-[250px]' imgClass=''  />
+  <Image src='/images/canvas_stroke_dash.png' className='w-[250px] h-[250px]' imgClass=''  />
 </div>
 
 ## Bezier Patches
@@ -343,7 +343,7 @@ when tessalated, you can define things like:
 
 Bezier patches of 2nd and 3rd degree, Quadratic and Cubic orders are supported as well
 
-<img src="/images/canvas_bezier_patch.png" style={{height:"250px", margin: "auto"}} />
+<Image src='/images/canvas_bezier_patch.png' className='w-[250px] h-[250px] mx-auto my-10' imgClass=''  />
 
 ## Lines (Wu lines)
 > Examples at **`/examples/example_3d_simple_pipeline.cpp`** 
@@ -353,5 +353,5 @@ Bezier patches of 2nd and 3rd degree, Quadratic and Cubic orders are supported a
 Wu lines algorithm is supported, it is a fast DDA algorithm, supports anti-aliasing
 but is not very accurate.
 
-<img src="/images/canvas_wu_lines.png" style={{height:"250px", margin: "auto"}} />
+<Image src='/images/canvas_wu_lines.png' className='w-[250px] h-[250px] mx-auto my-10' imgClass=''  />
 
