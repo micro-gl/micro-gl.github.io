@@ -16,7 +16,7 @@ const Header =
 
       <div className='h-fit w-fit flex flex-row items-center 
                       font-old text-base font-bold'>
-        <div className='h-20 p-3 opa'>
+        <div className='h-20 sm:p-3 opa'>
           <img src={logo} className='h-full object-contain rounded-md border dark:border-pink-400/50'/>   
         </div>                        
         <span children={prefix} className='text-black dark:text-white' />
